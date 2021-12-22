@@ -1,0 +1,27 @@
+microservice:
+  neo-service-transactions-enrichment:
+    cluster: api
+    version:
+    name:
+    chart:
+    liquibase: true
+    strategy: service
+    worker-cron:
+    cfa: true
+    mock: false
+    env:
+      - dev
+      - sit
+      - uat
+      - prod
+    connectivity:
+      db:
+        db-instance-api: true
+        db-instance-almanac: false
+        db-instance-urbis: true
+      amq:
+        broker_name: api-amq
+        enabled: false
+      integrations:
+        service-sirion: false
+        iban-service: false
