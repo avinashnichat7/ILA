@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: 096987977627.dkr.ecr.eu-west-1.amazonaws.com/api/transactions-enrichment-service
+  tag: latest
+  pullPolicy: Always
+
+nameOverride: "transactions-enrichment-service"
+fullnameOverride: "transactions-enrichment-service"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  paths:
+    - /api/v1/prize-linked-account
+    - /prize-linked-account
+
+aws:
+  role: service-default-role
+
+appdynamics:
+  appdynamics_controller_host_name: null
+  appdynamics_agent_account_name: null
+  appdynamics_agent_account_access_key: null
+  appdynamics_agent_application_name: api
+  appdynamics_java_agent_reuse_node_name: True
+  appdynamics_controller_port: 443
+  appdynamics_controller_ssl_enabled: True
+
+env:
+  pg_write_db_host: null
+  pg_read_db_host: null
+  pg_db_name: neo_service_transactions_enrichment
+  pg_db_password: null
+  pg_db_username: null
+
+  spring:
+    profiles:
+      active: sit

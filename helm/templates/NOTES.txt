@@ -1,0 +1,3 @@
+Get the development application URL by running these commands:
+  kubectl -n {{ .Release.Namespace }} port-forward $POD_NAME 8080:{{ .Values.service.port }}
+  echo "Visit http://127.0.0.1:8080 to access your neo-service."

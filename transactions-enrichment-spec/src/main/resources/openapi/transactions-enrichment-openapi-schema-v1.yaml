@@ -1,0 +1,75 @@
+openapi: '3.0.2'
+info:
+  title: Transaction Enrichment Service Specs
+  version: '0.0.1'
+servers:
+  - url: '{protocol}://localhost/v1'
+    variables:
+      protocol:
+        enum:
+          - https
+        default: https
+paths:
+  /transaction-enrichment:
+    get:
+      summary: Dummy Get API
+      responses:
+        '200':
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Dummy Get API
+
+components:
+  schemas:
+    Meta:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: 'GENE-0001'
+          description: The code associated with the successful operation.
+        message:
+          type: string
+          example: message
+          description: The message for the client
+    ApiError:
+      type: object
+      required:
+        - meta
+      properties:
+        meta:
+          $ref: '#/components/schemas/ErrorMetaInformation'
+      title: ApiError
+    ErrorMetaInformation:
+      type: object
+      required:
+        - code
+        - errorType
+        - message
+      properties:
+        code:
+          type: string
+          example: 20025
+          description: code associated with the error
+        errorType:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+          description: error type
+          enum:
+            - VALIDATION_ERROR
+            - INTERNAL_SERVER_ERROR
+            - RESOURCE_NOT_FOUND
+        message:
+          type: string
+          example: 'Failure to process <request>. Reason: <reason-phrase>'
+          description: message
+      title: ErrorMetaInformation
+
+

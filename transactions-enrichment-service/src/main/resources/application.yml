@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: local
+  datasource:
+    primary:
+      driverClassName: org.postgresql.Driver
+      url: jdbc:postgresql://${pg_write_db_host:localhost:5432}/${pg_db_name:neo-service-transactions-enrichment}?socketTimeout=${socketTimeout:10}&statement_timeout=10000
+      jdbc-url: ${spring.datasource.primary.url}
+      username: ${pg_db_username:postgres}
+      password: ${pg_db_password:test}
+    replica:
+      driverClassName: org.postgresql.Driver
+      url: jdbc:postgresql://${pg_read_db_host:localhost:5432}/${pg_db_name:neo-service-transactions-enrichment}?socketTimeout=${socketTimeout:10}&statement_timeout=10000
+      jdbc-url: ${spring.datasource.replica.url}
+      username: ${pg_db_username:postgres}
+      password: ${pg_db_password:test}
+    hikari:
+      maximum-pool-size: ${pool_maximum_size:10}
+  jackson:
+    default-property-inclusion: non_null
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+logging:
+  config: classpath:logback/logback-${spring.profiles.active}.xml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "loggers, info, health"
+
