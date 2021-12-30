@@ -2,19 +2,20 @@ package com.neo.v1.controller;
 
 
 import com.neo.core.model.ApiError;
-
+import com.neo.v1.service.TransactionEnrichmentService;
 import com.neo.v1.transactions.enrichment.api.NeoServiceV1Api;
+import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
+import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Validated
 @Slf4j
@@ -28,9 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 })
 public class TransactionEnrichmentController implements NeoServiceV1Api {
 
+    private final TransactionEnrichmentService transactionsService;
+
     @Override
-    @GetMapping
-    public ResponseEntity<Void> getTransactionEnrichment() {
-        return (ResponseEntity<Void>) ResponseEntity.ok();
+    @PostMapping
+    public ResponseEntity<AccountTransactionsResponse> getTransactionEnrichment(AccountTransactionsRequest body) {
+        return ResponseEntity.ok(transactionsService.getAccountTransactions(body));
     }
 }

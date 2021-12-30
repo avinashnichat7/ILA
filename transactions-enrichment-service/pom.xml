@@ -37,17 +37,17 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>com.neo</groupId>
-            <artifactId>trigger-spec</artifactId>
-            <version>${trigger-spec.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.neo</groupId>-->
+<!--            <artifactId>trigger-spec</artifactId>-->
+<!--            <version>${trigger-spec.version}</version>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>com.neo</groupId>
-            <artifactId>standing-order-spec</artifactId>
-            <version>${standing-order-spec.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.neo</groupId>-->
+<!--            <artifactId>standing-order-spec</artifactId>-->
+<!--            <version>${standing-order-spec.version}</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.neo</groupId>
