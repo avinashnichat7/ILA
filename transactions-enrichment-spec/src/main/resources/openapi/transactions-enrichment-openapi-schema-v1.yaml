@@ -1,0 +1,269 @@
+openapi: '3.0.2'
+info:
+  title: Transaction Enrichment Service Specs
+  version: '0.0.1'
+servers:
+  - url: '{protocol}://localhost/v1'
+    variables:
+      protocol:
+        enum:
+          - https
+        default: https
+paths:
+  /transaction-enrichment:
+    post:
+      summary: Dummy Get API
+      description: Pet object that needs to be added to the store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountTransactionsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountTransactionsResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Dummy Get API
+
+components:
+  schemas:
+    Meta:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: 'GENE-0001'
+          description: The code associated with the successful operation.
+        message:
+          type: string
+          example: message
+          description: The message for the client
+    ApiError:
+      type: object
+      required:
+        - meta
+      properties:
+        meta:
+          $ref: '#/components/schemas/ErrorMetaInformation'
+      title: ApiError
+    ErrorMetaInformation:
+      type: object
+      required:
+        - code
+        - errorType
+        - message
+      properties:
+        code:
+          type: string
+          example: 20025
+          description: code associated with the error
+        errorType:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+          description: error type
+          enum:
+            - VALIDATION_ERROR
+            - INTERNAL_SERVER_ERROR
+            - RESOURCE_NOT_FOUND
+        message:
+          type: string
+          example: 'Failure to process <request>. Reason: <reason-phrase>'
+          description: message
+      title: ErrorMetaInformation
+    Currency:
+      type: object
+      required:
+        - code
+        - decimalPlaces
+      properties:
+        code:
+          type: string
+          example: BHD
+          description: currency code
+        decimalPlaces:
+          type: string
+          example: 3
+          description: decimal places
+    AccountTransactionsRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: BHxxABCO1456789023903
+          description: Source Iban
+        offset:
+          type: integer
+          example: Happy Birthday
+          description: Gift title
+        pageSize:
+          type: integer
+          format : int64
+          example: Happy Birthday
+          description: Gift description
+        filter:
+          type: string
+          example: hkhjkhk3
+          description: Gift icon
+        fromAmount:
+          type: number
+          example: TYPE_A
+          description: Gift card type
+        toAmount:
+          type: number
+          example: 1000
+          description: Gift amount
+        fromDate:
+          type: string
+          format: date
+          example: BHD
+          description: Currency code
+        toDate:
+          type: string
+          format: date
+          example: +973123456
+          description: Mobile number
+        debitCreditIndicator:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+        status:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+        maskedCardNumber:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+        excludeCardTransactions:
+          type: boolean
+          example: Mohammed
+          description: Gift receiver name
+    AccountTransactionsResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/AccountTransactions'
+    AccountTransactions:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountTransaction'
+    AccountTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDate:
+          type: string
+          format: date-time
+          example: 989248099
+          description: Account Transaction Id
+        valueDate:
+          type: string
+          format: date
+          example: 989248099
+          description: Account Transaction Id
+        transactionType:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionCurrency:
+          $ref: '#/components/schemas/Currency'
+        transactionExchangeRate:
+          type: number
+          example: 989248099
+          description: Account Transaction Id
+        accountCurrency:
+          $ref: '#/components/schemas/Currency'
+        transactionDescription1:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription2:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription3:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription4:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription5:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription6:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        amount:
+          type: number
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        originalAmount:
+          type: number
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        reference:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        previousBalance:
+          type: number
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        currentBalance:
+          type: number
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        generateAdvice:
+          type: boolean
+          example: 989248099
+          description: Account Transaction Id
+        status:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        merchantName:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        mcCode:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionTypeCode:
+          type: string
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+
+
+
+
+

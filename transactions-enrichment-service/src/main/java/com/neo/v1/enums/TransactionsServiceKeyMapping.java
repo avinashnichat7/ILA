@@ -1,0 +1,108 @@
+package com.neo.v1.enums;
+
+import com.neo.core.provider.ServiceKeyMapping;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_DOWN_AUDIT_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_DOWN_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_DOWN_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_AUDIT_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_HOLD_TRANSACTION_EXPIRY_DATE_INVALID_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_DOWN_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.HOLD_NUMBER_REQUIRED_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.IBAN_REQUIRED_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TMSX_INVALID_OPERATION_TYPE_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_AUDIT_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_DOWN_AUDIT_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_DOWN_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_DOWN_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_UNAVAILABLE_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSFER_SERVICE_DOWN_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSFER_SERVICE_ERROR_CODE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+
+@AllArgsConstructor
+@Getter
+public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
+
+    URBIS_SERVICE_ERROR(TRANSACTIONS_URBIS_ERROR_CODE, INTERNAL_SERVER_ERROR, TRANSACTIONS_URBIS_MESSAGE, TRANSACTIONS_URBIS_AUDIT_MESSAGE),
+    URBIS_SERVICE_DOWN(TRANSACTIONS_URBIS_DOWN_CODE, SERVICE_UNAVAILABLE, TRANSACTIONS_URBIS_DOWN_MESSAGE, TRANSACTIONS_URBIS_DOWN_AUDIT_MESSAGE),
+    ACCOUNT_SERVICE_ERROR(ACCOUNT_SERVICE_ERROR_CODE, INTERNAL_SERVER_ERROR, ACCOUNT_SERVICE_ERROR_MESSAGE, ACCOUNT_SERVICE_ERROR_AUDIT_MESSAGE),
+    ACCOUNT_SERVICE_DOWN(ACCOUNT_SERVICE_DOWN_CODE, SERVICE_UNAVAILABLE, ACCOUNT_SERVICE_DOWN_MESSAGE, ACCOUNT_SERVICE_DOWN_AUDIT_MESSAGE),
+    CREATE_HOLD_EXPIRY_DATE_INVALID(CREATE_HOLD_TRANSACTION_EXPIRY_DATE_INVALID_CODE, BAD_REQUEST, "com.neo.transactions.create.hold.expiry.date.invalid.message",
+            "com.neo.transactions.create.hold.expiry.date.invalid.error.message"),
+    TMSX_INVALID_OPERATION_TYPE(TMSX_INVALID_OPERATION_TYPE_CODE, BAD_REQUEST, "com.neo.transactions.tmx.post.release.hold.operation.type.invalid.message",
+            "com.neo.transactions.tmx.post.release.hold.operation.type.invalid.error.message"),
+    TMSX_SERVICE_ERROR("TRAN-0080", INTERNAL_SERVER_ERROR, "com.neo.transactions.tmsx.failed.response.message", "com.neo.transactions.tmsx.failed.response.error.message"),
+    TMSX_SERVICE_DOWN("GENE-1013", SERVICE_UNAVAILABLE, "com.neo.transactions.tmsx.down.message", "com.neo.transactions.tmsx.down.error.message"),
+    EXCHANGE_SERVICE_ERROR(EXCHANGE_SERVICE_ERROR_CODE, INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.exchange.failure.message", "com.neo.transactions.release.hold.exchange.failure.error.message"),
+    EXCHANGE_SERVICE_DOWN(EXCHANGE_SERVICE_DOWN_CODE, SERVICE_UNAVAILABLE, "com.neo.transactions.release.hold.exchange.unavailable.message", "com.neo.transactions.release.hold.exchange.unavailable.error.message"),
+    TRANSFER_SERVICE_ERROR(TRANSFER_SERVICE_ERROR_CODE, INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.transfer.failure.message", "com.neo.transactions.release.hold.transfer.failure.error.message"),
+    TRANSFER_SERVICE_DOWN(TRANSFER_SERVICE_DOWN_CODE, SERVICE_UNAVAILABLE, "com.neo.transactions.release.hold.transfer.unavailable.message", "com.neo.transactions.release.hold.transfer.unavailable.error.message"),
+    TRANSFER_LIMIT_EXCEEDED("TRAN-0090", BAD_REQUEST, "com.neo.transactions.tmx.transfer.limit.exceeded.message",
+            "com.neo.transactions.tmx.transfer.limit.exceeded.error.message"),
+    CUSTOMER_SERVICE_ERROR("TRAN-0091", INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.customer.service.failure.message",
+            "com.neo.transactions.release.hold.customer.service.error.message"),
+    CHARITY_SERVICE_ERROR("GENE-2006", INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.charity.unavailable.message",
+            "com.neo.transactions.release.hold.charity.unavailable.error.message"),
+    CUSTOMER_SERVICE_UNAVAILABLE("GENE-2004", SERVICE_UNAVAILABLE, "com.neo.transactions.customer.service.unavailable.message", "com.neo.transactions.customer.service.unavailable.error.message"),
+    CONTENT_SERVICE_ERROR("TRAN-0092", INTERNAL_SERVER_ERROR, "com.neo.transactions.content.service.failure.message", "com.neo.transactions.content.service.failure.error.message"),
+    CONTENT_SERVICE_UNAVAILABLE("GENE-2014", SERVICE_UNAVAILABLE, "com.neo.transactions.content.service.unavailable.message", "com.neo.transactions.content.service.unavailable.error.message"),
+    CHARITY_SERVICE_UNAVAILABLE("GENE-2027", SERVICE_UNAVAILABLE, "com.neo.transactions.charity.service.unavailable.message",
+            "com.neo.transactions.charity.service.unavailable.message"),
+    UNIT_DOES_NOT_EXISTS(
+            "TRAN-1020",
+            INTERNAL_SERVER_ERROR,
+            "com.neo.transactions.unit.does.not.exist.message",
+            "com.neo.transactions.unit.does.not.exist.error.message"
+    ),
+
+    TRANSACTION_REFERENCE_DOES_NOT_EXISTS(
+            "TRAN-0097",
+            INTERNAL_SERVER_ERROR,
+            "com.neo.transactions.transaction.reference.does.not.exist.message",
+            "com.neo.transactions.transaction.reference.does.not.exist.error.message"
+    ),
+
+    INVALID_TRANSACTION_STATUS_MAPPING(
+            "TRAN-1010",
+            INTERNAL_SERVER_ERROR,
+            "com.neo.transactions.invalid.transaction.status.mapping.message",
+            "com.neo.transactions.invalid.transaction.status.mapping.error.message"
+    ),
+    FILTER_DECODING_ERROR(
+            "TRAN-0099",
+            INTERNAL_SERVER_ERROR,
+            "com.neo.transactions.decode.failure.message",
+            "com.neo.transactions.decode.failure.error.message"
+    ),
+    IBAN_REQUIRED(
+            IBAN_REQUIRED_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.transaction.hold.balance.iban.required.message",
+            "com.neo.transaction.hold.balance.required.iban.error.message"),
+    HOLD_NUMBER_REQUIRED(
+            HOLD_NUMBER_REQUIRED_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.transaction.hold.balance.holdNumber.required.message",
+            "com.neo.transaction.hold.balance.required.holdNumber.error.message"),
+    TRANSACTION_SERVICE_UNAVAILABLE(TRANSACTION_UNAVAILABLE_ERROR_CODE,
+                                    INTERNAL_SERVER_ERROR,
+            "com.neo.gift.customer.service.error.failure.message",
+                                            "com.neo.gift.customer.service.error.failure.audit.message");
+
+
+    private String code;
+    private HttpStatus httpStatus;
+    private String messageKey;
+    private String errorMessageKey;
+}
