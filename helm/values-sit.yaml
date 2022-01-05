@@ -40,6 +40,24 @@ env:
   pg_db_password: null
   pg_db_username: null
 
+  te:
+    account:
+      service:
+        base:
+          url: http://accounts-service.accounts-service.svc:8080/api/v1/accounts
+    charity:
+      service:
+        base:
+          url: http://charity-service.charity-service.svc:8080/api/v1/charity
+    transaction:
+      service:
+        base:
+          url: http://transactions-service.transactions-service.svc:8080/api/v1/transactions
+    product:
+      service:
+        base:
+          url: http://product-catalogue-service.product-catalogue-service.svc:8080/api/v1/product-catalogue
+
   spring:
     profiles:
       active: sit

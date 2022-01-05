@@ -2,12 +2,17 @@ package com.neo.v1.service;
 
 import com.neo.core.context.GenericRestParamContextHolder;
 import com.neo.core.model.GenericRestParamDto;
+import com.neo.v1.entity.CustomerCategory;
 import com.neo.v1.entity.TmsxUrbisOperationTypesEntity;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
+import com.neo.v1.mapper.CustomerCategoryMapper;
+import com.neo.v1.model.catalogue.CategoryDetail;
+import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
+import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +63,15 @@ public class TransactionEnrichmentServiceTest {
 
     @Mock
     private UrbisService urbisService;
+
+    @Mock
+    private ProductCatalogueService productCatalogueService;
+
+    @Mock
+    private CustomerCategoryRepository customerCategoryRepository;
+
+    @Mock
+    private CustomerCategoryMapper customerCategoryMapper;
 
     @BeforeEach
     void before() {
@@ -163,5 +178,18 @@ public class TransactionEnrichmentServiceTest {
         AccountTransactionsResponse result = subject.getAccountTransactions(request);
         assertThat(result).isEqualTo(expected);
         verify(accountTransactionsResponseMapper).map(any(List.class));
+    }
+
+    @Test
+    void getMerchantCategoryList_returnSuccess() {
+        CategoryListResponse expected = CategoryListResponse.builder().build();
+        CategoryDetail categoryDetail = CategoryDetail.builder().id(1l).name("category1").build();
+        CustomerCategory customCategoryDetail = CustomerCategory.builder().id(12l).name("category2").build();
+        when(productCatalogueService.getProductCatalogueMerchantCategory()).thenReturn(Collections.singletonList(categoryDetail));
+        when(customerCategoryRepository.findByCustomerId(any())).thenReturn(Collections.singletonList(customCategoryDetail));
+        when(customerCategoryMapper.map(Collections.singletonList(categoryDetail), Collections.singletonList(customCategoryDetail)))
+                .thenReturn(expected);
+        CategoryListResponse result = subject.getMerchantCategoryList();
+        assertThat(result).isEqualTo(expected);
     }
 }

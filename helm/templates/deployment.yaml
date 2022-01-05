@@ -80,6 +80,14 @@ spec:
               value: {{ .Values.env.aws_region }}
             - name: spring.profiles.active
               value: {{ .Values.env.spring.profiles.active }}
+            - name: te.account.service.base.url
+              value: {{ .Values.env.te.account.service.base.url }}
+            - name: te.charity.service.base.url
+              value: {{ .Values.env.te.charity.service.base.url }}
+            - name: te.transaction.service.base.url
+              value: {{ .Values.env.te.transaction.service.base.url }}
+            - name: te.product.service.base.url
+              value: {{ .Values.env.te.product.service.base.url }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

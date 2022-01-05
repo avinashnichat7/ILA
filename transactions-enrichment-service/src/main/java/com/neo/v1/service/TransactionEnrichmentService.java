@@ -1,14 +1,19 @@
 package com.neo.v1.service;
 
+import com.neo.v1.entity.CustomerCategory;
 import com.neo.v1.enums.AccountTransactionStatusType;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
+import com.neo.v1.mapper.CustomerCategoryMapper;
 import com.neo.v1.mapper.TransferFeesRequestMapper;
 import com.neo.v1.model.account.TransferCharge;
 import com.neo.v1.model.account.TransferFees;
+import com.neo.v1.model.catalogue.CategoryDetail;
+import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
+import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +47,9 @@ public class TransactionEnrichmentService {
     private final AccountTransactionsMapper accountTransactionsMapper;
     private final AccountTransactionsResponseMapper accountTransactionsResponseMapper;
     private final TransactionService transactionService;
+    private final ProductCatalogueService productCatalogueService;
+    private final CustomerCategoryRepository customerCategoryRepository;
+    private final CustomerCategoryMapper customerCategoryMapper;
 
 
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
@@ -97,6 +105,12 @@ public class TransactionEnrichmentService {
     private Boolean isFawriChargesAvailable(List<TransferCharge> transferCharges) {
         return !transferCharges.isEmpty()
                 && transferCharges.get(0).getChargeAmountInAccountCurrency().compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public CategoryListResponse getMerchantCategoryList() {
+        List<CategoryDetail> categoryList = productCatalogueService.getProductCatalogueMerchantCategory();
+        List<CustomerCategory> customerCategoryList = customerCategoryRepository.findByCustomerId(getContext().getCustomerId());
+        return customerCategoryMapper.map(categoryList, customerCategoryList);
     }
 
 }

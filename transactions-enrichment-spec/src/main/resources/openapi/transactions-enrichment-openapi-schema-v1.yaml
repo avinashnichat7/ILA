@@ -33,6 +33,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: Dummy Get API
+  /transaction-enrichment/category:
+    get:
+      summary: Get ila Products
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
 
 components:
   schemas:
@@ -262,6 +278,52 @@ components:
           required: true
           example: 989248099
           description: Account Transaction Id
+    CategoryListResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/CategoryListData'
+    CategoryListData:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantCategoryDetail'
+    MerchantCategoryDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: "123456"
+          description: Category Id
+        name:
+          type: string
+          example: "Ajith"
+          description: Category name
+        iconLabelUrl:
+          type: string
+          example: "https://example.com/2.png"
+          description: Icon Label URL
+        icon:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon url
+        color:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon color
+        isCustom:
+          type: boolean
+          default: false
+          example: "true"
+          description: custom category identification flag
+        displayOrder:
+          type: integer
+          example: "1"
+          description: Category order
 
 
 
