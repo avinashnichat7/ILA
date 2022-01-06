@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-    <include file="database/transaction-enrichment/1/transaction_enrichment_1.xml"/>
+    <include file="database/transaction-enrichment/1/changeset/1_IB_10802_create_tables.xml"/>
+
+    <changeSet id="transaction_enrichment_1" author="Rosh TR">
+        <tagDatabase tag="transaction_enrichment"/>
+    </changeSet>
 
 </databaseChangeLog>

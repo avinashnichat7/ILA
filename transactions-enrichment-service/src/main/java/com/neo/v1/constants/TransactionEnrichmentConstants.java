@@ -8,8 +8,6 @@ import static java.math.BigDecimal.ONE;
 
 public class TransactionEnrichmentConstants {
 
-    public static final String CODE_TRANSACTION_ID_LENGTH = "TRAN-0015";
-    public static final String CODE_TRANSACTION_ID_REQUIRED = "TRAN-0017";
     public static final String CODE_ENTRY_ACCOUNT_ID_REQUIRED = "TRAN-0021";
     public static final String POST_RELEASE_HOLD_ENTRY_ACCOUNT_ID_REQUIRED = "TRAN-0038";
     public static final String CODE_ENTRY_AMOUNT_REQUIRED = "TRAN-0022";
@@ -25,7 +23,6 @@ public class TransactionEnrichmentConstants {
     public static final String CODE_ENTRY_NARRATIVE_LENGTH = "TRAN-0027";
     public static final String POST_RELEASE_HOLD_ENTRY_NARRATIVE_LENGTH = "TRAN-0044";
 
-    public static final String CODE_TRANSACTION_ENTRY_INVALID = "TRAN-0029";
     // ACCOUNT TRANSACTIONS CODES AND MESSAGES
     public static final String TRANSACTIONS_ACCOUNT_CODE = "TRAN-1009";
     public static final String TRANSACTIONS_ACCOUNT_MESSAGE = "com.neo.transactions.account.message";
@@ -49,13 +46,6 @@ public class TransactionEnrichmentConstants {
     public static final String ACCOUNT_SERVICE_ERROR_MESSAGE = "com.neo.transactions.account.error.message";
     public static final String ACCOUNT_SERVICE_ERROR_AUDIT_MESSAGE = "com.neo.transactions.account.error.audit.message";
 
-    public static final String CREATE_HOLD_TRANSACTION_REFERENCE_ID_REQUIRED_CODE = "TRAN-0003";
-    public static final String CREATE_HOLD_TRANSACTION_ACCOUNT_ID_REQUIRED_CODE = "TRAN-0004";
-    public static final String CREATE_HOLD_TRANSACTION_AMOUNT_REQUIRED_CODE = "TRAN-0005";
-    public static final String CREATE_HOLD_TRANSACTION_AMOUNT_INVALID_CODE = "TRAN-0006";
-    public static final String CURRENCY_CODE_REQUIRED_CODE = "TRAN-0007";
-    public static final String CREATE_HOLD_TRANSACTION_VALUE_DATE_REQUIRED_CODE = "TRAN-0011";
-    public static final String CREATE_HOLD_TRANSACTION_NARRATIVE_INVALID_LENGTH_CODE = "TRAN-0012";
     public static final String CREATE_HOLD_TRANSACTION_EXPIRY_DATE_INVALID_CODE = "TRAN-0014";
 
     public static final String TMSX_CREATE_HOLD_TRANSACTION_ID_REQUIRED_CODE = "TRAN-0050";
@@ -67,8 +57,6 @@ public class TransactionEnrichmentConstants {
     public static final String TMSX_CREATE_HOLD_VALUE_DATE_REQUIRED_CODE = "TRAN-0055";
     public static final String TMSX_INVALID_OPERATION_TYPE_CODE = "TRAN-0076";
     public static final String TMSX_CREATE_HOLD_OPERATION_TYPE_REQUIRED_CODE = "TRAN-0098";
-
-    public static final String URBIS_CLIENT_DATE_FORMAT = "yyyyMMdd";
 
     public static final int NARRATIVE_SIZE = 6;
 
@@ -103,10 +91,6 @@ public class TransactionEnrichmentConstants {
     public static final String OPERATION_TYPE_FAWRI_TRANSFER = "Fawri Transfer";
     public static final String OPERATION_TYPE_FAWRIPLUS_TRANSFER = "Fawri+ Transfer";
     public static final String NARRATIVE_LINE_MAX_LENGTH = "34";
-    public static final String TRANSACTION_DETAIL_BLANK_ACCOUNT_ID_CODE = "TRAN-0094";
-    public static final String TRANSACTION_DETAIL_INVALID_ACCOUNT_ID_LENGTH_CODE = "TRAN-0095";
-    public static final String TRANSACTION_DETAIL_BLANK_TRANSACTION_REFERENCE_CODE = "TRAN-0093";
-    public static final String TRANSACTION_DETAIL_INVALID_TRANSACTION_REFERENCE_LENGTH_CODE = "TRAN-1012";
     public static final String TRANSACTION_TYPE_SALARY_TRANSFER = "Salary Transfer";
     public static final String TRANSACTION_TYPE_CHARITY_TRANSFER = "Contribution to charity";
     public static final String TRANSACTION_TYPE_SALARY_TRANSFER_CODE = "021";
@@ -127,10 +111,10 @@ public class TransactionEnrichmentConstants {
     public static final String IBAN_REQUIRED_ERROR_CODE = "TRAN-0100";
     public static final String HOLD_NUMBER_REQUIRED_ERROR_CODE = "TRAN-0101";
     public static final String TRANSACTION_UNAVAILABLE_ERROR_CODE = "GENE-2013";
-    public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_STATUS_CODE = "TRAN-0089";
-    public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_OFFSET_CODE = "TRAN-0082";
-    public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_PAGE_SIZE_CODE = "TRAN-0083";
-    public static final int GET_ACCOUNT_TRANSACTION_DEFAULT_PAGE_SIZE = 5;
+    public static final String PRODUCT_CATALOGUE_UNAVAILABLE_ERROR_CODE = "GENE-2030";
+
+    public static final String GET_CATEGORY_LIST_SUCCESS_CODE = "TRNE-1021";
+    public static final String GET_CATEGORY_LIST_SUCCESS_MSG = "com.neo.te.category.success.message";
     
     static {
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(1L, OPERATION_TYPE_FAWRI);

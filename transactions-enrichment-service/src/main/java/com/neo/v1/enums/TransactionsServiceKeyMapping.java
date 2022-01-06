@@ -16,6 +16,7 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVI
 import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.HOLD_NUMBER_REQUIRED_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.IBAN_REQUIRED_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.PRODUCT_CATALOGUE_UNAVAILABLE_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TMSX_INVALID_OPERATION_TYPE_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_AUDIT_MESSAGE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_DOWN_AUDIT_MESSAGE;
@@ -98,7 +99,11 @@ public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
     TRANSACTION_SERVICE_UNAVAILABLE(TRANSACTION_UNAVAILABLE_ERROR_CODE,
                                     INTERNAL_SERVER_ERROR,
             "com.neo.gift.customer.service.error.failure.message",
-                                            "com.neo.gift.customer.service.error.failure.audit.message");
+                                            "com.neo.gift.customer.service.error.failure.audit.message"),
+    PRODUCT_CATALOGUE_SERVICE_UNAVAILABLE(PRODUCT_CATALOGUE_UNAVAILABLE_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.te.category.service.error.failure.message",
+            "com.neo.te.category.service.error.failure.audit.message");
 
 
     private String code;

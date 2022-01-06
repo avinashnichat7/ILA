@@ -6,6 +6,7 @@ import com.neo.v1.service.TransactionEnrichmentService;
 import com.neo.v1.transactions.enrichment.api.NeoServiceV1Api;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
+import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,13 @@ public class TransactionEnrichmentController implements NeoServiceV1Api {
 
     @Override
     @PostMapping
-    public ResponseEntity<AccountTransactionsResponse> getTransactionEnrichment(AccountTransactionsRequest body) {
+    public ResponseEntity<AccountTransactionsResponse> postTransactionEnrichment(AccountTransactionsRequest body) {
         return ResponseEntity.ok(transactionsService.getAccountTransactions(body));
+    }
+
+    @Override
+    @GetMapping("/category")
+    public ResponseEntity<CategoryListResponse> getTransactionEnrichmentCategory() {
+        return ResponseEntity.ok(transactionsService.getMerchantCategoryList());
     }
 }

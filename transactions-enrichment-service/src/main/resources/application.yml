@@ -7,7 +7,7 @@ spring:
   datasource:
     primary:
       driverClassName: org.postgresql.Driver
-      url: jdbc:postgresql://${pg_write_db_host:localhost:5432}/${pg_db_name:neo-service-transactions-enrichment}?socketTimeout=${socketTimeout:10}&statement_timeout=10000
+      url: jdbc:postgresql://${pg_write_db_host:localhost:5432}/${pg_db_name:neo_service_transactions_enrichment}?socketTimeout=${socketTimeout:10}&statement_timeout=10000
       jdbc-url: ${spring.datasource.primary.url}
       username: ${pg_db_username:postgres}
       password: ${pg_db_password:test}
@@ -20,7 +20,7 @@ spring:
         max-lifetime: ${pool_connection_max_lifetime:86400000}
     replica:
       driverClassName: org.postgresql.Driver
-      url: jdbc:postgresql://${pg_read_db_host:localhost:5432}/${pg_db_name:neo-service-transactions-enrichment}?socketTimeout=${socketTimeout:10}&statement_timeout=10000
+      url: jdbc:postgresql://${pg_read_db_host:localhost:5432}/${pg_db_name:neo_service_transactions_enrichment}?socketTimeout=${socketTimeout:10}&statement_timeout=10000
       jdbc-url: ${spring.datasource.replica.url}
       username: ${pg_db_username:postgres}
       password: ${pg_db_password:test}
@@ -60,7 +60,10 @@ te:
     service:
       base:
         url: http://localhost:8080/api/v1/transactions
-
+  product:
+    service:
+      base:
+        url: http://localhost:8081/api/v1/product-catalogue
 
   urbis:
     service:
@@ -78,7 +81,7 @@ te:
           uri: /CashWaste/api/v1/cashwaste/reverse/
     datasource:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-      url: jdbc:sqlserver://${urbis_db_host:localhost:1456};databaseName=${urbis_db_name:neo_service_transactions};queryTimeout=${urbisQueryTimeout:30}
+      url: jdbc:sqlserver://${urbis_db_host:localhost:1456};databaseName=${urbis_db_name:neo_service_transactions_enrichment};queryTimeout=${urbisQueryTimeout:30}
       jdbc-url: ${te.urbis.datasource.url}
       username: ${urbis_db_username:SA}
       password: ${urbis_db_password:<YourStrong!Passw0rd>}
@@ -104,6 +107,8 @@ feign:
         errorDecoder: com.neo.v1.client.decoder.CharityClientErrorDecoder
       TransactionClient:
         errorDecoder: com.neo.v1.client.decoder.TransactionClientErrorDecoder
+      ProductCatalogueClient:
+        errorDecoder: com.neo.v1.client.decoder.ProductCatalogueClientErrorDecoder
 
 logging:
   config: classpath:logback/logback-${spring.profiles.active}.xml
