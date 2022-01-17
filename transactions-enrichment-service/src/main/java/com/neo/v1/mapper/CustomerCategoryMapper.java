@@ -21,7 +21,8 @@ public class CustomerCategoryMapper {
     private final MetaMapper metaMapper;
 
     public CategoryListResponse map(List<CategoryDetail> categoryList, List<CustomerCategory> customerCategoryList) {
-        List<MerchantCategoryDetail> customerCategories = customerCategoryList.stream().map(customerCategory -> map(customerCategory)).collect(Collectors.toList());
+        List<MerchantCategoryDetail> customerCategories = customerCategoryList.stream()
+                .map(customerCategory -> map(customerCategory)).collect(Collectors.toList());
         List<MerchantCategoryDetail> categories = categoryList.stream().map(customerCategory -> map(customerCategory)).collect(Collectors.toList());
         customerCategories.addAll(categories);
         return CategoryListResponse.builder()

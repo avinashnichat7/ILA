@@ -70,9 +70,9 @@ public final class TmsxUtil {
         } else {
             if (OPERATION_TYPE_FAWATEER.equalsIgnoreCase(tmsxUrbisOperationTypesEntity.getTransferOperationTypeEntity().getOperationType())) {
                 narrativeLines = getFawateerNarrativeLines(paymentDetails, isTmsxPostTransaction);
-            } else if(TRANSACTION_TYPE_CHARITY_TRANSFER_CODE.equalsIgnoreCase(paymentDetails.getTransactionTypeCode())) {
+            } else if (TRANSACTION_TYPE_CHARITY_TRANSFER_CODE.equalsIgnoreCase(paymentDetails.getTransactionTypeCode())) {
                 narrativeLines = getCharityNarrativeLines(paymentDetails, charityItemData);
-            } else{
+            } else {
                 narrativeLines = getFawriFawriPlusNarrativeLines(paymentDetails, tmsxUrbisOperationTypesEntity, transactionEntryType);
             }
         }
@@ -119,18 +119,18 @@ public final class TmsxUtil {
         logWarningFawri(creditor);
         if (isSalaryTransfer(paymentDetails)) {
             narratives.add(TRANSACTION_TYPE_SALARY_TRANSFER);
-            narratives.add(nonNull(creditor) ? creditor.getAccount().getIban() : null);
-            narratives.add(nonNull(creditor) && nonNull(creditor.getName()) ? getName(creditor.getName()) : null);
-            narratives.add(nonNull(creditor) && DEBIT.equals(transactionEntryType) ? creditor.getAddress() : null);
+            narratives.add(getAccountIban(creditor));
+            narratives.add(getName(creditor));
+            narratives.add(getAddress(creditor,transactionEntryType));
         } else {
             if (DEBIT.equals(transactionEntryType)) {
                 narratives.add(getTransferType(tmsxUrbisOperationTypesEntity));
-                narratives.add(nonNull(creditor) ? creditor.getAccount().getIban() : null);
-                narratives.add(nonNull(creditor) ? creditor.getAddress() : null);
+                narratives.add(getAccountIban(creditor));
+                narratives.add(getAddress(creditor,transactionEntryType));
             } else {
-                narratives.add(nonNull(creditor) && nonNull(creditor.getName()) ? getName(creditor.getName()) : null);
+                narratives.add(getName(creditor));
                 narratives.add(getTransferType(tmsxUrbisOperationTypesEntity));
-                narratives.add(nonNull(debtor) ? debtor.getAccount().getIban() : null);
+                narratives.add(getAccountIban(creditor));
                 narratives.add(getSenderMobileNumberNarrative(debtor, paymentDetails.getCreditorAgent()));
             }
             narratives.addAll(getRemittanceNarratives(paymentDetails.getRemittanceInformation()));
@@ -151,8 +151,8 @@ public final class TmsxUtil {
         Creditor creditor = paymentDetails.getCreditor();
 
         return Stream.of(
-                format(vatOperationTypeNarrative, NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.get(tmsxUrbisOperationTypesEntity.getTransferOperationTypeEntity().getId())),
-                nonNull(creditor.getName()) ? getName(creditor.getName()) : EMPTY)
+                        format(vatOperationTypeNarrative, NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.get(tmsxUrbisOperationTypesEntity.getTransferOperationTypeEntity().getId())),
+                        nonNull(creditor.getName()) ? getName(creditor.getName()) : EMPTY)
                 .filter(StringUtils::isNotEmpty)
                 .collect(Collectors.toList()).toArray(new String[NARRATIVE_SIZE]);
     }
@@ -237,4 +237,18 @@ public final class TmsxUtil {
         }
         return result;
     }
+
+    private static String getAccountIban(Creditor creditor) {
+        return nonNull(creditor) ? creditor.getAccount().getIban() : StringUtils.EMPTY;
+    }
+
+    private static String getName(Creditor creditor) {
+        return nonNull(creditor) && nonNull(creditor.getName()) ? getName(creditor.getName()) : StringUtils.EMPTY;
+    }
+
+    private static String getAddress(Creditor creditor, TransactionEntryType transactionEntryType) {
+        return nonNull(creditor) && DEBIT.equals(transactionEntryType) ? creditor.getAddress() : StringUtils.EMPTY;
+    }
+
+
 }

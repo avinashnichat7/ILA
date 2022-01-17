@@ -39,7 +39,7 @@ public class TransactionEnrichmentControllerAdvice extends GenericResponseEntity
         log.error("MissingServletRequestParameterException exception occurred: ", ex);
         String errorMessage = INVALID_DATE_MESSAGE;
         String errorCode = INTERNAL_SERVER_ERROR_CODE;
-        if (isDateException(ex.getRequiredType().getName())) {
+        if (isDateException(ex.getName())) {
             errorCode = INVALID_DATE_CODE;
         }
         String message = genericMessageSource.getMessage(errorMessage, ex.getName());
