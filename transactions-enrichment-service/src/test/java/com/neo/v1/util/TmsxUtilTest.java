@@ -182,7 +182,7 @@ class TmsxUtilTest {
     void getFawriFawriPlusNarrativeLines_AllDetailsWithFawriOperationWithCreditEntryType_Success() {
         TransactionEntryType transactionEntryType = CREDIT;
         String CREDITOR_IBAN = "BH12ABCO6546546";
-        String DEBTOR_IBAN = "BH12ABCO6546547";
+        String DEBTOR_IBAN = "BH12ABCO6546546";
         PaymentDetails paymentDetails = PaymentDetails.builder()
                 .debtor(Debtor.builder()
                         .name("Yondu")
@@ -209,7 +209,7 @@ class TmsxUtilTest {
     void getFawriFawriPlusNarrativeLines_AllDetailsWithFawriOperationWithCreditEntryTypeAndMobileNumber_Success() {
         TransactionEntryType transactionEntryType = CREDIT;
         String CREDITOR_IBAN = "BH12ABCO6546546";
-        String DEBTOR_IBAN = "BH12ABCO6546547";
+        String DEBTOR_IBAN = "BH12ABCO6546546";
         PaymentDetails paymentDetails = PaymentDetails.builder()
                 .debtor(Debtor.builder()
                         .name("Yondu")
@@ -238,7 +238,7 @@ class TmsxUtilTest {
     void getFawriFawriPlusNarrativeLines_AllDetailsWithFawriOperationWithCreditEntryTypeAndMobileNumberHasPlus_Success() {
         TransactionEntryType transactionEntryType = CREDIT;
         String CREDITOR_IBAN = "BH12ABCO6546546";
-        String DEBTOR_IBAN = "BH12ABCO6546547";
+        String DEBTOR_IBAN = "BH12ABCO6546546";
         PaymentDetails paymentDetails = PaymentDetails.builder()
                 .debtor(Debtor.builder()
                         .name("Yondu")

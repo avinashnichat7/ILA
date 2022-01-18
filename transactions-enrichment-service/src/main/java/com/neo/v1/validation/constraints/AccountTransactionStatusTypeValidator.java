@@ -17,5 +17,5 @@ public @interface AccountTransactionStatusTypeValidator {
 
     Class<? extends Payload>[] payload() default {};
 
-    Class<? extends Enum<?>> enumClass();
+    Class<? extends Enum> enumClass();
 }

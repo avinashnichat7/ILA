@@ -11,6 +11,8 @@ import static com.neo.v1.enums.TransactionsServiceKeyMapping.FILTER_DECODING_ERR
 
 public class TransactionsUtils {
 
+    private TransactionsUtils(){}
+
     public static String decodeString(String encodedString) {
         try {
             return StringUtils.isNotBlank(encodedString)

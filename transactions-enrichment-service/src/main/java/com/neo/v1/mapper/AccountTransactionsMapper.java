@@ -212,11 +212,11 @@ public class AccountTransactionsMapper {
                 chargesAndVatTransactionList.add(mapFawriCharge(fawriTransaction, charge));
                 chargesAndVatTransactionList.add(mapFawriVat(fawriTransaction, charge));
             }
-        } else if (returnCharge) {
+        } else if (Boolean.TRUE.equals(returnCharge)) {
             for (AccountTransaction fawriTransaction : fawriTransactions) {
                 chargesAndVatTransactionList.add(mapFawriCharge(fawriTransaction, charge));
             }
-        } else if (returnVat) {
+        } else if (Boolean.TRUE.equals(returnVat)) {
             for (AccountTransaction fawriTransaction : fawriTransactions) {
                 chargesAndVatTransactionList.add(mapFawriVat(fawriTransaction, charge));
             }
