@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MetaMapperTest {
+ class MetaMapperTest {
 
     @InjectMocks
     private MetaMapper subject;
@@ -34,10 +34,10 @@ public class MetaMapperTest {
                 .code(code)
                 .message(message)
                 .build();
-        when(messageSource.getMessage(eq(messageKey))).thenReturn(message);
+        when(messageSource.getMessage((messageKey))).thenReturn(message);
 
         Meta actual = subject.map(code, messageKey);
         assertThat(actual).isEqualToComparingFieldByFieldRecursively(expected);
-        verify(messageSource).getMessage(eq(messageKey));
+        verify(messageSource).getMessage((messageKey));
     }
 }

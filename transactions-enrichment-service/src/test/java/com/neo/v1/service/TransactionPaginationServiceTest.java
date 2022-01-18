@@ -42,6 +42,6 @@ class TransactionPaginationServiceTest {
         int pageSize = 2;
 
         List<AccountTransaction> result = subject.getPaginatedRecords(accountTransactionList, offSet, pageSize);
-        assertThat(result.size()).isEqualTo(0);
+        assertThat(result.size()).isZero();
     }
 }

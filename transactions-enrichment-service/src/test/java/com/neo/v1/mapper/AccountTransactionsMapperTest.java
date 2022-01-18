@@ -60,7 +60,7 @@ class AccountTransactionsMapperTest {
     private CharityService charityService;
 
     @Test
-    public void map_isCalledWithAccountTransactionEntity_ReturnAccountTransaction() {
+     void map_isCalledWithAccountTransactionEntity_ReturnAccountTransaction() {
         String transactionCurrencyCode = "XXXX";
         String transactionCurrencyPlaces = "XXXX";
         String accountCurrencyCode = "XXXX";
@@ -157,7 +157,7 @@ class AccountTransactionsMapperTest {
     }
 
     @Test
-    public void map_IsCalledWithAccountPendingTransactionEntity_ThenAccountTransactionToBeReturned() {
+     void map_IsCalledWithAccountPendingTransactionEntity_ThenAccountTransactionToBeReturned() {
         String transactionCurrencyCode = "XXXX";
         String transactionCurrencyPlaces = "XXXX";
         String accountCurrencyCode = "XXXX";
@@ -633,7 +633,7 @@ class AccountTransactionsMapperTest {
                 .build();
 
         List<AccountTransaction> result = subject.mapFawriChargesAndVat(Collections.singletonList(fawriTransaction), transferCharge, accountTransactionsRequest);
-        assertThat(result.size()).isEqualTo(0);
+        assertThat(result.size()).isZero();
     }
 
     @Test

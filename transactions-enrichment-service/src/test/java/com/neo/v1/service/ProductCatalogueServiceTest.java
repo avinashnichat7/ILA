@@ -63,7 +63,7 @@ class ProductCatalogueServiceTest {
         when(productCatalogueClient.getProductCatalogueMerchantCategory(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT)).thenThrow(RetryableException.class);
 
         ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.getProductCatalogueMerchantCategory()).getKeyMapping();
-        assertEquals(keyMapping, PRODUCT_CATALOGUE_SERVICE_UNAVAILABLE);
+        assertEquals(PRODUCT_CATALOGUE_SERVICE_UNAVAILABLE, keyMapping);
 
         verify(productCatalogueClient).getProductCatalogueMerchantCategory(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT);
     }

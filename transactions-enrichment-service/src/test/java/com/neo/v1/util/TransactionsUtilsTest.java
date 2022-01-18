@@ -17,11 +17,11 @@ class TransactionsUtilsTest {
     @Test
     void decodeString_withNull_returnNull() {
         String result = decodeString(null);
-        assertThat(result).isEqualTo(null);
+        assertThat(result).isNull();
     }
     @Test
     void decodeString_withEmptyString_returnEmptyString() {
         String result = decodeString("");
-        assertThat(result).isEqualTo("");
+        assertThat(result).isEmpty();
     }
 }

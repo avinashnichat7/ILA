@@ -62,7 +62,7 @@ class CharityServiceTest {
         when(charityClient.getCharityById(CUSTOMER_ID, USER_ID, UNIT, LANGUAGE, charityId, purposeId)).thenThrow(RetryableException.class);
 
         ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.getCharityDetail(charityId, purposeId)).getKeyMapping();
-        assertEquals(keyMapping, CHARITY_SERVICE_UNAVAILABLE);
+        assertEquals(CHARITY_SERVICE_UNAVAILABLE, keyMapping);
 
         verify(charityClient).getCharityById(CUSTOMER_ID, USER_ID, UNIT, LANGUAGE, charityId, purposeId);
     }
