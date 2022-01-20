@@ -76,6 +76,41 @@ spec:
               value: {{ .Values.env.pg_db_username }}
             - name: pg_db_name
               value: {{ .Values.env.pg_db_name }}
+
+
+            - name: pool_connection_timeout
+              value: {{ .Values.env.pool_connection_timeout | quote }}
+            - name: pool_idle_connection_timeout
+              value: {{ .Values.env.pool_idle_connection_timeout | quote }}
+            - name: pool_maximum_size
+              value: {{ .Values.env.pool_maximum_size | quote }}
+            - name: pool_minimum_idle_connection
+              value: {{ .Values.env.pool_minimum_idle_connection | quote }}
+            - name: pool_connection_max_lifetime
+              value: {{ .Values.env.pool_connection_max_lifetime | quote }}
+            - name: urbis_pool_connection_timeout
+              value: {{ .Values.env.urbis_pool_connection_timeout | quote }}
+            - name: urbis_pool_idle_connection_timeout
+              value: {{ .Values.env.urbis_pool_idle_connection_timeout | quote }}
+            - name: urbis_pool_maximum_size
+              value: {{ .Values.env.urbis_pool_maximum_size | quote }}
+            - name: urbis_pool_minimum_idle_connection
+              value: {{ .Values.env.urbis_pool_minimum_idle_connection | quote }}
+            - name: urbis_pool_connection_max_lifetime
+              value: {{ .Values.env.urbis_pool_connection_max_lifetime | quote }}
+            - name: urbis.service.authorisation.token
+              value: {{ .Values.env.urbis.service.authorisation.token }}
+            - name: urbis_service_base_url
+              value: {{ .Values.env.urbis_service_base_url }}
+            - name: urbis_db_host
+              value: {{ .Values.env.urbis_db_host }}
+            - name: urbis_db_password
+              value: {{ .Values.env.urbis_db_password | quote }}
+            - name: urbis_db_username
+              value: {{ .Values.env.urbis_db_username | quote }}
+            - name: urbis_db_name
+              value: {{ .Values.env.urbis_db_name }}
+
             - name: AWS_REGION
               value: {{ .Values.env.aws_region }}
             - name: spring.profiles.active
