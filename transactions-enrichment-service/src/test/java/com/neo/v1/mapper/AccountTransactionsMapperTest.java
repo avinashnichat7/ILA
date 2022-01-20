@@ -3,6 +3,7 @@ package com.neo.v1.mapper;
 import com.neo.v1.entity.TmsxUrbisOperationTypesEntity;
 import com.neo.v1.entity.TransferOperationTypeEntity;
 import com.neo.v1.entity.urbis.AccountPendingTransactionEntity;
+import com.neo.v1.entity.urbis.AccountTransactionDetailEntity;
 import com.neo.v1.entity.urbis.AccountTransactionEntity;
 import com.neo.v1.model.PaymentDetails;
 import com.neo.v1.model.account.TransferCharge;
@@ -60,7 +61,7 @@ class AccountTransactionsMapperTest {
     private CharityService charityService;
 
     @Test
-    public void map_isCalledWithAccountTransactionEntity_ReturnAccountTransaction() {
+     void map_isCalledWithAccountTransactionEntity_ReturnAccountTransaction() {
         String transactionCurrencyCode = "XXXX";
         String transactionCurrencyPlaces = "XXXX";
         String accountCurrencyCode = "XXXX";
@@ -157,7 +158,7 @@ class AccountTransactionsMapperTest {
     }
 
     @Test
-    public void map_IsCalledWithAccountPendingTransactionEntity_ThenAccountTransactionToBeReturned() {
+     void map_IsCalledWithAccountPendingTransactionEntity_ThenAccountTransactionToBeReturned() {
         String transactionCurrencyCode = "XXXX";
         String transactionCurrencyPlaces = "XXXX";
         String accountCurrencyCode = "XXXX";
@@ -633,7 +634,7 @@ class AccountTransactionsMapperTest {
                 .build();
 
         List<AccountTransaction> result = subject.mapFawriChargesAndVat(Collections.singletonList(fawriTransaction), transferCharge, accountTransactionsRequest);
-        assertThat(result.size()).isEqualTo(0);
+        assertThat(result.size()).isZero();
     }
 
     @Test
@@ -645,4 +646,98 @@ class AccountTransactionsMapperTest {
         assertThat(result).isEqualToComparingFieldByField(expected);
 
     }
+
+    @Test
+    void map_IsCalledWithAccountTransactionDetailEntity_ThenAccountTransactionToBeReturned() {
+
+        String transactionCurrencyCode = "XXXX";
+        String transactionCurrencyPlaces = "XXXX";
+        String accountCurrencyCode = "XXXX";
+        String accountCurrencyPlaces = "XXXX";
+        String id = "XXXX";
+        LocalDateTime transactionDate = LocalDateTime.now();
+        LocalDate valueDate = LocalDate.now();
+        String transactionType = "XXXX";
+        BigDecimal transactionExchangeRate = BigDecimal.valueOf(3);
+        String transactionDescription1 = "XXXX";
+        String transactionDescription2 = "XXXX";
+        String transactionDescription3 = "XXXX";
+        String transactionDescription4 = "XXXX";
+        String transactionDescription5 = "XXXX";
+        String transactionDescription6 = "XXXX";
+        BigDecimal amount = BigDecimal.valueOf(300.6834);
+        BigDecimal originalAmount = BigDecimal.valueOf(400.7134);
+        String reference = "XXXX";
+        BigDecimal previousBalance = BigDecimal.valueOf(598.900);
+        BigDecimal currentBalance = BigDecimal.valueOf(400.89);
+        Integer generateAdvice = 1;
+        String status = "pending";
+        String mcCode = "123";
+        String merchantName = "merchantName";
+
+        Currency transactionCurrency = Currency.builder()
+                .code(transactionCurrencyCode)
+                .decimalPlaces(transactionCurrencyPlaces)
+                .build();
+
+        Currency accountCurrency = Currency.builder()
+                .code(accountCurrencyCode)
+                .decimalPlaces(accountCurrencyPlaces)
+                .build();
+        when(currencyMapper.map(transactionCurrencyCode, transactionCurrencyPlaces)).thenReturn(transactionCurrency).thenReturn(accountCurrency);
+
+        AccountTransaction expected = AccountTransaction.builder()
+                .id(id)
+                .transactionDate(transactionDate)
+                .valueDate(valueDate)
+                .transactionType(transactionType)
+                .transactionCurrency(transactionCurrency)
+                .transactionExchangeRate(transactionExchangeRate)
+                .accountCurrency(accountCurrency)
+                .transactionDescription1(transactionDescription1)
+                .transactionDescription2(transactionDescription2)
+                .transactionDescription3(transactionDescription3)
+                .transactionDescription4(transactionDescription4)
+                .transactionDescription5(transactionDescription5)
+                .transactionDescription6(transactionDescription6)
+                .amount(amount)
+                .originalAmount(originalAmount)
+                .reference(reference)
+                .previousBalance(previousBalance)
+                .currentBalance(currentBalance)
+                .generateAdvice(GENERATE_ADVICE.equals(generateAdvice))
+                .status(status)
+                .build();
+        AccountTransactionDetailEntity entity = AccountTransactionDetailEntity.builder()
+                .id(id)
+                .transactionDate(transactionDate)
+                .valueDate(valueDate)
+                .transactionType(transactionType)
+                .transactionCurrency(transactionCurrencyCode)
+                .transactionCurrencyPlaces(transactionCurrencyPlaces)
+                .transactionExchangeRate(transactionExchangeRate)
+                .accountCurrency(accountCurrencyCode)
+                .accountCurrencyPlaces(accountCurrencyPlaces)
+                .transactionDescription1(transactionDescription1)
+                .transactionDescription2(transactionDescription2)
+                .transactionDescription3(transactionDescription3)
+                .transactionDescription4(transactionDescription4)
+                .transactionDescription5(transactionDescription5)
+                .transactionDescription6(transactionDescription6)
+                .amount(amount)
+                .originalAmount(originalAmount)
+                .reference(reference)
+                .previousBalance(previousBalance)
+                .currentBalance(currentBalance)
+                .generateAdvice(GENERATE_ADVICE)
+                .status(status)
+                .build();
+
+        AccountTransaction result = subject.map(entity);
+
+        assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
+
+        verify(currencyMapper, times(2)).map(transactionCurrencyCode, transactionCurrencyPlaces);
+    }
+
 }

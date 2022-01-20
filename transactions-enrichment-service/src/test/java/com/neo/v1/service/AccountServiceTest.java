@@ -60,8 +60,11 @@ class AccountServiceTest {
     @Test
     void getFees_withTransferFeesRequest_ThrowException() {
         when(accountClient.getTransferFees(any(), any(), any(), any(), any())).thenThrow(RetryableException.class);
-        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.getFees(TransferFeesRequest.builder().build())).getKeyMapping();
-        assertEquals(keyMapping, ACCOUNT_SERVICE_DOWN);
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> getFeesResponse(subject)).getKeyMapping();
+        assertEquals(ACCOUNT_SERVICE_DOWN, keyMapping);
     }
 
+    private static TransferFeesResponse getFeesResponse(AccountService subject) {
+        return subject.getFees(TransferFeesRequest.builder().build());
+    }
 }

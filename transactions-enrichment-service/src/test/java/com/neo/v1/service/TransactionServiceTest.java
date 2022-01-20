@@ -75,7 +75,7 @@ class TransactionServiceTest {
         String status = "status";
         when(transactionClient.getAccountTransactionsByStatus(any(), any(), any(), any(), any(), any())).thenThrow(RetryableException.class);
         ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.getAccountTransactionsByStatus(request, status)).getKeyMapping();
-        assertEquals(keyMapping, TRANSACTION_SERVICE_UNAVAILABLE);
+        assertEquals(TRANSACTION_SERVICE_UNAVAILABLE, keyMapping);
     }
 
 }
