@@ -39,6 +39,27 @@ env:
   pg_db_name: neo_service_transactions_enrichment
   pg_db_password: null
   pg_db_username: null
+  queryTimeout: "10"
+  pool_connection_timeout: "5000"
+  pool_idle_connection_timeout: "10800000"
+  pool_maximum_size: "10"
+  pool_minimum_idle_connection: "10"
+  pool_connection_max_lifetime: "86400000"
+  urbis_db_host: urbis-db.dev.ilabank.internal:64451
+  urbis_db_name: URBILADEV2
+  urbis_db_username: null
+  urbis_db_password: null
+  urbisQueryTimeout: "30"
+  urbis_pool_connection_timeout: "5000"
+  urbis_pool_idle_connection_timeout: "10800000"
+  urbis_pool_maximum_size: "10"
+  urbis_pool_minimum_idle_connection: "10"
+  urbis_pool_connection_max_lifetime: "86400000"
+  almanac_db_host: api-rds.dev.ilabank.internal:64758
+  almanac_db_name: neobankeralmanac
+  almanac_db_password: null
+  almanac_db_username: null
+  urbis_service_base_url: http://urbis-api.dev.ilabank.internal
 
   te:
     account:
@@ -57,6 +78,12 @@ env:
       service:
         base:
           url: http://product-catalogue-service.product-catalogue-service.svc:8080/api/v1/product-catalogue
+
+  urbis:
+    service:
+      authorisation:
+        token: null
+    pendingTransactionsPageSize: 50
 
 
   spring:
