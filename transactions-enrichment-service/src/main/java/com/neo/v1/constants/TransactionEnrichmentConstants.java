@@ -112,9 +112,15 @@ public class TransactionEnrichmentConstants {
     public static final String HOLD_NUMBER_REQUIRED_ERROR_CODE = "TRAN-0101";
     public static final String TRANSACTION_UNAVAILABLE_ERROR_CODE = "GENE-2013";
     public static final String PRODUCT_CATALOGUE_UNAVAILABLE_ERROR_CODE = "GENE-2030";
+    public static final String CREATE_CATEGORY_INVALID_CATEGORY = "TRAN-2200";
+    public static final String CREATE_CATEGORY_INVALID_ICON = "TRAN-2201";
+    public static final String CREATE_CATEGORY_INVALID_COLOR = "TRAN-2202";
+    public static final String CREATE_CATEGORY_INVALID_CUSTOMER_TYPE = "TRAN-2203";
 
     public static final String GET_CATEGORY_LIST_SUCCESS_CODE = "TRNE-1021";
     public static final String GET_CATEGORY_LIST_SUCCESS_MSG = "com.neo.te.category.success.message";
+    public static final String CREATE_CATEGORY_SUCCESS_CODE = "TRAN-1022";
+    public static final String CREATE_CATEGORY_SUCCESS_MSG = "com.neo.te.create.category.success.message";
     
     static {
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(1L, OPERATION_TYPE_FAWRI);

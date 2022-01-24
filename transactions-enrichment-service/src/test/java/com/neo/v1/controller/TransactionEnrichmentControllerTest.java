@@ -3,6 +3,7 @@ package com.neo.v1.controller;
 import com.neo.core.message.GenericMessageSource;
 import com.neo.v1.service.TransactionEnrichmentService;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
+import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,14 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
     void getTransactionEnrichmentCategory_withValidRequest_expectSuccess() throws Exception {
         mockMvc.perform(get(URI_GET_CATEGORIES)
                         .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void postTransactionEnrichmentCategory_withValidRequest_expectSuccess() throws Exception {
+        mockMvc.perform(post(URI_GET_CATEGORIES)
+                        .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
+                        .content(toJson(CreateCategoryRequest.builder().build())))
                 .andExpect(status().isOk());
     }
 

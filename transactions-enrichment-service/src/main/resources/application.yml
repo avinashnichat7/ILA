@@ -64,6 +64,10 @@ te:
     service:
       base:
         url: http://localhost:8081/api/v1/product-catalogue
+  customer:
+    service:
+      base:
+        url: http://localhost:8081/api/v1/customers
 
   urbis:
     service:
@@ -109,6 +113,9 @@ feign:
         errorDecoder: com.neo.v1.client.decoder.TransactionClientErrorDecoder
       ProductCatalogueClient:
         errorDecoder: com.neo.v1.client.decoder.ProductCatalogueClientErrorDecoder
+      CustomerFeignService:
+        errorDecoder: com.neo.v1.client.decoder.CustomerClientErrorDecoder
+
 
 logging:
   config: classpath:logback/logback-${spring.profiles.active}.xml

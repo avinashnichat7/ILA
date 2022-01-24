@@ -1,13 +1,15 @@
 package com.neo.v1.mapper;
 
-import com.neo.v1.entity.CustomerCategory;
+import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.model.catalogue.CategoryDetail;
 import com.neo.v1.transactions.enrichment.model.CategoryListData;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
+import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.MerchantCategoryDetail;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +22,8 @@ public class CustomerCategoryMapper {
 
     private final MetaMapper metaMapper;
 
-    public CategoryListResponse map(List<CategoryDetail> categoryList, List<CustomerCategory> customerCategoryList) {
-        List<MerchantCategoryDetail> customerCategories = customerCategoryList.stream()
+    public CategoryListResponse map(List<CategoryDetail> categoryList, List<CustomerCategoryEntity> customerCategoryEntityList) {
+        List<MerchantCategoryDetail> customerCategories = customerCategoryEntityList.stream()
                 .map(customerCategory -> map(customerCategory)).collect(Collectors.toList());
         List<MerchantCategoryDetail> categories = categoryList.stream().map(customerCategory -> map(customerCategory)).collect(Collectors.toList());
         customerCategories.addAll(categories);
@@ -31,11 +33,11 @@ public class CustomerCategoryMapper {
                 .build();
     }
 
-    private MerchantCategoryDetail map(CustomerCategory customerCategory) {
-        return MerchantCategoryDetail.builder().id(customerCategory.getId())
-                .name(customerCategory.getName())
-                .icon(customerCategory.getIcon())
-                .color(customerCategory.getColor())
+    private MerchantCategoryDetail map(CustomerCategoryEntity customerCategoryEntity) {
+        return MerchantCategoryDetail.builder().id(customerCategoryEntity.getId())
+                .name(customerCategoryEntity.getName())
+                .icon(customerCategoryEntity.getIcon())
+                .color(customerCategoryEntity.getColor())
                 .isCustom(Boolean.TRUE)
                 .build();
     }
@@ -46,6 +48,18 @@ public class CustomerCategoryMapper {
                 .icon(categoryDetail.getIcon())
                 .color(categoryDetail.getColor())
                 .isCustom(Boolean.FALSE)
+                .build();
+    }
+
+    public CustomerCategoryEntity map(CreateCategoryRequest req, String customerId) {
+        return CustomerCategoryEntity.builder()
+                .customerId(customerId)
+                .name(req.getName())
+                .icon(req.getIcon())
+                .color(req.getColor())
+                .active(Boolean.TRUE)
+                .updatedDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now())
                 .build();
     }
 }

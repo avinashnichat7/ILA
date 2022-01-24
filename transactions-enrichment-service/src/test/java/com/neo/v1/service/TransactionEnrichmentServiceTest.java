@@ -2,17 +2,23 @@ package com.neo.v1.service;
 
 import com.neo.core.context.GenericRestParamContextHolder;
 import com.neo.core.model.GenericRestParamDto;
-import com.neo.v1.entity.CustomerCategory;
+import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.TmsxUrbisOperationTypesEntity;
+import com.neo.v1.enums.customer.RecordType;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
+import com.neo.v1.mapper.CreateCategoryResponseMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
+import com.neo.v1.mapper.MetaMapper;
 import com.neo.v1.model.catalogue.CategoryDetail;
+import com.neo.v1.model.customer.CustomerDetailData;
 import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
+import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
+import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +35,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -72,6 +80,15 @@ import static org.mockito.Mockito.when;
 
     @Mock
     private CustomerCategoryMapper customerCategoryMapper;
+
+    @Mock
+    private CustomerService customerService;
+
+    @Mock
+    private CreateCategoryResponseMapper createCategoryResponseMapper;
+
+    @Mock
+    private MetaMapper metaMapper;
 
     @BeforeEach
     void before() {
@@ -184,12 +201,30 @@ import static org.mockito.Mockito.when;
     void getMerchantCategoryList_returnSuccess() {
         CategoryListResponse expected = CategoryListResponse.builder().build();
         CategoryDetail categoryDetail = CategoryDetail.builder().id(1l).name("category1").build();
-        CustomerCategory customCategoryDetail = CustomerCategory.builder().id(12l).name("category2").build();
+        CustomerCategoryEntity customCategoryDetail = CustomerCategoryEntity.builder().id(12l).name("category2").build();
         when(productCatalogueService.getProductCatalogueMerchantCategory()).thenReturn(Collections.singletonList(categoryDetail));
         when(customerCategoryRepository.findByCustomerId(any())).thenReturn(Collections.singletonList(customCategoryDetail));
         when(customerCategoryMapper.map(Collections.singletonList(categoryDetail), Collections.singletonList(customCategoryDetail)))
                 .thenReturn(expected);
         CategoryListResponse result = subject.getMerchantCategoryList();
         assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    void createCategory_returnSuccess() {
+        String name = "name";
+        String icon = "icon";
+        String color = "color";
+        String customerId = "customerId";
+        CustomerDetailData customerDetailData = CustomerDetailData.builder().customerId(customerId).recordType(RecordType.CUSTOMER).build();
+        CreateCategoryRequest req = CreateCategoryRequest.builder().name(name).icon(icon).color(color).build();
+        CustomerCategoryEntity customerCategoryEntity = CustomerCategoryEntity.builder().build();
+        when(customerService.getCustomerDetail()).thenReturn(customerDetailData);
+        when(customerCategoryMapper.map(req, customerDetailData.getCustomerId())).thenReturn(customerCategoryEntity);
+        when(customerCategoryRepository.save(customerCategoryEntity)).thenReturn(CustomerCategoryEntity.builder().build());
+        when(createCategoryResponseMapper.map(any(), any())).thenReturn(CreateCategoryResponse.builder().build());
+        CreateCategoryResponse expected = CreateCategoryResponse.builder().build();
+        CreateCategoryResponse result = subject.createCategory(req);
+        assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
     }
 }

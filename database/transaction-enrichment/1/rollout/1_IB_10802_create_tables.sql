@@ -35,6 +35,18 @@ CREATE TABLE customer_category(
 ALTER TABLE configuration ADD CONSTRAINT configuration_code_unique UNIQUE (code);
 ALTER TABLE unit ADD CONSTRAINT unit_code_unique UNIQUE (code);
 
+-- Index
+CREATE INDEX idx_cat_customerId_active ON customer_category(customer_id, active);
+
+-- Sequence
+CREATE SEQUENCE seq_customer_category
+AS BIGINT
+START WITH 1
+INCREMENT BY 50
+MINVALUE 1
+NO CYCLE
+CACHE 20;
+
 --------------------------------------------
 -- Initial Data Records Insert statements --
 --------------------------------------------
