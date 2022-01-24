@@ -24,7 +24,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Table(name = "customer_category")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerCategory {
+public class CustomerCategoryEntity {
 
     @Id
     @GeneratedValue(strategy = SEQUENCE, generator = "SEQUENCE_CUSTOMER_CATEGORY")

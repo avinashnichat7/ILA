@@ -80,6 +80,10 @@ env:
       service:
         base:
           url: http://product-catalogue-service.product-catalogue-service.svc:8080/api/v1/product-catalogue
+    customer:
+      service:
+        base:
+          url: http://customers-service.customers-service.svc:8080/api/v1/customers
 
   urbis:
     service:

@@ -49,6 +49,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: No Products found
+    post:
+      summary: Create category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CreateCategoryResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
 
 components:
   schemas:
@@ -324,6 +345,47 @@ components:
           type: integer
           example: "1"
           description: Category order
+    CreateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Ajith"
+          description: Category name
+        icon:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon url
+        color:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon color
+    CreateCategoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/CategoryData'
+    CategoryData:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: "123456"
+          description: Category Id
+        name:
+          type: string
+          example: "Ajith"
+          description: Category name
+        icon:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon url
+        color:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon color
 
 
 

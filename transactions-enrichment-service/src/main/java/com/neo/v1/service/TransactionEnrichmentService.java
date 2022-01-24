@@ -1,19 +1,26 @@
 package com.neo.v1.service;
 
-import com.neo.v1.entity.CustomerCategory;
+import com.neo.core.exception.ServiceException;
+import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.enums.AccountTransactionStatusType;
+import com.neo.v1.enums.customer.RecordType;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
+import com.neo.v1.mapper.CreateCategoryResponseMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
+import com.neo.v1.mapper.MetaMapper;
 import com.neo.v1.mapper.TransferFeesRequestMapper;
 import com.neo.v1.model.account.TransferCharge;
 import com.neo.v1.model.account.TransferFees;
 import com.neo.v1.model.catalogue.CategoryDetail;
+import com.neo.v1.model.customer.CustomerDetailData;
 import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
+import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
+import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +33,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.neo.core.context.GenericRestParamContextHolder.getContext;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.FAWRI_TRANSACTION_TYPE_FOR_PENDING;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_TYPE_CHARITY_TRANSFER_CODE;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED_PENDING;
 import static com.neo.v1.enums.AccountTransactionStatusType.PENDING;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_COLOR;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CUSTOMER_TYPE;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_ICON;
 import static com.neo.v1.util.TransactionsUtils.decodeString;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -50,7 +63,9 @@ public class TransactionEnrichmentService {
     private final ProductCatalogueService productCatalogueService;
     private final CustomerCategoryRepository customerCategoryRepository;
     private final CustomerCategoryMapper customerCategoryMapper;
-
+    private final CustomerService customerService;
+    private final CreateCategoryResponseMapper createCategoryResponseMapper;
+    private final MetaMapper metaMapper;
 
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
         request.setFilter(decodeString(request.getFilter()));
@@ -109,8 +124,31 @@ public class TransactionEnrichmentService {
 
     public CategoryListResponse getMerchantCategoryList() {
         List<CategoryDetail> categoryList = productCatalogueService.getProductCatalogueMerchantCategory();
-        List<CustomerCategory> customerCategoryList = customerCategoryRepository.findByCustomerId(getContext().getCustomerId());
-        return customerCategoryMapper.map(categoryList, customerCategoryList);
+        List<CustomerCategoryEntity> customerCategoryEntityList = customerCategoryRepository.findByCustomerId(getContext().getCustomerId());
+        return customerCategoryMapper.map(categoryList, customerCategoryEntityList);
+    }
+
+    public CreateCategoryResponse createCategory(CreateCategoryRequest req) {
+        validateCreateCategoryRequest(req);
+        CustomerDetailData customerDetail = customerService.getCustomerDetail();
+        if (customerDetail.getRecordType() == RecordType.PROSPECT) {
+            throw new ServiceException(INVALID_CUSTOMER_TYPE);
+        }
+        CustomerCategoryEntity categoryEntity = customerCategoryMapper.map(req, customerDetail.getCustomerId());
+        CustomerCategoryEntity savedCategory = customerCategoryRepository.save(categoryEntity);
+        return createCategoryResponseMapper.map(savedCategory, metaMapper.map(CREATE_CATEGORY_SUCCESS_CODE, CREATE_CATEGORY_SUCCESS_MSG));
+    }
+
+    public void validateCreateCategoryRequest(CreateCategoryRequest req) {
+        if (StringUtils.isBlank(req.getName())) {
+            throw new ServiceException(INVALID_CATEGORY);
+        }
+        if (StringUtils.isBlank(req.getIcon())) {
+            throw new ServiceException(INVALID_ICON);
+        }
+        if (StringUtils.isBlank(req.getColor())) {
+            throw new ServiceException(INVALID_COLOR);
+        }
     }
 
 }
