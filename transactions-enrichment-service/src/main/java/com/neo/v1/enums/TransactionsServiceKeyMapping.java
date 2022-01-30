@@ -31,6 +31,9 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_U
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_UNAVAILABLE_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSFER_SERVICE_DOWN_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSFER_SERVICE_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_COLOR_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_ICON_ERROR_CODE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
@@ -123,7 +126,23 @@ public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
     INVALID_CUSTOMER_TYPE(CREATE_CATEGORY_INVALID_CUSTOMER_TYPE,
             INTERNAL_SERVER_ERROR,
             "com.neo.te.create.category.invalid.type.message",
-            "com.neo.te.create.category.invalid.type.audit.message");
+            "com.neo.te.create.category.invalid.type.audit.message"),
+    INVALID_CATEGORY_ID(UPDATE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.te.update.category.invalid.id.message",
+            "com.neo.te.update.category.invalid.id.audit.message"),
+    UPDATE_CATEGORY_INVALID_CATEGORY(CREATE_CATEGORY_INVALID_CATEGORY,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.te.create.category.category.required.message",
+            "com.neo.te.create.category.category.required.audit.message"),
+    UPDATE_CATEGORY_INVALID_ICON(UPDATE_CATEGORY_INVALID_ICON_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.te.create.category.icon.required.message",
+            "com.neo.te.create.category.icon.required.audit.message"),
+    UPDATE_CATEGORY_INVALID_COLOR(UPDATE_CATEGORY_INVALID_COLOR_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.te.create.category.color.required.message",
+            "com.neo.te.create.category.color.required.audit.message");
 
 
     private String code;

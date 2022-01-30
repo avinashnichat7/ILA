@@ -6,6 +6,7 @@ import com.neo.v1.transactions.enrichment.model.CategoryListData;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.MerchantCategoryDetail;
+import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -53,6 +54,19 @@ public class CustomerCategoryMapper {
 
     public CustomerCategoryEntity map(CreateCategoryRequest req, String customerId) {
         return CustomerCategoryEntity.builder()
+                .customerId(customerId)
+                .name(req.getName())
+                .icon(req.getIcon())
+                .color(req.getColor())
+                .active(Boolean.TRUE)
+                .updatedDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now())
+                .build();
+    }
+
+    public CustomerCategoryEntity map(UpdateCategoryRequest req, String customerId, Long id) {
+        return CustomerCategoryEntity.builder()
+                .id(id)
                 .customerId(customerId)
                 .name(req.getName())
                 .icon(req.getIcon())

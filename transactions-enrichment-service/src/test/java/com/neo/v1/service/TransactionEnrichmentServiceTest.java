@@ -10,6 +10,7 @@ import com.neo.v1.mapper.AccountTransactionsResponseMapper;
 import com.neo.v1.mapper.CreateCategoryResponseMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
 import com.neo.v1.mapper.MetaMapper;
+import com.neo.v1.mapper.UpdateCategoryResponseMapper;
 import com.neo.v1.model.catalogue.CategoryDetail;
 import com.neo.v1.model.customer.CustomerDetailData;
 import com.neo.v1.repository.CustomerCategoryRepository;
@@ -19,6 +20,9 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.Meta;
+import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
+import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,11 +38,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -89,6 +95,9 @@ import static org.mockito.Mockito.when;
 
     @Mock
     private MetaMapper metaMapper;
+
+    @Mock
+    private UpdateCategoryResponseMapper updateCategoryResponseMapper;
 
     @BeforeEach
     void before() {
@@ -203,7 +212,7 @@ import static org.mockito.Mockito.when;
         CategoryDetail categoryDetail = CategoryDetail.builder().id(1l).name("category1").build();
         CustomerCategoryEntity customCategoryDetail = CustomerCategoryEntity.builder().id(12l).name("category2").build();
         when(productCatalogueService.getProductCatalogueMerchantCategory()).thenReturn(Collections.singletonList(categoryDetail));
-        when(customerCategoryRepository.findByCustomerId(any())).thenReturn(Collections.singletonList(customCategoryDetail));
+        when(customerCategoryRepository.findByCustomerIdAndActive(any(), anyBoolean())).thenReturn(Collections.singletonList(customCategoryDetail));
         when(customerCategoryMapper.map(Collections.singletonList(categoryDetail), Collections.singletonList(customCategoryDetail)))
                 .thenReturn(expected);
         CategoryListResponse result = subject.getMerchantCategoryList();
@@ -225,6 +234,22 @@ import static org.mockito.Mockito.when;
         when(createCategoryResponseMapper.map(any(), any())).thenReturn(CreateCategoryResponse.builder().build());
         CreateCategoryResponse expected = CreateCategoryResponse.builder().build();
         CreateCategoryResponse result = subject.createCategory(req);
+        assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
+    void updateCategory_returnSuccess() {
+        String name = "name";
+        String icon = "icon";
+        String color = "color";
+        Long categoryId = 1l;
+        UpdateCategoryResponse expected = UpdateCategoryResponse.builder().build();
+        CustomerCategoryEntity categoryEntity = CustomerCategoryEntity.builder().build();
+        UpdateCategoryRequest req = UpdateCategoryRequest.builder().name(name).icon(icon).color(color).build();
+        when(customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE)).thenReturn(Optional.of(categoryEntity));
+        when(customerCategoryMapper.map(req, categoryEntity.getCustomerId(), categoryId)).thenReturn(CustomerCategoryEntity.builder().build());
+        when(updateCategoryResponseMapper.map(any(), any())).thenReturn(expected);
+        UpdateCategoryResponse result = subject.updateCategory(categoryId, req);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
     }
 }

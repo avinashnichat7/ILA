@@ -9,6 +9,8 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
+import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,5 +53,11 @@ public class TransactionEnrichmentController implements NeoServiceV1Api {
     @PostMapping("/category")
     public ResponseEntity<CreateCategoryResponse> postTransactionEnrichmentCategory(CreateCategoryRequest body) {
         return ResponseEntity.ok(transactionsService.createCategory(body));
+    }
+
+    @Override
+    @PutMapping("/category/{categoryId}")
+    public ResponseEntity<UpdateCategoryResponse> putTransactionEnrichmentCategory(Long categoryId, UpdateCategoryRequest body) {
+        return ResponseEntity.ok(transactionsService.updateCategory(categoryId, body));
     }
 }

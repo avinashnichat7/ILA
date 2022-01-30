@@ -4,6 +4,7 @@ import com.neo.core.message.GenericMessageSource;
 import com.neo.v1.service.TransactionEnrichmentService;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
+import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -64,6 +66,14 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
         mockMvc.perform(post(URI_GET_CATEGORIES)
                         .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
                         .content(toJson(CreateCategoryRequest.builder().build())))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void putTransactionEnrichmentCategory_withValidRequest_expectSuccess() throws Exception {
+        mockMvc.perform(put(URI_GET_CATEGORIES + "/" + 1)
+                        .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
+                        .content(toJson(UpdateCategoryRequest.builder().build())))
                 .andExpect(status().isOk());
     }
 
