@@ -20,6 +20,7 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.Meta;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
@@ -251,5 +252,15 @@ import static org.mockito.Mockito.when;
         when(updateCategoryResponseMapper.map(any(), any())).thenReturn(expected);
         UpdateCategoryResponse result = subject.updateCategory(categoryId, req);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
+    void deleteCategory_returnSuccess() {
+        Long categoryId = 1l;
+        DeleteCategoryResponse expected = DeleteCategoryResponse.builder().build();
+        when(customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE)).thenReturn(Optional.of(CustomerCategoryEntity.builder().build()));
+        DeleteCategoryResponse result = subject.deleteCategory(categoryId);
+        assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
+        verify(customerCategoryRepository).save(any());
     }
 }

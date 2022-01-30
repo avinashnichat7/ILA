@@ -99,6 +99,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: No Products found
+    delete:
+      summary: Delete category
+      parameters:
+        - in: path
+          required: true
+          name: categoryId
+          description: category Id
+          example: "7"
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/DeleteCategoryResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
 
 components:
   schemas:
@@ -437,6 +460,11 @@ components:
           $ref: '#/components/schemas/Meta'
         data:
           $ref: '#/components/schemas/CategoryData'
+    DeleteCategoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
 
 
 

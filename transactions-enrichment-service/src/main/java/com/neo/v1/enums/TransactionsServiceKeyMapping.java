@@ -16,6 +16,7 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGOR
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_CUSTOMER_TYPE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_ICON;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_HOLD_TRANSACTION_EXPIRY_DATE_INVALID_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_DOWN_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.HOLD_NUMBER_REQUIRED_ERROR_CODE;
@@ -142,7 +143,11 @@ public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
     UPDATE_CATEGORY_INVALID_COLOR(UPDATE_CATEGORY_INVALID_COLOR_ERROR_CODE,
             INTERNAL_SERVER_ERROR,
             "com.neo.te.create.category.color.required.message",
-            "com.neo.te.create.category.color.required.audit.message");
+            "com.neo.te.create.category.color.required.audit.message"),
+    DELETE_CATEGORY_INVALID_CATEGORY_ID(DELETE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.te.delete.category.invalid.id.message",
+            "com.neo.te.delete.category.invalid.id.audit.message");
 
 
     private String code;
