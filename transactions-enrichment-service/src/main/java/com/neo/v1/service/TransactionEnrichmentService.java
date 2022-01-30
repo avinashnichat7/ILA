@@ -10,6 +10,7 @@ import com.neo.v1.mapper.CreateCategoryResponseMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
 import com.neo.v1.mapper.MetaMapper;
 import com.neo.v1.mapper.TransferFeesRequestMapper;
+import com.neo.v1.mapper.UpdateCategoryResponseMapper;
 import com.neo.v1.model.account.TransferCharge;
 import com.neo.v1.model.account.TransferFees;
 import com.neo.v1.model.catalogue.CategoryDetail;
@@ -21,6 +22,8 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
+import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +33,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.neo.core.context.GenericRestParamContextHolder.getContext;
@@ -37,13 +41,19 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGOR
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.FAWRI_TRANSACTION_TYPE_FOR_PENDING;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_TYPE_CHARITY_TRANSFER_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED_PENDING;
 import static com.neo.v1.enums.AccountTransactionStatusType.PENDING;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY_ID;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_COLOR;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CUSTOMER_TYPE;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_ICON;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_CATEGORY;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_COLOR;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_ICON;
 import static com.neo.v1.util.TransactionsUtils.decodeString;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -65,6 +75,7 @@ public class TransactionEnrichmentService {
     private final CustomerCategoryMapper customerCategoryMapper;
     private final CustomerService customerService;
     private final CreateCategoryResponseMapper createCategoryResponseMapper;
+    private final UpdateCategoryResponseMapper updateCategoryResponseMapper;
     private final MetaMapper metaMapper;
 
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
@@ -124,7 +135,7 @@ public class TransactionEnrichmentService {
 
     public CategoryListResponse getMerchantCategoryList() {
         List<CategoryDetail> categoryList = productCatalogueService.getProductCatalogueMerchantCategory();
-        List<CustomerCategoryEntity> customerCategoryEntityList = customerCategoryRepository.findByCustomerId(getContext().getCustomerId());
+        List<CustomerCategoryEntity> customerCategoryEntityList = customerCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE);
         return customerCategoryMapper.map(categoryList, customerCategoryEntityList);
     }
 
@@ -151,4 +162,24 @@ public class TransactionEnrichmentService {
         }
     }
 
+    public UpdateCategoryResponse updateCategory(Long categoryId, UpdateCategoryRequest req) {
+        categoryId = Optional.ofNullable(categoryId).orElseThrow( ()-> new ServiceException(INVALID_CATEGORY_ID));
+        validateUpdateCategoryRequest(req);
+        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE).orElseThrow(() -> new ServiceException(INVALID_CATEGORY_ID));
+        CustomerCategoryEntity updatedEntity = customerCategoryMapper.map(req, categoryEntity.getCustomerId(), categoryId);
+        CustomerCategoryEntity savedCategory = customerCategoryRepository.save(updatedEntity);
+        return updateCategoryResponseMapper.map(savedCategory, metaMapper.map(UPDATE_CATEGORY_SUCCESS_CODE, UPDATE_CATEGORY_SUCCESS_MSG));
+    }
+
+    public void validateUpdateCategoryRequest(UpdateCategoryRequest req) {
+        if (StringUtils.isBlank(req.getName())) {
+            throw new ServiceException(UPDATE_CATEGORY_INVALID_CATEGORY);
+        }
+        if (StringUtils.isBlank(req.getIcon())) {
+            throw new ServiceException(UPDATE_CATEGORY_INVALID_ICON);
+        }
+        if (StringUtils.isBlank(req.getColor())) {
+            throw new ServiceException(UPDATE_CATEGORY_INVALID_COLOR);
+        }
+    }
 }

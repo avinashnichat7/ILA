@@ -70,6 +70,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: No Products found
+    put:
+      summary: Update category
+      parameters:
+        - in: path
+          required: true
+          name: categoryId
+          description: category Id
+          example: "7"
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UpdateCategoryResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
 
 components:
   schemas:
@@ -386,6 +415,28 @@ components:
           type: string
           example: "https://example.com/3.png"
           description: Icon color
+    UpdateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Ajith"
+          description: Category name
+        icon:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon url
+        color:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon color
+    UpdateCategoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/CategoryData'
 
 
 
