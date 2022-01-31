@@ -22,14 +22,17 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -39,6 +42,8 @@ import java.util.stream.Collectors;
 import static com.neo.core.context.GenericRestParamContextHolder.getContext;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.FAWRI_TRANSACTION_TYPE_FOR_PENDING;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_TYPE_CHARITY_TRANSFER_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_CODE;
@@ -46,6 +51,7 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGOR
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED_PENDING;
 import static com.neo.v1.enums.AccountTransactionStatusType.PENDING;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.DELETE_CATEGORY_INVALID_CATEGORY_ID;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY_ID;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_COLOR;
@@ -162,6 +168,7 @@ public class TransactionEnrichmentService {
         }
     }
 
+    @Transactional
     public UpdateCategoryResponse updateCategory(Long categoryId, UpdateCategoryRequest req) {
         categoryId = Optional.ofNullable(categoryId).orElseThrow( ()-> new ServiceException(INVALID_CATEGORY_ID));
         validateUpdateCategoryRequest(req);
@@ -181,5 +188,15 @@ public class TransactionEnrichmentService {
         if (StringUtils.isBlank(req.getColor())) {
             throw new ServiceException(UPDATE_CATEGORY_INVALID_COLOR);
         }
+    }
+
+    @Transactional
+    public DeleteCategoryResponse deleteCategory(Long categoryId) {
+        categoryId = Optional.ofNullable(categoryId).orElseThrow( ()-> new ServiceException(INVALID_CATEGORY_ID));
+        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE).orElseThrow(() -> new ServiceException(DELETE_CATEGORY_INVALID_CATEGORY_ID));
+        categoryEntity.setActive(Boolean.FALSE);
+        categoryEntity.setUpdatedDate(LocalDateTime.now());
+        customerCategoryRepository.save(categoryEntity);
+        return DeleteCategoryResponse.builder().meta(metaMapper.map(DELETE_CATEGORY_SUCCESS_CODE, DELETE_CATEGORY_SUCCESS_MSG)).build();
     }
 }

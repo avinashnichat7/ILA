@@ -9,6 +9,7 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import io.swagger.annotations.ApiResponse;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,5 +61,11 @@ public class TransactionEnrichmentController implements NeoServiceV1Api {
     @PutMapping("/category/{categoryId}")
     public ResponseEntity<UpdateCategoryResponse> putTransactionEnrichmentCategory(Long categoryId, UpdateCategoryRequest body) {
         return ResponseEntity.ok(transactionsService.updateCategory(categoryId, body));
+    }
+
+    @Override
+    @DeleteMapping("/category/{categoryId}")
+    public ResponseEntity<DeleteCategoryResponse> deleteTransactionEnrichmentCategory(Long categoryId) {
+        return ResponseEntity.ok(transactionsService.deleteCategory(categoryId));
     }
 }

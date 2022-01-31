@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static com.neo.core.utils.JsonUtils.toJson;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -74,6 +75,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
         mockMvc.perform(put(URI_GET_CATEGORIES + "/" + 1)
                         .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
                         .content(toJson(UpdateCategoryRequest.builder().build())))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteTransactionEnrichmentCategory_withValidRequest_expectSuccess() throws Exception {
+        mockMvc.perform(delete(URI_GET_CATEGORIES + "/" + 1)
+                        .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk());
     }
 

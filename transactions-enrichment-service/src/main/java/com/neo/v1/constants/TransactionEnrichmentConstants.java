@@ -119,6 +119,7 @@ public class TransactionEnrichmentConstants {
     public static final String UPDATE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE = "TRNE-2300";
     public static final String UPDATE_CATEGORY_INVALID_ICON_ERROR_CODE = "TRNE-2301";
     public static final String UPDATE_CATEGORY_INVALID_COLOR_ERROR_CODE = "TRNE-2302";
+    public static final String DELETE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE = "TRNE-2400";
 
     public static final String GET_CATEGORY_LIST_SUCCESS_CODE = "TRNE-1021";
     public static final String GET_CATEGORY_LIST_SUCCESS_MSG = "com.neo.te.category.success.message";
@@ -126,6 +127,8 @@ public class TransactionEnrichmentConstants {
     public static final String CREATE_CATEGORY_SUCCESS_MSG = "com.neo.te.create.category.success.message";
     public static final String UPDATE_CATEGORY_SUCCESS_CODE = "TRNE-1023";
     public static final String UPDATE_CATEGORY_SUCCESS_MSG = "com.neo.te.update.category.success.message";
+    public static final String DELETE_CATEGORY_SUCCESS_CODE = "TRNE-1024";
+    public static final String DELETE_CATEGORY_SUCCESS_MSG = "com.neo.te.delete.category.success.message";
     
     static {
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(1L, OPERATION_TYPE_FAWRI);
