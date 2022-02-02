@@ -247,7 +247,7 @@ import static org.mockito.Mockito.when;
         UpdateCategoryResponse expected = UpdateCategoryResponse.builder().build();
         CustomerCategoryEntity categoryEntity = CustomerCategoryEntity.builder().build();
         UpdateCategoryRequest req = UpdateCategoryRequest.builder().name(name).icon(icon).color(color).build();
-        when(customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE)).thenReturn(Optional.of(categoryEntity));
+        when(customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, CUSTOMER_ID, Boolean.TRUE)).thenReturn(Optional.of(categoryEntity));
         when(customerCategoryMapper.map(req, categoryEntity.getCustomerId(), categoryId)).thenReturn(CustomerCategoryEntity.builder().build());
         when(updateCategoryResponseMapper.map(any(), any())).thenReturn(expected);
         UpdateCategoryResponse result = subject.updateCategory(categoryId, req);
@@ -258,7 +258,7 @@ import static org.mockito.Mockito.when;
     void deleteCategory_returnSuccess() {
         Long categoryId = 1l;
         DeleteCategoryResponse expected = DeleteCategoryResponse.builder().build();
-        when(customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE)).thenReturn(Optional.of(CustomerCategoryEntity.builder().build()));
+        when(customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, CUSTOMER_ID, Boolean.TRUE)).thenReturn(Optional.of(CustomerCategoryEntity.builder().build()));
         DeleteCategoryResponse result = subject.deleteCategory(categoryId);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
         verify(customerCategoryRepository).save(any());

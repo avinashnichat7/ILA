@@ -172,7 +172,7 @@ public class TransactionEnrichmentService {
     public UpdateCategoryResponse updateCategory(Long categoryId, UpdateCategoryRequest req) {
         categoryId = Optional.ofNullable(categoryId).orElseThrow( ()-> new ServiceException(INVALID_CATEGORY_ID));
         validateUpdateCategoryRequest(req);
-        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE).orElseThrow(() -> new ServiceException(INVALID_CATEGORY_ID));
+        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, getContext().getCustomerId(), Boolean.TRUE).orElseThrow(() -> new ServiceException(INVALID_CATEGORY_ID));
         CustomerCategoryEntity updatedEntity = customerCategoryMapper.map(req, categoryEntity.getCustomerId(), categoryId);
         CustomerCategoryEntity savedCategory = customerCategoryRepository.save(updatedEntity);
         return updateCategoryResponseMapper.map(savedCategory, metaMapper.map(UPDATE_CATEGORY_SUCCESS_CODE, UPDATE_CATEGORY_SUCCESS_MSG));
@@ -193,7 +193,7 @@ public class TransactionEnrichmentService {
     @Transactional
     public DeleteCategoryResponse deleteCategory(Long categoryId) {
         categoryId = Optional.ofNullable(categoryId).orElseThrow( ()-> new ServiceException(INVALID_CATEGORY_ID));
-        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE).orElseThrow(() -> new ServiceException(DELETE_CATEGORY_INVALID_CATEGORY_ID));
+        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, getContext().getCustomerId(), Boolean.TRUE).orElseThrow(() -> new ServiceException(DELETE_CATEGORY_INVALID_CATEGORY_ID));
         categoryEntity.setActive(Boolean.FALSE);
         categoryEntity.setUpdatedDate(LocalDateTime.now());
         customerCategoryRepository.save(categoryEntity);
