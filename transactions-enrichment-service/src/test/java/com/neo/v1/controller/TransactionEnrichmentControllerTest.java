@@ -32,8 +32,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 @ContextConfiguration(classes = GenericMessageSource.class)
  class TransactionEnrichmentControllerTest {
 
-    private static final String URI_TRANSACTION_ENRICHMENT_ACCOUNT = "/api/v1/transaction-enrichment";
-    private static final String URI_GET_CATEGORIES = "/api/v1/transaction-enrichment/category";
+    private static final String URI_TRANSACTION_ENRICHMENT_ACCOUNT = "/api/v1/transactions-enrichment";
+    private static final String URI_GET_CATEGORIES = "/api/v1/transactions-enrichment/category";
 
     @Autowired
     private MockMvc mockMvc;

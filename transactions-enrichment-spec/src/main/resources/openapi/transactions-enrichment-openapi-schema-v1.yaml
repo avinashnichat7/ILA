@@ -10,7 +10,7 @@ servers:
           - https
         default: https
 paths:
-  /transaction-enrichment:
+  /transactions-enrichment:
     post:
       summary: Dummy Get API
       description: Pet object that needs to be added to the store
@@ -33,7 +33,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: Dummy Get API
-  /transaction-enrichment/category:
+  /transactions-enrichment/category:
     get:
       summary: Get ila Products
       responses:
