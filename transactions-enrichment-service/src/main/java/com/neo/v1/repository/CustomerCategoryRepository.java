@@ -10,5 +10,5 @@ public interface CustomerCategoryRepository extends JpaRepository<CustomerCatego
 
     List<CustomerCategoryEntity> findByCustomerIdAndActive(String customerId, boolean isActive);
 
-    Optional<CustomerCategoryEntity> findByIdAndActive(Long id, boolean isActive);
+    Optional<CustomerCategoryEntity> findByIdAndCustomerIdAndActive(Long id, String customerId, boolean isActive);
 }
