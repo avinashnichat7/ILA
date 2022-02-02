@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/transaction-enrichment")
+@RequestMapping("/api/v1/transactions-enrichment")
 @ApiResponses({
         @ApiResponse(code = 400, message = "BadRequest", response = ApiError.class),
         @ApiResponse(code = 403, message = "Forbidden", response = ApiError.class),
@@ -41,31 +41,31 @@ public class TransactionEnrichmentController implements NeoServiceV1Api {
 
     @Override
     @PostMapping
-    public ResponseEntity<AccountTransactionsResponse> postTransactionEnrichment(AccountTransactionsRequest body) {
+    public ResponseEntity<AccountTransactionsResponse> postTransactionsEnrichment(AccountTransactionsRequest body) {
         return ResponseEntity.ok(transactionsService.getAccountTransactions(body));
     }
 
     @Override
     @GetMapping("/category")
-    public ResponseEntity<CategoryListResponse> getTransactionEnrichmentCategory() {
+    public ResponseEntity<CategoryListResponse> getTransactionsEnrichmentCategory() {
         return ResponseEntity.ok(transactionsService.getMerchantCategoryList());
     }
 
     @Override
     @PostMapping("/category")
-    public ResponseEntity<CreateCategoryResponse> postTransactionEnrichmentCategory(CreateCategoryRequest body) {
+    public ResponseEntity<CreateCategoryResponse> postTransactionsEnrichmentCategory(CreateCategoryRequest body) {
         return ResponseEntity.ok(transactionsService.createCategory(body));
     }
 
     @Override
     @PutMapping("/category/{categoryId}")
-    public ResponseEntity<UpdateCategoryResponse> putTransactionEnrichmentCategory(Long categoryId, UpdateCategoryRequest body) {
+    public ResponseEntity<UpdateCategoryResponse> putTransactionsEnrichmentCategory(Long categoryId, UpdateCategoryRequest body) {
         return ResponseEntity.ok(transactionsService.updateCategory(categoryId, body));
     }
 
     @Override
     @DeleteMapping("/category/{categoryId}")
-    public ResponseEntity<DeleteCategoryResponse> deleteTransactionEnrichmentCategory(Long categoryId) {
+    public ResponseEntity<DeleteCategoryResponse> deleteTransactionsEnrichmentCategory(Long categoryId) {
         return ResponseEntity.ok(transactionsService.deleteCategory(categoryId));
     }
 }

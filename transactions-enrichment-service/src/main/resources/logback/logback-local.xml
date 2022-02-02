@@ -8,7 +8,7 @@
     <property name="log.aws.pattern"
               value="%d{yyyyMMdd'T'HHmmss} ${LOG_LEVEL_PATTERN:-%5p} %thread %level %logger{15} %msg%n"/>
 
-    <property name="log.group" value="/com/neo/transaction-enrichment"/>
+    <property name="log.group" value="/com/neo/transactions-enrichment"/>
     <property name="log.level" value="INFO"/>
     <property name="com.neo.log.level" value="INFO"/>
     <property name="log.region" value="eu-west-1"/>
