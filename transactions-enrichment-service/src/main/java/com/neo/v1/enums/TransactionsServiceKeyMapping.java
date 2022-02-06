@@ -51,45 +51,45 @@ public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
             "com.neo.transactions.create.hold.expiry.date.invalid.error.message"),
     TMSX_INVALID_OPERATION_TYPE(TMSX_INVALID_OPERATION_TYPE_CODE, BAD_REQUEST, "com.neo.transactions.tmx.post.release.hold.operation.type.invalid.message",
             "com.neo.transactions.tmx.post.release.hold.operation.type.invalid.error.message"),
-    TMSX_SERVICE_ERROR("TRAN-0080", INTERNAL_SERVER_ERROR, "com.neo.transactions.tmsx.failed.response.message", "com.neo.transactions.tmsx.failed.response.error.message"),
+    TMSX_SERVICE_ERROR("TRNE-0080", INTERNAL_SERVER_ERROR, "com.neo.transactions.tmsx.failed.response.message", "com.neo.transactions.tmsx.failed.response.error.message"),
     TMSX_SERVICE_DOWN("GENE-1013", SERVICE_UNAVAILABLE, "com.neo.transactions.tmsx.down.message", "com.neo.transactions.tmsx.down.error.message"),
     EXCHANGE_SERVICE_ERROR(EXCHANGE_SERVICE_ERROR_CODE, INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.exchange.failure.message", "com.neo.transactions.release.hold.exchange.failure.error.message"),
     EXCHANGE_SERVICE_DOWN(EXCHANGE_SERVICE_DOWN_CODE, SERVICE_UNAVAILABLE, "com.neo.transactions.release.hold.exchange.unavailable.message", "com.neo.transactions.release.hold.exchange.unavailable.error.message"),
     TRANSFER_SERVICE_ERROR(TRANSFER_SERVICE_ERROR_CODE, INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.transfer.failure.message", "com.neo.transactions.release.hold.transfer.failure.error.message"),
     TRANSFER_SERVICE_DOWN(TRANSFER_SERVICE_DOWN_CODE, SERVICE_UNAVAILABLE, "com.neo.transactions.release.hold.transfer.unavailable.message", "com.neo.transactions.release.hold.transfer.unavailable.error.message"),
-    TRANSFER_LIMIT_EXCEEDED("TRAN-0090", BAD_REQUEST, "com.neo.transactions.tmx.transfer.limit.exceeded.message",
+    TRANSFER_LIMIT_EXCEEDED("TRNE-0090", BAD_REQUEST, "com.neo.transactions.tmx.transfer.limit.exceeded.message",
             "com.neo.transactions.tmx.transfer.limit.exceeded.error.message"),
-    CUSTOMER_SERVICE_ERROR("TRAN-0091", INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.customer.service.failure.message",
+    CUSTOMER_SERVICE_ERROR("TRNE-0091", INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.customer.service.failure.message",
             "com.neo.transactions.release.hold.customer.service.error.message"),
     CHARITY_SERVICE_ERROR("GENE-2006", INTERNAL_SERVER_ERROR, "com.neo.transactions.release.hold.charity.unavailable.message",
             "com.neo.transactions.release.hold.charity.unavailable.error.message"),
     CUSTOMER_SERVICE_UNAVAILABLE("GENE-2004", SERVICE_UNAVAILABLE, "com.neo.transactions.customer.service.unavailable.message", "com.neo.transactions.customer.service.unavailable.error.message"),
-    CONTENT_SERVICE_ERROR("TRAN-0092", INTERNAL_SERVER_ERROR, "com.neo.transactions.content.service.failure.message", "com.neo.transactions.content.service.failure.error.message"),
+    CONTENT_SERVICE_ERROR("TRNE-0092", INTERNAL_SERVER_ERROR, "com.neo.transactions.content.service.failure.message", "com.neo.transactions.content.service.failure.error.message"),
     CONTENT_SERVICE_UNAVAILABLE("GENE-2014", SERVICE_UNAVAILABLE, "com.neo.transactions.content.service.unavailable.message", "com.neo.transactions.content.service.unavailable.error.message"),
     CHARITY_SERVICE_UNAVAILABLE("GENE-2027", SERVICE_UNAVAILABLE, "com.neo.transactions.charity.service.unavailable.message",
             "com.neo.transactions.charity.service.unavailable.message"),
     UNIT_DOES_NOT_EXISTS(
-            "TRAN-1020",
+            "TRNE-1020",
             INTERNAL_SERVER_ERROR,
             "com.neo.transactions.unit.does.not.exist.message",
             "com.neo.transactions.unit.does.not.exist.error.message"
     ),
 
     TRANSACTION_REFERENCE_DOES_NOT_EXISTS(
-            "TRAN-0097",
+            "TRNE-0097",
             INTERNAL_SERVER_ERROR,
             "com.neo.transactions.transaction.reference.does.not.exist.message",
             "com.neo.transactions.transaction.reference.does.not.exist.error.message"
     ),
 
     INVALID_TRANSACTION_STATUS_MAPPING(
-            "TRAN-1010",
+            "TRNE-1010",
             INTERNAL_SERVER_ERROR,
             "com.neo.transactions.invalid.transaction.status.mapping.message",
             "com.neo.transactions.invalid.transaction.status.mapping.error.message"
     ),
     FILTER_DECODING_ERROR(
-            "TRAN-0099",
+            "TRNE-0099",
             INTERNAL_SERVER_ERROR,
             "com.neo.transactions.decode.failure.message",
             "com.neo.transactions.decode.failure.error.message"
