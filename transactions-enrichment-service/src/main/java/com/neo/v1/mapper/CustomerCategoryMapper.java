@@ -35,7 +35,7 @@ public class CustomerCategoryMapper {
     }
 
     private MerchantCategoryDetail map(CustomerCategoryEntity customerCategoryEntity) {
-        return MerchantCategoryDetail.builder().id(customerCategoryEntity.getId())
+        return MerchantCategoryDetail.builder().id(customerCategoryEntity.getId().toString())
                 .name(customerCategoryEntity.getName())
                 .icon(customerCategoryEntity.getIcon())
                 .color(customerCategoryEntity.getColor())

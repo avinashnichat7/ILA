@@ -369,7 +369,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: string
           example: "123456"
           description: Category Id
         name:

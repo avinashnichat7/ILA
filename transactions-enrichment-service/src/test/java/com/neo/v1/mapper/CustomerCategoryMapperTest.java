@@ -30,14 +30,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
     @Test
     void map_withCategoryListAndCustomCategoryList_returnCategoryListResponse() {
-        MerchantCategoryDetail category1 = MerchantCategoryDetail.builder().id(1l).name("category1").isCustom(false).build();
-        MerchantCategoryDetail category2 = MerchantCategoryDetail.builder().id(2l).name("category2").isCustom(true).build();
+        MerchantCategoryDetail category1 = MerchantCategoryDetail.builder().id("1").name("category1").isCustom(false).build();
+        MerchantCategoryDetail category2 = MerchantCategoryDetail.builder().id("2").name("category2").isCustom(true).build();
         List<MerchantCategoryDetail> categories = new ArrayList<>();
         categories.add(category2);
         categories.add(category1);
         CategoryListResponse expected = CategoryListResponse.builder().data(CategoryListData.builder().categories(categories).build()).build();
         java.util.List<CategoryDetail> categoryList = new ArrayList<>();
-        categoryList.add(CategoryDetail.builder().id(1l).name("category1").build());
+        categoryList.add(CategoryDetail.builder().id("1").name("category1").build());
         List<CustomerCategoryEntity> customerCategoryEntityList = Collections.singletonList(CustomerCategoryEntity.builder().id(2l).name("category2").build());
         CategoryListResponse result = customerCategoryMapper.map(categoryList, customerCategoryEntityList);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
