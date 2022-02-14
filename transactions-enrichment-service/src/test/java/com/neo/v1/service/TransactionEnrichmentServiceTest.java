@@ -21,7 +21,6 @@ import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
-import com.neo.v1.transactions.enrichment.model.Meta;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,8 +40,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -210,7 +207,7 @@ import static org.mockito.Mockito.when;
     @Test
     void getMerchantCategoryList_returnSuccess() {
         CategoryListResponse expected = CategoryListResponse.builder().build();
-        CategoryDetail categoryDetail = CategoryDetail.builder().id(1l).name("category1").build();
+        CategoryDetail categoryDetail = CategoryDetail.builder().id("1").name("category1").build();
         CustomerCategoryEntity customCategoryDetail = CustomerCategoryEntity.builder().id(12l).name("category2").build();
         when(productCatalogueService.getProductCatalogueMerchantCategory()).thenReturn(Collections.singletonList(categoryDetail));
         when(customerCategoryRepository.findByCustomerIdAndActive(any(), anyBoolean())).thenReturn(Collections.singletonList(customCategoryDetail));

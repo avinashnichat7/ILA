@@ -10,7 +10,7 @@ import lombok.Builder;
 @AllArgsConstructor
 public class CategoryDetail {
 
-	private Long id;
+	private String id;
 
 	private String name;
 
@@ -29,7 +29,7 @@ public class CategoryDetail {
 
   /* Getters */
 
-	public Long getId() { return this.id; }
+	public String getId() { return this.id; }
 
 	public String getName() { return this.name; }
 
@@ -44,7 +44,7 @@ public class CategoryDetail {
 
   /* Setters */
 
-	public void setId(Long id) { this.id = id; };
+	public void setId(String id) { this.id = id; };
 
 	public void setName(String name) { this.name = name; };
 
@@ -61,7 +61,7 @@ public class CategoryDetail {
 
     private CategoryDetail item = new CategoryDetail();
 
-		public Builder withId(Long id) { item.setId(id); return this; };
+		public Builder withId(String id) { item.setId(id); return this; };
 
 		public Builder withName(String name) { item.setName(name); return this; };
 
