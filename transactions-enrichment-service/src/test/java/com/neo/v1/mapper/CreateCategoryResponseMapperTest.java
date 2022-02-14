@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class CreateCategoryResponseMapperTest {
+class CreateCategoryResponseMapperTest {
 
     @InjectMocks
     private CreateCategoryResponseMapper createCategoryResponseMapper;
 
     @Test
     void map_CustomerCategoryEntityAndMeta_returnCreateCategoryResponse() {
-        Long id = 1l;
+        Long id = 1L;
         String name = "name";
         String icon = "icon";
         String color = "color";

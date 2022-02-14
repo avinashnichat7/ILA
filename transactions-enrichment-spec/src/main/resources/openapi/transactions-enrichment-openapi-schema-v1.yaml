@@ -338,19 +338,42 @@ components:
           type: string
           example: 989248099
           description: Account Transaction Id
-        merchantName:
-          type: string
-          example: 989248099
-          description: Account Transaction Id
-        mcCode:
-          type: string
-          example: 989248099
-          description: Account Transaction Id
         transactionTypeCode:
           type: string
           required: true
           example: 989248099
           description: Account Transaction Id
+        merchantName:
+          type: string
+          required: true
+          example: talabat
+          description: Account Transaction Merchant Name
+        mcCode:
+          type: string
+          required: true
+          example: 989248099
+          description: Account Transaction McCode
+        enrichedTransactionCategory:
+          $ref: '#/components/schemas/EnrichedTransactionCategory'
+    EnrichedTransactionCategory:
+      type: object
+      properties:
+        name:
+          type: string
+          example: dinner
+          description: Merchant Category Name
+        icon:
+          type: string
+          example: icon
+          description: Merchant Category icon
+        iconLabelUrl:
+          type: string
+          example: icon label url
+          description: Icon Label URL
+        color:
+          type: string
+          example: icon color
+          description: Merchant Category icon color
     CategoryListResponse:
       type: object
       properties:

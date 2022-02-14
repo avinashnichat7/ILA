@@ -25,8 +25,8 @@ public class CustomerCategoryMapper {
 
     public CategoryListResponse map(List<CategoryDetail> categoryList, List<CustomerCategoryEntity> customerCategoryEntityList) {
         List<MerchantCategoryDetail> customerCategories = customerCategoryEntityList.stream()
-                .map(customerCategory -> map(customerCategory)).collect(Collectors.toList());
-        List<MerchantCategoryDetail> categories = categoryList.stream().map(customerCategory -> map(customerCategory)).collect(Collectors.toList());
+                .map(this::map).collect(Collectors.toList());
+        List<MerchantCategoryDetail> categories = categoryList.stream().map(this::map).collect(Collectors.toList());
         customerCategories.addAll(categories);
         return CategoryListResponse.builder()
                 .meta(metaMapper.map(GET_CATEGORY_LIST_SUCCESS_CODE, GET_CATEGORY_LIST_SUCCESS_MSG))

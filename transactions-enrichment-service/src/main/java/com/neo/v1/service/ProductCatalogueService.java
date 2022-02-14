@@ -4,6 +4,10 @@ import com.neo.core.exception.ServiceException;
 import com.neo.v1.client.ProductCatalogueClient;
 import com.neo.v1.model.catalogue.CategoryDetail;
 import com.neo.v1.model.catalogue.CategoryListData;
+import com.neo.v1.model.catalogue.MerchantCodeDetail;
+import com.neo.v1.model.catalogue.MerchantCodeListData;
+import com.neo.v1.model.catalogue.MerchantDetail;
+import com.neo.v1.model.catalogue.MerchantListData;
 import feign.RetryableException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +27,7 @@ public class ProductCatalogueService {
 
     private final ProductCatalogueClient productCatalogueClient;
 
-    List<CategoryDetail> getProductCatalogueMerchantCategory() {
+    public List<CategoryDetail> getProductCatalogueMerchantCategory() {
         CategoryListData data;
         try {
             data = productCatalogueClient.getProductCatalogueMerchantCategory(
@@ -35,5 +39,33 @@ public class ProductCatalogueService {
             throw new ServiceException(PRODUCT_CATALOGUE_SERVICE_UNAVAILABLE, retryableException);
         }
         return Optional.ofNullable(data).map(CategoryListData::getMerchantCategories).orElse(Collections.emptyList());
+    }
+
+    public List<MerchantDetail> getProductCatalogueMerchant() {
+        MerchantListData data;
+        try {
+            data = productCatalogueClient.getProductCatalogueMerchant(
+                    getContext().getCustomerId(),
+                    getContext().getUserId(),
+                    getContext().getLocale().getLanguage(),
+                    getContext().getUnit()).getData();
+        } catch (RetryableException retryableException) {
+            throw new ServiceException(PRODUCT_CATALOGUE_SERVICE_UNAVAILABLE, retryableException);
+        }
+        return Optional.ofNullable(data).map(MerchantListData::getMerchants).orElse(Collections.emptyList());
+    }
+
+    public List<MerchantCodeDetail> getProductCatalogueMerchantCode() {
+        MerchantCodeListData data;
+        try {
+            data = productCatalogueClient.getProductCatalogueMerchantCode(
+                    getContext().getCustomerId(),
+                    getContext().getUserId(),
+                    getContext().getLocale().getLanguage(),
+                    getContext().getUnit()).getData();
+        } catch (RetryableException retryableException) {
+            throw new ServiceException(PRODUCT_CATALOGUE_SERVICE_UNAVAILABLE, retryableException);
+        }
+        return Optional.ofNullable(data).map(MerchantCodeListData::getMerchantCodes).orElse(Collections.emptyList());
     }
 }
