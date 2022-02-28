@@ -1,21 +1,28 @@
 package com.neo.v1.service;
 
 import com.neo.core.exception.ServiceException;
+import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
+import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.enums.AccountTransactionStatusType;
 import com.neo.v1.enums.customer.RecordType;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
 import com.neo.v1.mapper.CreateCategoryResponseMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
+import com.neo.v1.mapper.MerchantCategoryMapper;
 import com.neo.v1.mapper.MetaMapper;
 import com.neo.v1.mapper.TransferFeesRequestMapper;
 import com.neo.v1.mapper.UpdateCategoryResponseMapper;
 import com.neo.v1.model.account.TransferCharge;
 import com.neo.v1.model.account.TransferFees;
 import com.neo.v1.model.catalogue.CategoryDetail;
+import com.neo.v1.model.catalogue.MerchantCodeDetail;
+import com.neo.v1.model.catalogue.MerchantDetail;
 import com.neo.v1.model.customer.CustomerDetailData;
+import com.neo.v1.repository.CustomerAccountTransactionCategoryRepository;
 import com.neo.v1.repository.CustomerCategoryRepository;
+import com.neo.v1.repository.CustomerMerchantCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
@@ -36,10 +43,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.neo.core.context.GenericRestParamContextHolder.getContext;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CATEGORY_OTHER;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_CODE;
@@ -63,6 +74,7 @@ import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INV
 import static com.neo.v1.util.TransactionsUtils.decodeString;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Slf4j
 @Service
@@ -83,6 +95,7 @@ public class TransactionEnrichmentService {
     private final CreateCategoryResponseMapper createCategoryResponseMapper;
     private final UpdateCategoryResponseMapper updateCategoryResponseMapper;
     private final MetaMapper metaMapper;
+    private final MerchantService merchantService;
 
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
         request.setFilter(decodeString(request.getFilter()));
@@ -106,7 +119,7 @@ public class TransactionEnrichmentService {
                     .stream().map(accountTransactionsMapper::map)
                     .collect(toList());
         }
-
+        merchantService.mapMerchantCategory(transactions, request);
         log.info("Transaction Details for Account Id {} has been retrieved successfully.", request.getId());
         return accountTransactionsResponseMapper.map(transactions);
     }
@@ -199,4 +212,5 @@ public class TransactionEnrichmentService {
         customerCategoryRepository.save(categoryEntity);
         return DeleteCategoryResponse.builder().meta(metaMapper.map(DELETE_CATEGORY_SUCCESS_CODE, DELETE_CATEGORY_SUCCESS_MSG)).build();
     }
+
 }

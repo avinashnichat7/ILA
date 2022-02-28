@@ -8,6 +8,12 @@ import com.neo.v1.client.ProductCatalogueClient;
 import com.neo.v1.model.catalogue.CategoryDetail;
 import com.neo.v1.model.catalogue.CategoryListData;
 import com.neo.v1.model.catalogue.CategoryListResponse;
+import com.neo.v1.model.catalogue.MerchantCodeDetail;
+import com.neo.v1.model.catalogue.MerchantCodeListData;
+import com.neo.v1.model.catalogue.MerchantCodeListResponse;
+import com.neo.v1.model.catalogue.MerchantDetail;
+import com.neo.v1.model.catalogue.MerchantListData;
+import com.neo.v1.model.catalogue.MerchantListResponse;
 import feign.RetryableException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,6 +85,42 @@ class ProductCatalogueServiceTest {
         assertThat(result.get(0)).isEqualToComparingFieldByField(expected.get(0));
 
         verify(productCatalogueClient).getProductCatalogueMerchantCategory(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT);
+    }
+
+    @Test
+    void getProductCatalogueMerchant_returnMerchantDetailList(){
+        List<MerchantDetail> expected = Collections.singletonList(MerchantDetail.builder().build());
+        when(productCatalogueClient.getProductCatalogueMerchant(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT)).thenReturn(MerchantListResponse.builder().data(MerchantListData.builder()
+                .merchants(Collections.singletonList(MerchantDetail.builder().build())).build()).build());
+        List<MerchantDetail> result = subject.getProductCatalogueMerchant();
+        assertThat(result.get(0)).isEqualToComparingFieldByField(expected.get(0));
+        verify(productCatalogueClient).getProductCatalogueMerchant(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT);
+    }
+
+    @Test
+    void getProductCatalogueMerchant_throwException() {
+        when(productCatalogueClient.getProductCatalogueMerchant(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT)).thenThrow(RetryableException.class);
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.getProductCatalogueMerchant()).getKeyMapping();
+        assertEquals(PRODUCT_CATALOGUE_SERVICE_UNAVAILABLE, keyMapping);
+        verify(productCatalogueClient).getProductCatalogueMerchant(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT);
+    }
+
+    @Test
+    void getProductCatalogueMerchantCode_returnMerchantCodeDetailList(){
+        List<MerchantCodeDetail> expected = Collections.singletonList(MerchantCodeDetail.builder().build());
+        when(productCatalogueClient.getProductCatalogueMerchantCode(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT)).thenReturn(MerchantCodeListResponse.builder().data(MerchantCodeListData.builder()
+                .merchantCodes(Collections.singletonList(MerchantCodeDetail.builder().build())).build()).build());
+        List<MerchantCodeDetail> result = subject.getProductCatalogueMerchantCode();
+        assertThat(result.get(0)).isEqualToComparingFieldByField(expected.get(0));
+        verify(productCatalogueClient).getProductCatalogueMerchantCode(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT);
+    }
+
+    @Test
+    void getProductCatalogueMerchantCode_throwException() {
+        when(productCatalogueClient.getProductCatalogueMerchantCode(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT)).thenThrow(RetryableException.class);
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.getProductCatalogueMerchantCode()).getKeyMapping();
+        assertEquals(PRODUCT_CATALOGUE_SERVICE_UNAVAILABLE, keyMapping);
+        verify(productCatalogueClient).getProductCatalogueMerchantCode(CUSTOMER_ID, USER_ID, LANGUAGE, UNIT);
     }
 
 }

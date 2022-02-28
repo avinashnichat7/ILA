@@ -129,6 +129,7 @@ public class TransactionEnrichmentConstants {
     public static final String UPDATE_CATEGORY_SUCCESS_MSG = "com.neo.te.update.category.success.message";
     public static final String DELETE_CATEGORY_SUCCESS_CODE = "TRNE-1024";
     public static final String DELETE_CATEGORY_SUCCESS_MSG = "com.neo.te.delete.category.success.message";
+    public static final String CATEGORY_OTHER = "Other";
     
     static {
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(1L, OPERATION_TYPE_FAWRI);

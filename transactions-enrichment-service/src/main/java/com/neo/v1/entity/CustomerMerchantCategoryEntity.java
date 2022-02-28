@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
 import java.time.LocalDateTime;
 
 import static javax.persistence.GenerationType.SEQUENCE;
@@ -21,30 +23,28 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @Entity
-@Table(name = "customer_category")
+@Table(name = "customer_merchant_category")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerCategoryEntity {
+public class CustomerMerchantCategoryEntity {
 
     @Id
-    @GeneratedValue(strategy = SEQUENCE, generator = "SEQUENCE_CUSTOMER_CATEGORY")
-    @SequenceGenerator(name = "SEQUENCE_CUSTOMER_CATEGORY", sequenceName = "seq_customer_category")
+    @GeneratedValue(strategy = SEQUENCE, generator = "SEQUENCE_MERCHANT_CATEGORY")
+    @SequenceGenerator(name = "SEQUENCE_MERCHANT_CATEGORY", sequenceName = "seq_customer_merchant_category")
     private Long id;
 
     @Column(name = "customer_id")
     private String customerId;
 
-    @Column(name = "name")
+    @Column(name = "custom")
     private String name;
 
-    @Column(name = "icon")
-    private String icon;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private CustomerCategoryEntity customerCategory;
 
-    @Column(name = "color")
-    private String color;
-
-    @Column(name = "icon_label_url")
-    private String iconLabelUrl;
+    @Column(name = "is_custom")
+    private boolean isCustom;
 
     @Column(name = "active")
     private boolean active;

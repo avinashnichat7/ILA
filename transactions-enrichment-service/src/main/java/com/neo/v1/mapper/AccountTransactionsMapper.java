@@ -66,6 +66,7 @@ public class AccountTransactionsMapper {
                 .currentBalance(entity.getCurrentBalance())
                 .generateAdvice(GENERATE_ADVICE.equals(entity.getGenerateAdvice()))
                 .status(entity.getStatus())
+//                .category(AccountTransactionCategory.builder().build())
                 .mcCode(entity.getMcCode())
                 .merchantName(entity.getMerchantName())
                 .build();

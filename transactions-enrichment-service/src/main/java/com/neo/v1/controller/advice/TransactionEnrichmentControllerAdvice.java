@@ -38,7 +38,7 @@ public class TransactionEnrichmentControllerAdvice extends GenericResponseEntity
     public ResponseEntity<Object> handleMethodArgumentTypeMismatchedException(MethodArgumentTypeMismatchException ex, WebRequest request) {
         log.error("MissingServletRequestParameterException exception occurred: ", ex);
         String errorMessage = INVALID_DATE_MESSAGE;
-        String errorCode = INTERNAL_SERVER_ERROR_CODE;
+        String errorCode = INVALID_DATE_CODE;
         if (isDateException(ex.getName())) {
             errorCode = INVALID_DATE_CODE;
         }

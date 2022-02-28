@@ -1,7 +1,9 @@
 package com.neo.v1.service;
 
 import com.neo.core.context.GenericRestParamContextHolder;
+import com.neo.core.exception.ServiceException;
 import com.neo.core.model.GenericRestParamDto;
+import com.neo.core.provider.ServiceKeyMapping;
 import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.TmsxUrbisOperationTypesEntity;
 import com.neo.v1.enums.customer.RecordType;
@@ -23,6 +25,7 @@ import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,7 +44,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_COLOR;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_ICON;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_CATEGORY;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_COLOR;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_ICON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
@@ -97,6 +108,9 @@ import static org.mockito.Mockito.when;
     @Mock
     private UpdateCategoryResponseMapper updateCategoryResponseMapper;
 
+    @Mock
+    private MerchantService merchantService;
+
     @BeforeEach
     void before() {
         GenericRestParamDto genericRestParamDto = GenericRestParamDto.builder()
@@ -115,8 +129,10 @@ import static org.mockito.Mockito.when;
         AccountTransactionsRequest request = AccountTransactionsRequest.builder()
                 .status("failed_pending")
                 .id(ID)
-                .pageSize(new Long(1))
-                .offset(new Long(1))
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
                 .build();
         TmsxUrbisOperationTypesEntity tmsxUrbisOperationTypesEntity = TmsxUrbisOperationTypesEntity.builder().build();
         Map<String, TmsxUrbisOperationTypesEntity> tmsxConfigurations = new HashMap<>();
@@ -140,8 +156,10 @@ import static org.mockito.Mockito.when;
         AccountTransactionsRequest request = AccountTransactionsRequest.builder()
                 .status("pending")
                 .id(ID)
-                .pageSize(new Long(1))
-                .offset(new Long(1))
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
                 .build();
         TmsxUrbisOperationTypesEntity tmsxUrbisOperationTypesEntity = TmsxUrbisOperationTypesEntity.builder().build();
         Map<String, TmsxUrbisOperationTypesEntity> tmsxConfigurations = new HashMap<>();
@@ -165,8 +183,10 @@ import static org.mockito.Mockito.when;
         AccountTransactionsRequest request = AccountTransactionsRequest.builder()
                 .status("failed")
                 .id(ID)
-                .pageSize(new Long(1))
-                .offset(new Long(1))
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
                 .build();
         TmsxUrbisOperationTypesEntity tmsxUrbisOperationTypesEntity = TmsxUrbisOperationTypesEntity.builder().build();
         Map<String, TmsxUrbisOperationTypesEntity> tmsxConfigurations = new HashMap<>();
@@ -189,8 +209,10 @@ import static org.mockito.Mockito.when;
         AccountTransactionsRequest request = AccountTransactionsRequest.builder()
                 .status("completed")
                 .id(ID)
-                .pageSize(new Long(1))
-                .offset(new Long(1))
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
                 .build();
         TmsxUrbisOperationTypesEntity tmsxUrbisOperationTypesEntity = TmsxUrbisOperationTypesEntity.builder().build();
         Map<String, TmsxUrbisOperationTypesEntity> tmsxConfigurations = new HashMap<>();
@@ -218,6 +240,15 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
+    void createCategory_returnThrowInvalidNameException() {
+        String icon = "icon";
+        String color = "color";
+        CreateCategoryRequest req = CreateCategoryRequest.builder().icon(icon).color(color).build();
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.createCategory(req)).getKeyMapping();
+        Assertions.assertEquals(INVALID_CATEGORY, keyMapping);
+    }
+
+    @Test
     void createCategory_returnSuccess() {
         String name = "name";
         String icon = "icon";
@@ -236,11 +267,29 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
+    void createCategory_returnThrowInvalidIconException() {
+        String name = "name";
+        String color = "color";
+        CreateCategoryRequest req = CreateCategoryRequest.builder().name(name).color(color).build();
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.createCategory(req)).getKeyMapping();
+        Assertions.assertEquals(INVALID_ICON, keyMapping);
+    }
+
+    @Test
+    void createCategory_returnThrowInvalidColorException() {
+        String name = "name";
+        String icon = "icon";
+        CreateCategoryRequest req = CreateCategoryRequest.builder().icon(icon).name(name).build();
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.createCategory(req)).getKeyMapping();
+        Assertions.assertEquals(INVALID_COLOR, keyMapping);
+    }
+
+    @Test
     void updateCategory_returnSuccess() {
         String name = "name";
         String icon = "icon";
         String color = "color";
-        Long categoryId = 1l;
+        Long categoryId = 1L;
         UpdateCategoryResponse expected = UpdateCategoryResponse.builder().build();
         CustomerCategoryEntity categoryEntity = CustomerCategoryEntity.builder().build();
         UpdateCategoryRequest req = UpdateCategoryRequest.builder().name(name).icon(icon).color(color).build();
@@ -252,8 +301,38 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
+    void updateCategory_throwServiceException() {
+        String icon = "icon";
+        String color = "color";
+        Long categoryId = 1L;
+        UpdateCategoryRequest req = UpdateCategoryRequest.builder().icon(icon).color(color).build();
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.updateCategory(categoryId, req)).getKeyMapping();
+        Assertions.assertEquals(UPDATE_CATEGORY_INVALID_CATEGORY, keyMapping);
+    }
+
+    @Test
+    void updateCategory_throwInvalidColorException() {
+        String icon = "icon";
+        String name = "name";
+        Long categoryId = 1L;
+        UpdateCategoryRequest req = UpdateCategoryRequest.builder().icon(icon).name(name).build();
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.updateCategory(categoryId, req)).getKeyMapping();
+        Assertions.assertEquals(UPDATE_CATEGORY_INVALID_COLOR, keyMapping);
+    }
+
+    @Test
+    void updateCategory_throwInvalidIconException() {
+        String color = "color";
+        String name = "name";
+        Long categoryId = 1L;
+        UpdateCategoryRequest req = UpdateCategoryRequest.builder().color(color).name(name).build();
+        ServiceKeyMapping keyMapping = assertThrows(ServiceException.class, () -> subject.updateCategory(categoryId, req)).getKeyMapping();
+        Assertions.assertEquals(UPDATE_CATEGORY_INVALID_ICON, keyMapping);
+    }
+
+    @Test
     void deleteCategory_returnSuccess() {
-        Long categoryId = 1l;
+        Long categoryId = 1L;
         DeleteCategoryResponse expected = DeleteCategoryResponse.builder().build();
         when(customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, CUSTOMER_ID, Boolean.TRUE)).thenReturn(Optional.of(CustomerCategoryEntity.builder().build()));
         DeleteCategoryResponse result = subject.deleteCategory(categoryId);
