@@ -68,7 +68,7 @@ public class TransactionsRepository {
         try {
             StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery(ACCOUNT_TRANSACTIONS_PROCEDURE_NAME, AccountTransactionEntity.class);
             setParameters(customerId, request, storedProcedure);
-            addParameter(storedProcedure, PARAM_PAGE_SIZE, isNull(request.getPageSize()) ? DEFAULT_PAGE_SIZE : request.getPageSize(), Integer.class, IN);
+            addParameter(storedProcedure, PARAM_PAGE_SIZE, isNull(request.getPageSize()) ? DEFAULT_PAGE_SIZE : request.getPageSize().intValue(), Integer.class, IN);
             return storedProcedure.getResultList();
         } catch (PersistenceException pe) {
             if (pe.getMessage().contains(DATABASE_DOWN)) {
@@ -96,7 +96,7 @@ public class TransactionsRepository {
     private void setParameters(String customerId, AccountTransactionsRequest request, StoredProcedureQuery storedProcedure) {
         addParameter(storedProcedure, PARAM_CUSTOMER_ID, customerId, String.class, IN);
         addParameter(storedProcedure, PARAM_ACCOUNT_ID, request.getId(), String.class, IN);
-        addParameter(storedProcedure, PARAM_OFFSET, isNull(request.getOffset()) ? DEFAULT_OFFSET : request.getOffset(), Integer.class, IN);
+        addParameter(storedProcedure, PARAM_OFFSET, isNull(request.getOffset()) ? DEFAULT_OFFSET : request.getOffset().intValue(), Integer.class, IN);
         addParameter(storedProcedure, PARAM_FILTER, request.getFilter(), String.class, IN);
         addParameter(storedProcedure, PARAM_FROM_DATE, request.getFromDate(), LocalDate.class, IN);
         addParameter(storedProcedure, PARAM_TO_DATE, request.getToDate(), LocalDate.class, IN);
