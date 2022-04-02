@@ -36,10 +36,10 @@ public class CustomerMerchantCategoryEntity {
     @Column(name = "customer_id")
     private String customerId;
 
-    @Column(name = "custom")
+    @Column(name = "name")
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CustomerCategoryEntity customerCategory;
 

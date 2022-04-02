@@ -3,3 +3,6 @@ DROP TABLE customer_account_transaction_category;
 DROP TABLE customer_credit_transaction_category;
 
 ALTER TABLE customer_category DROP COLUMN icon_label_url;
+
+DROP SEQUENCE seq_customer_merchant_category;
+DROP SEQUENCE seq_customer_account_transaction_category;

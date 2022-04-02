@@ -10,6 +10,9 @@ import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.Meta;
+import com.neo.v1.transactions.enrichment.model.TransactionLinkRequest;
+import com.neo.v1.transactions.enrichment.model.TransactionLinkResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import io.swagger.annotations.ApiResponse;
@@ -67,5 +70,11 @@ public class TransactionEnrichmentController implements NeoServiceV1Api {
     @DeleteMapping("/category/{categoryId}")
     public ResponseEntity<DeleteCategoryResponse> deleteTransactionsEnrichmentCategory(Long categoryId) {
         return ResponseEntity.ok(transactionsService.deleteCategory(categoryId));
+    }
+
+    @Override
+    @PostMapping("/link")
+    public ResponseEntity<TransactionLinkResponse> postTransactionsEnrichmentLink(TransactionLinkRequest body) {
+        return ResponseEntity.ok(transactionsService.link(body));
     }
 }

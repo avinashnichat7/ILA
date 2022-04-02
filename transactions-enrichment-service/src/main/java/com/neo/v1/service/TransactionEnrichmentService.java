@@ -9,20 +9,17 @@ import com.neo.v1.enums.customer.RecordType;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
 import com.neo.v1.mapper.CreateCategoryResponseMapper;
+import com.neo.v1.mapper.CustomerAccountTransactionCategoryEntityMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
-import com.neo.v1.mapper.MerchantCategoryMapper;
+import com.neo.v1.mapper.CustomerMerchantCategoryEntityMapper;
 import com.neo.v1.mapper.MetaMapper;
 import com.neo.v1.mapper.TransferFeesRequestMapper;
 import com.neo.v1.mapper.UpdateCategoryResponseMapper;
 import com.neo.v1.model.account.TransferCharge;
 import com.neo.v1.model.account.TransferFees;
 import com.neo.v1.model.catalogue.CategoryDetail;
-import com.neo.v1.model.catalogue.MerchantCodeDetail;
-import com.neo.v1.model.catalogue.MerchantDetail;
 import com.neo.v1.model.customer.CustomerDetailData;
-import com.neo.v1.repository.CustomerAccountTransactionCategoryRepository;
 import com.neo.v1.repository.CustomerCategoryRepository;
-import com.neo.v1.repository.CustomerMerchantCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
@@ -30,6 +27,8 @@ import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.TransactionLinkRequest;
+import com.neo.v1.transactions.enrichment.model.TransactionLinkResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import lombok.AllArgsConstructor;
@@ -43,38 +42,41 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.neo.core.context.GenericRestParamContextHolder.getContext;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CATEGORY_OTHER;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.FAWRI_TRANSACTION_TYPE_FOR_PENDING;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_SUCCESS_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_SUCCESS_MSG;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.MERCHANT;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.REFERENCE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_TYPE_CHARITY_TRANSFER_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED_PENDING;
 import static com.neo.v1.enums.AccountTransactionStatusType.PENDING;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.CATEGORY_REFERENCE_NOT_FOUND;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.DELETE_CATEGORY_INVALID_CATEGORY_ID;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY_ID;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_COLOR;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CUSTOMER_TYPE;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_ICON;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.LINK_CATEGORY_INVALID_CATEGORY_ID;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.LINK_CATEGORY_INVALID_IBAN;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.LINK_CATEGORY_INVALID_LINK_TYPE;
+import static com.neo.v1.enums.TransactionsServiceKeyMapping.LINK_CATEGORY_INVALID_REFERENCE;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_CATEGORY;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_COLOR;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_ICON;
 import static com.neo.v1.util.TransactionsUtils.decodeString;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 @Slf4j
 @Service
@@ -96,10 +98,12 @@ public class TransactionEnrichmentService {
     private final UpdateCategoryResponseMapper updateCategoryResponseMapper;
     private final MetaMapper metaMapper;
     private final MerchantService merchantService;
+    private final CustomerAccountTransactionCategoryEntityMapper customerAccountTransactionCategoryEntityMapper;
+    private final CustomerMerchantCategoryEntityMapper customerMerchantCategoryEntityMapper;
 
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
         request.setFilter(decodeString(request.getFilter()));
-        List<AccountTransaction> transactions = emptyList();
+        List<AccountTransaction> transactions = new ArrayList<>();
         AccountTransactionStatusType statusType = AccountTransactionStatusType.forValue(request.getStatus());
         if (FAILED_PENDING == statusType || PENDING == statusType) {
             if (StringUtils.isBlank(request.getMaskedCardNumber())) {
@@ -211,6 +215,38 @@ public class TransactionEnrichmentService {
         categoryEntity.setUpdatedDate(LocalDateTime.now());
         customerCategoryRepository.save(categoryEntity);
         return DeleteCategoryResponse.builder().meta(metaMapper.map(DELETE_CATEGORY_SUCCESS_CODE, DELETE_CATEGORY_SUCCESS_MSG)).build();
+    }
+
+    public TransactionLinkResponse link(TransactionLinkRequest request) {
+        validateCategoryLinkRequest(request);
+        AccountTransaction transactionDetail = transactionService.getTransactionDetail(request.getIban(), request.getTransactionReference());
+        CustomerCategoryEntity customerCategoryEntity = customerCategoryRepository.findById(Long.parseLong(request.getCategoryId()))
+                .orElseThrow(() -> new ServiceException(CATEGORY_REFERENCE_NOT_FOUND));
+        if(REFERENCE.equalsIgnoreCase(request.getLinkType())) {
+            CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = customerAccountTransactionCategoryEntityMapper.map(transactionDetail, customerCategoryEntity, request);
+            merchantService.saveCustomerAccountTransactionCategory(customerAccountTransactionCategoryEntity);
+        } else if(MERCHANT.equalsIgnoreCase(request.getLinkType())) {
+            CustomerMerchantCategoryEntity customerMerchantCategoryEntity = customerMerchantCategoryEntityMapper.map(transactionDetail, customerCategoryEntity);
+            merchantService.saveCustomerMerchantCategory(customerMerchantCategoryEntity);
+        } else {
+            throw new ServiceException(LINK_CATEGORY_INVALID_LINK_TYPE);
+        }
+        return TransactionLinkResponse.builder().meta(metaMapper.map(LINK_CATEGORY_SUCCESS_CODE, LINK_CATEGORY_SUCCESS_MSG)).build();
+    }
+
+    void validateCategoryLinkRequest(TransactionLinkRequest request) {
+        if (StringUtils.isBlank(request.getIban())) {
+            throw new ServiceException(LINK_CATEGORY_INVALID_IBAN);
+        }
+        if (StringUtils.isBlank(request.getCategoryId())) {
+            throw new ServiceException(LINK_CATEGORY_INVALID_CATEGORY_ID);
+        }
+        if (StringUtils.isBlank(request.getTransactionReference())) {
+            throw new ServiceException(LINK_CATEGORY_INVALID_REFERENCE);
+        }
+        if (StringUtils.isBlank(request.getLinkType())) {
+            throw new ServiceException(LINK_CATEGORY_INVALID_LINK_TYPE);
+        }
     }
 
 }

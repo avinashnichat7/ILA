@@ -4,6 +4,7 @@ import com.neo.core.message.GenericMessageSource;
 import com.neo.v1.service.TransactionEnrichmentService;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
+import com.neo.v1.transactions.enrichment.model.TransactionLinkResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
     private static final String URI_TRANSACTION_ENRICHMENT_ACCOUNT = "/api/v1/transactions-enrichment";
     private static final String URI_GET_CATEGORIES = "/api/v1/transactions-enrichment/category";
+    private static final String URI_LINK_CATEGORIES = "/api/v1/transactions-enrichment/link";
 
     @Autowired
     private MockMvc mockMvc;
@@ -82,6 +84,14 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
     void deleteTransactionEnrichmentCategory_withValidRequest_expectSuccess() throws Exception {
         mockMvc.perform(delete(URI_GET_CATEGORIES + "/" + 1)
                         .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void postTransactionsEnrichmentLink_withValidRequest_expectSuccess() throws Exception {
+        mockMvc.perform(post(URI_LINK_CATEGORIES)
+                        .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
+                        .content(toJson(TransactionLinkResponse.builder().build())))
                 .andExpect(status().isOk());
     }
 

@@ -130,6 +130,15 @@ public class TransactionEnrichmentConstants {
     public static final String DELETE_CATEGORY_SUCCESS_CODE = "TRNE-1024";
     public static final String DELETE_CATEGORY_SUCCESS_MSG = "com.neo.te.delete.category.success.message";
     public static final String CATEGORY_OTHER = "Other";
+    public static final String REFERENCE = "REFERENCE";
+    public static final String MERCHANT = "MERCHANT";
+    public static final String LINK_CATEGORY_SUCCESS_CODE = "TRNE-1025";
+    public static final String LINK_CATEGORY_SUCCESS_MSG = "com.neo.te.link.category.success.message";
+    public static final String CATEGORY_REFERENCE_NOT_FOUND_ERROR_CODE = "TRAN-2500";
+    public static final String LINK_CATEGORY_INVALID_IBAN_ERROR_CODE = "TRAN-2501";
+    public static final String LINK_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE = "TRAN-2502";
+    public static final String LINK_CATEGORY_INVALID_REFERENCE_ERROR_CODE = "TRAN-2503";
+    public static final String LINK_CATEGORY_INVALID_LINK_TYPE_ERROR_CODE = "TRAN-2504";
     
     static {
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(1L, OPERATION_TYPE_FAWRI);
