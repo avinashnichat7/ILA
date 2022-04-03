@@ -122,6 +122,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: No Products found
+  /transactions-enrichment/link:
+    post:
+      summary: Get ila Products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionLinkRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TransactionLinkResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
 
 components:
   schemas:
@@ -488,6 +510,31 @@ components:
       properties:
         meta:
           $ref: '#/components/schemas/Meta'
+    TransactionLinkRequest:
+      type: object
+      properties:
+        iban:
+          type: string
+          example: "BH12ABCO1234567890"
+          description: Iban
+        categoryId:
+          type: string
+          example: "121151"
+          description: CategoryId
+        transactionReference:
+          type: string
+          example: "ABhSUB234b"
+          description: transaction reference
+        linkType:
+          type: string
+          example: "REFERENCE"
+          description: link type
+    TransactionLinkResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+
 
 
 

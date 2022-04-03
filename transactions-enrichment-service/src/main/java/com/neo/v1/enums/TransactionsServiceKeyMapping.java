@@ -11,6 +11,7 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVIC
 import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_AUDIT_MESSAGE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CATEGORY_REFERENCE_NOT_FOUND_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_CATEGORY;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_COLOR;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_CUSTOMER_TYPE;
@@ -21,6 +22,10 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVI
 import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.HOLD_NUMBER_REQUIRED_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.IBAN_REQUIRED_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_INVALID_IBAN_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_INVALID_LINK_TYPE_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_INVALID_REFERENCE_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.PRODUCT_CATALOGUE_UNAVAILABLE_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TMSX_INVALID_OPERATION_TYPE_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_AUDIT_MESSAGE;
@@ -147,7 +152,28 @@ public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
     DELETE_CATEGORY_INVALID_CATEGORY_ID(DELETE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE,
             INTERNAL_SERVER_ERROR,
             "com.neo.te.delete.category.invalid.id.message",
-            "com.neo.te.delete.category.invalid.id.audit.message");
+            "com.neo.te.delete.category.invalid.id.audit.message"),
+
+    LINK_CATEGORY_INVALID_IBAN(LINK_CATEGORY_INVALID_IBAN_ERROR_CODE,
+                                     INTERNAL_SERVER_ERROR,
+            "com.neo.te.link.category.iban.required.message",
+            "com.neo.te.link.category.iban.required.audit.message"),
+    LINK_CATEGORY_INVALID_CATEGORY_ID(LINK_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE,
+                                     INTERNAL_SERVER_ERROR,
+            "com.neo.te.link.category.id.required.message",
+            "com.neo.te.link.category.id.required.audit.message"),
+    LINK_CATEGORY_INVALID_REFERENCE(LINK_CATEGORY_INVALID_REFERENCE_ERROR_CODE,
+                                     INTERNAL_SERVER_ERROR,
+            "com.neo.te.link.category.transaction.reference.required.message",
+            "com.neo.te.link.category.transaction.reference.required.audit.message"),
+    LINK_CATEGORY_INVALID_LINK_TYPE(LINK_CATEGORY_INVALID_LINK_TYPE_ERROR_CODE,
+                                     INTERNAL_SERVER_ERROR,
+            "com.neo.te.link.category.type.required.message",
+            "com.neo.te.link.category.type.required.audit.message"),
+    CATEGORY_REFERENCE_NOT_FOUND(CATEGORY_REFERENCE_NOT_FOUND_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.te.link.category.reference.not.found.message",
+            "com.neo.te.link.category.reference.not.found.audit.message");
 
 
     private String code;

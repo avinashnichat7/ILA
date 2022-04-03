@@ -94,4 +94,14 @@ public class MerchantService {
         });
     }
 
+    @Transactional
+    public void saveCustomerAccountTransactionCategory(CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity) {
+        customerAccountTransactionCategoryRepository.save(customerAccountTransactionCategoryEntity);
+    }
+
+    @Transactional
+    public void saveCustomerMerchantCategory(CustomerMerchantCategoryEntity customerMerchantCategoryEntity) {
+        customerMerchantCategoryRepository.save(customerMerchantCategoryEntity);
+    }
+
 }

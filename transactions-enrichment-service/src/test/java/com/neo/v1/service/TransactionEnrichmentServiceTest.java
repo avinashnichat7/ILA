@@ -4,13 +4,17 @@ import com.neo.core.context.GenericRestParamContextHolder;
 import com.neo.core.exception.ServiceException;
 import com.neo.core.model.GenericRestParamDto;
 import com.neo.core.provider.ServiceKeyMapping;
+import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
+import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.entity.TmsxUrbisOperationTypesEntity;
 import com.neo.v1.enums.customer.RecordType;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
 import com.neo.v1.mapper.CreateCategoryResponseMapper;
+import com.neo.v1.mapper.CustomerAccountTransactionCategoryEntityMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
+import com.neo.v1.mapper.CustomerMerchantCategoryEntityMapper;
 import com.neo.v1.mapper.MetaMapper;
 import com.neo.v1.mapper.UpdateCategoryResponseMapper;
 import com.neo.v1.model.catalogue.CategoryDetail;
@@ -23,6 +27,8 @@ import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.TransactionLinkRequest;
+import com.neo.v1.transactions.enrichment.model.TransactionLinkResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
 import org.junit.jupiter.api.Assertions;
@@ -44,6 +50,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.neo.v1.constants.TransactionEnrichmentConstants.MERCHANT;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.REFERENCE;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_COLOR;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_ICON;
@@ -110,6 +118,12 @@ import static org.mockito.Mockito.when;
 
     @Mock
     private MerchantService merchantService;
+
+    @Mock
+    private CustomerAccountTransactionCategoryEntityMapper customerAccountTransactionCategoryEntityMapper;
+
+    @Mock
+    private CustomerMerchantCategoryEntityMapper customerMerchantCategoryEntityMapper;
 
     @BeforeEach
     void before() {
@@ -338,5 +352,37 @@ import static org.mockito.Mockito.when;
         DeleteCategoryResponse result = subject.deleteCategory(categoryId);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
         verify(customerCategoryRepository).save(any());
+    }
+
+    @Test
+    void link_withLinkTypeReference_returnTransactionLinkResponse() {
+        TransactionLinkRequest request = TransactionLinkRequest.builder()
+                .iban("iban")
+                .categoryId("1")
+                .linkType(REFERENCE)
+                .transactionReference("reference")
+                .build();
+        TransactionLinkResponse expected = TransactionLinkResponse.builder().build();
+        when(transactionService.getTransactionDetail(request.getIban(), request.getTransactionReference())).thenReturn(AccountTransaction.builder().build());
+        when(customerCategoryRepository.findById(Long.parseLong(request.getCategoryId()))).thenReturn(Optional.of(CustomerCategoryEntity.builder().build()));
+        when(customerAccountTransactionCategoryEntityMapper.map(any(), any(), any())).thenReturn(CustomerAccountTransactionCategoryEntity.builder().build());
+        TransactionLinkResponse result = subject.link(request);
+        assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
+    void link_withLinkTypeMerchant_returnTransactionLinkResponse() {
+        TransactionLinkRequest request = TransactionLinkRequest.builder()
+                .iban("iban")
+                .categoryId("1")
+                .linkType(MERCHANT)
+                .transactionReference("reference")
+                .build();
+        TransactionLinkResponse expected = TransactionLinkResponse.builder().build();
+        when(transactionService.getTransactionDetail(request.getIban(), request.getTransactionReference())).thenReturn(AccountTransaction.builder().build());
+        when(customerCategoryRepository.findById(Long.parseLong(request.getCategoryId()))).thenReturn(Optional.of(CustomerCategoryEntity.builder().build()));
+        when(customerMerchantCategoryEntityMapper.map(any(), any())).thenReturn(CustomerMerchantCategoryEntity.builder().build());
+        TransactionLinkResponse result = subject.link(request);
+        assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
     }
 }
