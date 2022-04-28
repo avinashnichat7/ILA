@@ -140,8 +140,9 @@ import static org.mockito.Mockito.when;
     @DisplayName("Get accounts failed_pending transactions test")
     void whenAccountFailedPendingTransactionsRequestDataIsPassedTogetAccountTransactionsExpectSubjectToReturnTheTransactionsData() {
         BigDecimal positiveAmount = BigDecimal.valueOf(20);
+        String failedPending = "failed_pending";
         AccountTransactionsRequest request = AccountTransactionsRequest.builder()
-                .status("failed_pending")
+                .status(failedPending)
                 .id(ID)
                 .pageSize(1L)
                 .offset(1L)
@@ -167,8 +168,9 @@ import static org.mockito.Mockito.when;
     @DisplayName("Get accounts failed_pending transactions test")
     void whenAccountPendingTransactionsRequestDataIsPassedTogetAccountTransactionsExpectSubjectToReturnTheTransactionsData() {
         BigDecimal positiveAmount = BigDecimal.valueOf(20);
+        String pending = "pending";
         AccountTransactionsRequest request = AccountTransactionsRequest.builder()
-                .status("pending")
+                .status(pending)
                 .id(ID)
                 .pageSize(1L)
                 .offset(1L)

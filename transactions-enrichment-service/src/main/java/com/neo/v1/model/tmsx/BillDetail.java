@@ -1,4 +1,4 @@
-package com.neo.v1.tmsx;
+package com.neo.v1.model.tmsx;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -36,7 +36,7 @@ public class BillDetail {
     private String paymentMethod;
 
     @ApiModelProperty(notes = "Subscriber Identification")
-    private com.neo.v1.tmsx.SubscriberIdentification subscriberIdentification;
+    private SubscriberIdentification subscriberIdentification;
 
     @ApiModelProperty(notes = "Operator")
     private String operator;

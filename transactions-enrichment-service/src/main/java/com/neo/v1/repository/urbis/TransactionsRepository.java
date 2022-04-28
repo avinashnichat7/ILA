@@ -35,8 +35,6 @@ public class TransactionsRepository {
 
     private static final String ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_AccountTransactionsV2";
     private static final String PENDING_ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_AccountPendingTransactionV2";
-    private static final String PENDING_ACCOUNT_TRANSACTION_DETAIL_PROCEDURE_NAME = "API_AccountTransactionDetails";
-    private static final String HOLD_TRANSACTION_BALANCE_PROCEDURE_NAME = "API_HoldTransactionBalance";
 
     private static final String PARAM_CUSTOMER_ID = "customer_id";
     private static final String PARAM_ACCOUNT_ID = "id";
@@ -53,12 +51,9 @@ public class TransactionsRepository {
     private static final String PARAM_ERROR_CODE = "error_code";
     private static final String PARAM_ERROR_MESSAGE = "error_message";
     private static final String ERROR_MESSAGE_VALUE = "Error";
-    private static final String PARAM_TRANSACTION_REFERENCE = "transactionReference";
     private static final Integer ERROR_CODE_VALUE = 1;
     private static final Integer DEFAULT_OFFSET = 0;
     private static final Integer DEFAULT_PAGE_SIZE = 5;
-    private static final String IBAN = "iban";
-    private static final String HOLD_NUMBER = "holdNumber";
 
     @PersistenceContext(unitName = URBIS_DB_PERSISTENCE_UNIT)
     private EntityManager entityManager;
@@ -110,7 +105,7 @@ public class TransactionsRepository {
         addParameter(storedProcedure, PARAM_ERROR_MESSAGE, ERROR_MESSAGE_VALUE, String.class, INOUT);
     }
 
-    private void addParameter(StoredProcedureQuery storedProcedure, String paramName, Object paramValue, Class clazz, ParameterMode parameterMode) {
+    private void addParameter(StoredProcedureQuery storedProcedure, String paramName, Object paramValue, Class<?> clazz, ParameterMode parameterMode) {
         storedProcedure.registerStoredProcedureParameter(paramName, clazz, parameterMode);
         storedProcedure.setParameter(paramName, paramValue);
     }

@@ -5,6 +5,7 @@ import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.mapper.MerchantCategoryMapper;
 import com.neo.v1.model.catalogue.MerchantCodeDetail;
 import com.neo.v1.model.catalogue.MerchantDetail;
+import com.neo.v1.repository.CustomerAccountTransactionCategoryCustomRepository;
 import com.neo.v1.repository.CustomerAccountTransactionCategoryRepository;
 import com.neo.v1.repository.CustomerMerchantCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
@@ -14,9 +15,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,7 @@ public class MerchantService {
     private final CustomerAccountTransactionCategoryRepository customerAccountTransactionCategoryRepository;
     private final CustomerMerchantCategoryRepository customerMerchantCategoryRepository;
     private final MerchantCategoryMapper merchantCategoryMapper;
+    private final CustomerAccountTransactionCategoryCustomRepository customerAccountTransactionCategoryCustomRepository;
 
     public Map<String, MerchantDetail> getCachedMerchantData() {
         if(Objects.isNull(merchantDetailsCache) || merchantDetailsCache.isEmpty()) {
@@ -73,7 +77,8 @@ public class MerchantService {
 
     @Transactional(readOnly = true)
     public void mapMerchantCategory(List<AccountTransaction> transactions, AccountTransactionsRequest request) {
-        List<CustomerAccountTransactionCategoryEntity> accountTransactionCategoryList = customerAccountTransactionCategoryRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay());
+        List<CustomerAccountTransactionCategoryEntity> accountTransactionCategoryList = customerAccountTransactionCategoryCustomRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(),
+                Optional.ofNullable(request.getFromDate()).map(LocalDate::atStartOfDay).orElse(null), Optional.ofNullable(request.getToDate()).map(LocalDate::atStartOfDay).orElse(null));
         Map<String, CustomerAccountTransactionCategoryEntity> accountTransactionCategoryMap = accountTransactionCategoryList.stream().collect(toMap(CustomerAccountTransactionCategoryEntity::getTransactionReference, Function.identity()));
         List<CustomerMerchantCategoryEntity> customerMerchantCategoryEntityList = customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE);
         Map<String, CustomerMerchantCategoryEntity> merchantCategoryMap = customerMerchantCategoryEntityList.stream().collect(toMap(CustomerMerchantCategoryEntity::getName, Function.identity()));

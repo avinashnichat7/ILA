@@ -33,6 +33,14 @@ class MerchantCategoryMapperTest {
     }
 
     @Test
+    void mapAccountTransactionCategory_withNoCategoryEntity_returnSuccess() {
+        AccountTransaction transaction = AccountTransaction.builder().build();
+        CustomerAccountTransactionCategoryEntity customerAccountTransactionCategory = CustomerAccountTransactionCategoryEntity.builder().build();
+        subject.mapAccountTransactionCategory(transaction, customerAccountTransactionCategory);
+        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(transaction);
+    }
+
+    @Test
     void mapAccountTransactionCategory_withCustomerMerchantCategoryEntity_returnSuccess() {
         AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
                 .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build()).build();
@@ -41,6 +49,14 @@ class MerchantCategoryMapperTest {
                 .customerCategory(CustomerCategoryEntity.builder().name("cname").customerId("1").icon("icon").iconLabelUrl("iconLabelUrl").color("color").build()).build();
         subject.mapAccountTransactionCategory(transaction, customerMerchantCategoryEntity);
         assertThat(transaction).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
+    void mapAccountTransactionCategory_withNoCustomerMerchantCategoryEntity_returnSuccess() {
+        AccountTransaction transaction = AccountTransaction.builder().build();
+        CustomerMerchantCategoryEntity customerMerchantCategoryEntity = CustomerMerchantCategoryEntity.builder().build();
+        subject.mapAccountTransactionCategory(transaction, customerMerchantCategoryEntity);
+        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(transaction);
     }
 
     @Test
@@ -55,6 +71,14 @@ class MerchantCategoryMapperTest {
     }
 
     @Test
+    void mapAccountTransactionCategory_withNoMerchantDetail_returnSuccess() {
+        AccountTransaction transaction = AccountTransaction.builder().build();
+        MerchantDetail merchantDetail = MerchantDetail.builder().build();
+        subject.mapAccountTransactionCategory(transaction, merchantDetail);
+        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(transaction);
+    }
+
+    @Test
     void mapAccountTransactionCategory_withMerchantCodeDetail_returnSuccess() {
         AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
                 .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build()).build();
@@ -63,5 +87,13 @@ class MerchantCategoryMapperTest {
                 .contentfulMerchantCategory(CategoryDetail.builder().name("cname").icon("icon").iconLabelUrl("iconLabelUrl").color("color").build()).build();
         subject.mapAccountTransactionCategory(transaction, merchantCodeDetail);
         assertThat(transaction).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
+    void mapAccountTransactionCategory_withNoMerchantCodeDetail_returnSuccess() {
+        AccountTransaction transaction = AccountTransaction.builder().build();
+        MerchantCodeDetail merchantCodeDetail = MerchantCodeDetail.builder().build();
+        subject.mapAccountTransactionCategory(transaction, merchantCodeDetail);
+        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(transaction);
     }
 }

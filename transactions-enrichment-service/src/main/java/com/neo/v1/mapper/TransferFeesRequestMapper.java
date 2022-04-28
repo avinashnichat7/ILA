@@ -3,7 +3,7 @@ package com.neo.v1.mapper;
 import com.neo.v1.model.PaymentEntry;
 import com.neo.v1.model.TmsxCreateHoldRequest;
 import com.neo.v1.model.account.TransferFeesRequest;
-import com.neo.v1.tmsx.Amount;
+import com.neo.v1.model.tmsx.Amount;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import org.springframework.stereotype.Component;
 

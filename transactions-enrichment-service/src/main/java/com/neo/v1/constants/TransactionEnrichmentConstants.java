@@ -139,6 +139,10 @@ public class TransactionEnrichmentConstants {
     public static final String LINK_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE = "TRAN-2502";
     public static final String LINK_CATEGORY_INVALID_REFERENCE_ERROR_CODE = "TRAN-2503";
     public static final String LINK_CATEGORY_INVALID_LINK_TYPE_ERROR_CODE = "TRAN-2504";
+    public static final String CUSTOMER_ID = "customerId";
+    public static final String ACCOUNT_ID = "accountId";
+    public static final String TRANSACTION_DATE = "transactionDate";
+
     
     static {
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(1L, OPERATION_TYPE_FAWRI);
