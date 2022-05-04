@@ -1,4 +1,4 @@
-package com.neo.v1.tmsx;
+package com.neo.v1.model.tmsx;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

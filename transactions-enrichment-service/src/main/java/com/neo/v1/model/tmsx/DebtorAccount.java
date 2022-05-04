@@ -1,4 +1,4 @@
-package com.neo.v1.tmsx;
+package com.neo.v1.model.tmsx;
 
 import com.neo.v1.validation.group.PostReleaseHoldValidationGroup;
 import io.swagger.annotations.ApiModel;

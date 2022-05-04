@@ -7,14 +7,14 @@ import com.neo.v1.model.PaymentDetails;
 import com.neo.v1.model.charity.CharityItem;
 import com.neo.v1.model.charity.CharityItemData;
 import com.neo.v1.model.charity.PurposeItem;
-import com.neo.v1.tmsx.BillDetail;
-import com.neo.v1.tmsx.Creditor;
-import com.neo.v1.tmsx.CreditorAccount;
-import com.neo.v1.tmsx.CreditorDebtorAgent;
-import com.neo.v1.tmsx.CustomFeild;
-import com.neo.v1.tmsx.Debtor;
-import com.neo.v1.tmsx.DebtorAccount;
-import com.neo.v1.tmsx.SubscriberIdentification;
+import com.neo.v1.model.tmsx.BillDetail;
+import com.neo.v1.model.tmsx.Creditor;
+import com.neo.v1.model.tmsx.CreditorAccount;
+import com.neo.v1.model.tmsx.CreditorDebtorAgent;
+import com.neo.v1.model.tmsx.CustomFeild;
+import com.neo.v1.model.tmsx.Debtor;
+import com.neo.v1.model.tmsx.DebtorAccount;
+import com.neo.v1.model.tmsx.SubscriberIdentification;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -434,9 +434,11 @@ class TmsxUtilTest {
     @Test
     void getFawriFawriPlusNarrativeLines_withShortCreditorName_SubString() {
         TransactionEntryType transactionEntryType = CREDIT;
+        String name = "Abdulla";
+        String expected = "Abdulla";
         PaymentDetails paymentDetails = PaymentDetails.builder()
                 .creditor(Creditor.builder()
-                        .name("Abdulla")
+                        .name(name)
                         .account(CreditorAccount.builder()
                                 .iban(IBAN)
                                 .build())
@@ -444,15 +446,17 @@ class TmsxUtilTest {
                 .build();
         String[] result = TmsxUtil.getFawriFawriPlusNarrativeLines(paymentDetails, TmsxUrbisOperationTypesEntity.builder()
                 .transferOperationTypeEntity(TransferOperationTypeEntity.builder().operationType(OPERATION_TYPE_FAWRI).build()).build(), transactionEntryType);
-        assertThat(result[0]).isEqualTo("Abdulla");
+        assertThat(result[0]).isEqualTo(expected);
     }
 
     @Test
     void getFawriFawriPlusNarrativeLines_withCreditorNameWithSpace_SubString() {
         TransactionEntryType transactionEntryType = CREDIT;
+        String name = "Abdulla Hassan Ai Khais Hassan Ali Ali";
+        String expected = "Abdulla Hassan Ai Khais Hassan Ali";
         PaymentDetails paymentDetails = PaymentDetails.builder()
                 .creditor(Creditor.builder()
-                        .name("Abdulla Hassan Ai Khais Hassan Ali Ali")
+                        .name(name)
                         .account(CreditorAccount.builder()
                                 .iban(IBAN)
                                 .build())
@@ -460,15 +464,17 @@ class TmsxUtilTest {
                 .build();
         String[] result = TmsxUtil.getFawriFawriPlusNarrativeLines(paymentDetails, TmsxUrbisOperationTypesEntity.builder()
                 .transferOperationTypeEntity(TransferOperationTypeEntity.builder().operationType(OPERATION_TYPE_FAWRI).build()).build(), transactionEntryType);
-        assertThat(result[0]).isEqualTo("Abdulla Hassan Ai Khais Hassan Ali");
+        assertThat(result[0]).isEqualTo(expected);
     }
 
     @Test
     void getFawriFawriPlusNarrativeLines_withLongCreditorNameWithSpace_SubString() {
+        String name = "Abdulla Hassan Ai Khais Hassan Abdulla";
+        String expected = "Abdulla Hassan Ai Khais Hassan";
         TransactionEntryType transactionEntryType = CREDIT;
         PaymentDetails paymentDetails = PaymentDetails.builder()
                 .creditor(Creditor.builder()
-                        .name("Abdulla Hassan Ai Khais Hassan Abdulla")
+                        .name(name)
                         .account(CreditorAccount.builder()
                                 .iban(IBAN)
                                 .build())
@@ -476,7 +482,7 @@ class TmsxUtilTest {
                 .build();
         String[] result = TmsxUtil.getFawriFawriPlusNarrativeLines(paymentDetails, TmsxUrbisOperationTypesEntity.builder()
                 .transferOperationTypeEntity(TransferOperationTypeEntity.builder().operationType(OPERATION_TYPE_FAWRI).build()).build(), transactionEntryType);
-        assertThat(result[0]).isEqualTo("Abdulla Hassan Ai Khais Hassan");
+        assertThat(result[0]).isEqualTo(expected);
     }
 
     @ParameterizedTest

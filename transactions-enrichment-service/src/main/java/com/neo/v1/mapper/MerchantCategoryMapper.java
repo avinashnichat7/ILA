@@ -10,35 +10,44 @@ import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.EnrichedTransactionCategory;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class MerchantCategoryMapper {
 
     public void mapAccountTransactionCategory(AccountTransaction transactions, CustomerAccountTransactionCategoryEntity customerAccountTransactionCategory) {
-        CustomerCategoryEntity customerCategory = customerAccountTransactionCategory.getCustomerCategory();
-        EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder().name(customerCategory.getName())
-                .icon(customerCategory.getIcon()).iconLabelUrl(customerCategory.getIconLabelUrl()).color(customerCategory.getColor()).build();
-        transactions.setEnrichedTransactionCategory(enrichedTransactionCategory);
-
+        if(Objects.nonNull(customerAccountTransactionCategory) && Objects.nonNull(customerAccountTransactionCategory.getCustomerCategory())) {
+            CustomerCategoryEntity customerCategory = customerAccountTransactionCategory.getCustomerCategory();
+            EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder().name(customerCategory.getName())
+                    .icon(customerCategory.getIcon()).iconLabelUrl(customerCategory.getIconLabelUrl()).color(customerCategory.getColor()).build();
+            transactions.setEnrichedTransactionCategory(enrichedTransactionCategory);
+        }
     }
 
     public void mapAccountTransactionCategory(AccountTransaction transactions, CustomerMerchantCategoryEntity customerMerchantCategoryEntity) {
-        CustomerCategoryEntity customerCategory = customerMerchantCategoryEntity.getCustomerCategory();
-        EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder().name(customerCategory.getName())
-                .icon(customerCategory.getIcon()).iconLabelUrl(customerCategory.getIconLabelUrl()).color(customerCategory.getColor()).build();
-        transactions.setEnrichedTransactionCategory(enrichedTransactionCategory);
+        if(Objects.nonNull(customerMerchantCategoryEntity) && Objects.nonNull(customerMerchantCategoryEntity.getCustomerCategory())) {
+            CustomerCategoryEntity customerCategory = customerMerchantCategoryEntity.getCustomerCategory();
+            EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder().name(customerCategory.getName())
+                    .icon(customerCategory.getIcon()).iconLabelUrl(customerCategory.getIconLabelUrl()).color(customerCategory.getColor()).build();
+            transactions.setEnrichedTransactionCategory(enrichedTransactionCategory);
+        }
     }
 
     public void mapAccountTransactionCategory(AccountTransaction transactions, MerchantDetail merchantDetail) {
-        CategoryDetail merchantCategory = merchantDetail.getContentfulMerchantCategory();
-        EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder().name(merchantCategory.getName())
-                .icon(merchantCategory.getIcon()).iconLabelUrl(merchantCategory.getIconLabelUrl()).color(merchantCategory.getColor()).build();
-        transactions.setEnrichedTransactionCategory(enrichedTransactionCategory);
+        if(Objects.nonNull(merchantDetail) && Objects.nonNull(merchantDetail.getContentfulMerchantCategory())) {
+            CategoryDetail merchantCategory = merchantDetail.getContentfulMerchantCategory();
+            EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder().name(merchantCategory.getName())
+                    .icon(merchantCategory.getIcon()).iconLabelUrl(merchantCategory.getIconLabelUrl()).color(merchantCategory.getColor()).build();
+            transactions.setEnrichedTransactionCategory(enrichedTransactionCategory);
+        }
     }
 
     public void mapAccountTransactionCategory(AccountTransaction transactions, MerchantCodeDetail merchantCodeDetail) {
-        CategoryDetail merchantCategory = merchantCodeDetail.getContentfulMerchantCategory();
-        EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder().name(merchantCategory.getName())
-                .icon(merchantCategory.getIcon()).iconLabelUrl(merchantCategory.getIconLabelUrl()).color(merchantCategory.getColor()).build();
-        transactions.setEnrichedTransactionCategory(enrichedTransactionCategory);
+        if(Objects.nonNull(merchantCodeDetail) && Objects.nonNull(merchantCodeDetail.getContentfulMerchantCategory())) {
+            CategoryDetail merchantCategory = merchantCodeDetail.getContentfulMerchantCategory();
+            EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder().name(merchantCategory.getName())
+                    .icon(merchantCategory.getIcon()).iconLabelUrl(merchantCategory.getIconLabelUrl()).color(merchantCategory.getColor()).build();
+            transactions.setEnrichedTransactionCategory(enrichedTransactionCategory);
+        }
     }
 }

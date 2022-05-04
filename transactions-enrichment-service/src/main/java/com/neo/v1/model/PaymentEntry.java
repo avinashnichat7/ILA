@@ -1,6 +1,6 @@
 package com.neo.v1.model;
 
-import com.neo.v1.tmsx.Amount;
+import com.neo.v1.model.tmsx.Amount;
 import com.neo.v1.validation.group.PostReleaseHoldValidationGroup;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

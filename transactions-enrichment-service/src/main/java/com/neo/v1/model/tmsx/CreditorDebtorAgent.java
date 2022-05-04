@@ -1,6 +1,7 @@
-package com.neo.v1.tmsx;
+package com.neo.v1.model.tmsx;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,9 +15,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@ApiModel("CustomFeild")
-public class CustomFeild {
-    private String name;
-    private String type;
-    private String value;
+@ApiModel("CreditorDebtorAgent")
+public class CreditorDebtorAgent {
+
+    @ApiModelProperty(notes = "bic", example = "ABCIBHBM")
+    private String bic;
 }

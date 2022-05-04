@@ -4,7 +4,7 @@ import com.neo.v1.model.PaymentDetails;
 import com.neo.v1.model.PaymentEntry;
 import com.neo.v1.model.TmsxCreateHoldRequest;
 import com.neo.v1.model.account.TransferFeesRequest;
-import com.neo.v1.tmsx.Amount;
+import com.neo.v1.model.tmsx.Amount;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.Currency;
 import org.junit.jupiter.api.Test;

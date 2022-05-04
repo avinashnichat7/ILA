@@ -7,10 +7,10 @@ import com.neo.v1.model.PaymentDetails;
 import com.neo.v1.model.charity.CharityItem;
 import com.neo.v1.model.charity.CharityItemData;
 import com.neo.v1.model.charity.PurposeItem;
-import com.neo.v1.tmsx.BillDetail;
-import com.neo.v1.tmsx.Creditor;
-import com.neo.v1.tmsx.CreditorDebtorAgent;
-import com.neo.v1.tmsx.Debtor;
+import com.neo.v1.model.tmsx.BillDetail;
+import com.neo.v1.model.tmsx.Creditor;
+import com.neo.v1.model.tmsx.CreditorDebtorAgent;
+import com.neo.v1.model.tmsx.Debtor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -71,7 +71,7 @@ public final class TmsxUtil {
             if (OPERATION_TYPE_FAWATEER.equalsIgnoreCase(tmsxUrbisOperationTypesEntity.getTransferOperationTypeEntity().getOperationType())) {
                 narrativeLines = getFawateerNarrativeLines(paymentDetails, isTmsxPostTransaction);
             } else if (TRANSACTION_TYPE_CHARITY_TRANSFER_CODE.equalsIgnoreCase(paymentDetails.getTransactionTypeCode())) {
-                narrativeLines = getCharityNarrativeLines(paymentDetails, charityItemData);
+                narrativeLines = getCharityNarrativeLines(charityItemData);
             } else {
                 narrativeLines = getFawriFawriPlusNarrativeLines(paymentDetails, tmsxUrbisOperationTypesEntity, transactionEntryType);
             }
@@ -79,7 +79,7 @@ public final class TmsxUtil {
         return narrativeLines;
     }
 
-    public static String[] getCharityNarrativeLines(PaymentDetails paymentDetails, CharityItemData charityItemData) {
+    public static String[] getCharityNarrativeLines(CharityItemData charityItemData) {
         List<String> narratives = new ArrayList<>();
         String charityName = ofNullable(charityItemData).map(CharityItemData::getCharities).map(charityItems -> charityItems.get(0))
                 .map(CharityItem::getName).orElse(Strings.EMPTY);
