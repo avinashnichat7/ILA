@@ -83,7 +83,7 @@ env:
     customer:
       service:
         base:
-          url: http://customers-service.customers-service.svc:8080/api/v1/customers
+          url: http://api-shared.uat.ilabank.internal/api/v1/customers
 
   urbis:
     service:
