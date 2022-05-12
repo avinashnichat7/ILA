@@ -34,8 +34,8 @@ public class TransactionService {
             accountTransactions = transactionClient.getAccountTransactionsByStatus(
                     getContext().getCustomerId(),
                     getContext().getUserId(),
-                    getContext().getLocale().getLanguage(),
                     getContext().getUnit(),
+                    getContext().getLocale().getLanguage(),
                     transactionsRequestMapper.map(request),
                     status).getData();
         } catch (RetryableException retryableException) {
@@ -48,11 +48,12 @@ public class TransactionService {
 
         AccountTransaction accountTransaction;
         try {
+            log.info("Calling getTransactionDetail with Account id {} and transactionReference {}", accountId, transactionReference);
             accountTransaction = transactionClient.getTransactionDetail(
                     getContext().getCustomerId(),
                     getContext().getUserId(),
-                    getContext().getLocale().getLanguage(),
                     getContext().getUnit(),
+                    getContext().getLocale().getLanguage(),
                     transactionDetailRequestMapper.map(accountId, transactionReference)).getData();
         } catch (RetryableException retryableException) {
             throw new ServiceException(TRANSACTION_SERVICE_UNAVAILABLE, retryableException);
