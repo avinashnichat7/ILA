@@ -1,8 +1,9 @@
 package com.neo.v1.client;
 
-import com.neo.v1.model.catalogue.CategoryListResponse;
-import com.neo.v1.model.catalogue.MerchantCodeListResponse;
-import com.neo.v1.model.catalogue.MerchantListResponse;
+
+import com.neo.v1.product.catalogue.model.CategoryListResponse;
+import com.neo.v1.product.catalogue.model.MerchantCodeListResponse;
+import com.neo.v1.product.catalogue.model.MerchantListResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

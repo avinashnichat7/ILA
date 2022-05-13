@@ -1,7 +1,7 @@
 package com.neo.v1.mapper;
 
 import com.neo.v1.entity.CustomerCategoryEntity;
-import com.neo.v1.model.catalogue.CategoryDetail;
+import com.neo.v1.product.catalogue.model.CategoryDetail;
 import com.neo.v1.transactions.enrichment.model.CategoryListData;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;

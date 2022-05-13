@@ -3,9 +3,9 @@ package com.neo.v1.mapper;
 import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.CustomerMerchantCategoryEntity;
-import com.neo.v1.model.catalogue.CategoryDetail;
-import com.neo.v1.model.catalogue.MerchantCodeDetail;
-import com.neo.v1.model.catalogue.MerchantDetail;
+import com.neo.v1.product.catalogue.model.CategoryDetail;
+import com.neo.v1.product.catalogue.model.MerchantCodeDetail;
+import com.neo.v1.product.catalogue.model.MerchantDetail;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.EnrichedTransactionCategory;
 import org.junit.jupiter.api.Test;
@@ -43,10 +43,10 @@ class MerchantCategoryMapperTest {
     @Test
     void mapAccountTransactionCategory_withCustomerMerchantCategoryEntity_returnSuccess() {
         AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
-                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build()).build();
+                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").isCustom(Boolean.TRUE).id("1").build()).build();
         AccountTransaction transaction = AccountTransaction.builder().build();
         CustomerMerchantCategoryEntity customerMerchantCategoryEntity = CustomerMerchantCategoryEntity.builder()
-                .customerCategory(CustomerCategoryEntity.builder().name("cname").customerId("1").icon("icon").iconLabelUrl("iconLabelUrl").color("color").build()).build();
+                .customerCategory(CustomerCategoryEntity.builder().name("cname").customerId("1").id(1L).icon("icon").iconLabelUrl("iconLabelUrl").color("color").build()).build();
         subject.mapAccountTransactionCategory(transaction, customerMerchantCategoryEntity);
         assertThat(transaction).isEqualToComparingFieldByFieldRecursively(expected);
     }
@@ -62,7 +62,7 @@ class MerchantCategoryMapperTest {
     @Test
     void mapAccountTransactionCategory_withMerchantDetail_returnSuccess() {
         AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
-                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build()).build();
+                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").isCustom(false).build()).build();
         AccountTransaction transaction = AccountTransaction.builder().build();
         MerchantDetail merchantDetail = MerchantDetail.builder()
                 .contentfulMerchantCategory(CategoryDetail.builder().name("cname").icon("icon").iconLabelUrl("iconLabelUrl").color("color").build()).build();

@@ -380,6 +380,10 @@ components:
     EnrichedTransactionCategory:
       type: object
       properties:
+        id:
+          type: string
+          example: dinner
+          description: Merchant Category Name
         name:
           type: string
           example: dinner
@@ -396,6 +400,8 @@ components:
           type: string
           example: icon color
           description: Merchant Category icon color
+        isCustom:
+          type: boolean
     CategoryListResponse:
       type: object
       properties:

@@ -31,8 +31,7 @@
         <neo-service-lib-swagger.version>0.0.6</neo-service-lib-swagger.version>
         <build-helper-maven-plugin.version>1.9.1</build-helper-maven-plugin.version>
         <neo-test.version>0.0.11</neo-test.version>
-        <trigger-spec.version>1.0.0</trigger-spec.version>
-        <standing-order-spec.version>master-1.0.0-20201104-084240</standing-order-spec.version>
+        <product-catalogue-spec.version>feature-transactions-enrichment-1.0.0-20220512-073910</product-catalogue-spec.version>
     </properties>
 
     <dependencies>
@@ -41,6 +40,12 @@
             <groupId>com.neo</groupId>
             <artifactId>neo-service-lib-test</artifactId>
             <version>${neo-test.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neo</groupId>
+            <artifactId>product-catalogue-spec</artifactId>
+            <version>${product-catalogue-spec.version}</version>
         </dependency>
 
         <dependency>
@@ -84,6 +89,8 @@
             <artifactId>feign-core</artifactId>
             <version>${feign-core.version}</version>
         </dependency>
+
+
 
         <!-- Test -->
         <dependency>

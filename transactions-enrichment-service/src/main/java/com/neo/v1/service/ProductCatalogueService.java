@@ -2,12 +2,8 @@ package com.neo.v1.service;
 
 import com.neo.core.exception.ServiceException;
 import com.neo.v1.client.ProductCatalogueClient;
-import com.neo.v1.model.catalogue.CategoryDetail;
-import com.neo.v1.model.catalogue.CategoryListData;
-import com.neo.v1.model.catalogue.MerchantCodeDetail;
-import com.neo.v1.model.catalogue.MerchantCodeListData;
-import com.neo.v1.model.catalogue.MerchantDetail;
-import com.neo.v1.model.catalogue.MerchantListData;
+
+import com.neo.v1.product.catalogue.model.*;
 import feign.RetryableException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

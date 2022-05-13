@@ -3,18 +3,9 @@ package com.neo.v1.controller;
 
 import com.neo.core.model.ApiError;
 import com.neo.v1.service.TransactionEnrichmentService;
+
 import com.neo.v1.transactions.enrichment.api.NeoServiceV1Api;
-import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
-import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
-import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
-import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
-import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
-import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
-import com.neo.v1.transactions.enrichment.model.Meta;
-import com.neo.v1.transactions.enrichment.model.TransactionLinkRequest;
-import com.neo.v1.transactions.enrichment.model.TransactionLinkResponse;
-import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
-import com.neo.v1.transactions.enrichment.model.UpdateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.*;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
