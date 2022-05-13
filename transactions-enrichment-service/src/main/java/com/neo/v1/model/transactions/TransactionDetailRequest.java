@@ -1,10 +1,10 @@
 package com.neo.v1.model.transactions;
 
 import io.swagger.annotations.ApiModel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
