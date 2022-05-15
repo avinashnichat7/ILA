@@ -144,6 +144,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: No Products found
+  /transactions-enrichment/hold:
+    post:
+      summary: Hold Transaction Enrichment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionHoldRequest'
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TransactionHoldResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
 
 components:
   schemas:
@@ -540,9 +561,149 @@ components:
       properties:
         meta:
           $ref: '#/components/schemas/Meta'
-
-
-
-
-
-
+    TransactionHoldRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: BHxxABCO1456789023903
+          description: Source Iban
+        offset:
+          type: integer
+          example: Happy Birthday
+          description: Gift title
+        pageSize:
+          type: integer
+          format : int64
+          example: Happy Birthday
+          description: Gift description
+        filter:
+          type: string
+          example: hkhjkhk3
+          description: Gift icon
+        fromAmount:
+          type: number
+          example: TYPE_A
+          description: Gift card type
+        toAmount:
+          type: number
+          example: 1000
+          description: Gift amount
+        fromDate:
+          type: string
+          format: date
+          example: BHD
+          description: Currency code
+        toDate:
+          type: string
+          format: date
+          example: +973123456
+          description: Mobile number
+        maskedCardNumber:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+        excludeCardTransactions:
+          type: boolean
+          example: Mohammed
+          description: Gift receiver name
+        targetType:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+    TransactionHoldResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/TransactionHoldResponseData'
+    TransactionHoldResponseData:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountTransactionHold'
+    AccountTransactionHold:
+      type: object
+      properties:
+        id:
+          type: string
+          required: true
+          example: "123456"
+          description: IBAN
+        holdDate:
+          type: string
+          required: true
+          format: date-time
+          example: 989248099
+          description: hold Date
+        holdExpiryDate:
+          type: string
+          required: true
+          format: date
+          example: 989248099
+          description: hold Expiry Date
+        holdType:
+          type: string
+          required: true
+          example: "https://example.com/3.png"
+          description: Hold Type
+        holdCurrency:
+          $ref: '#/components/schemas/Currency'
+        holdAmount:
+          type: number
+          required: true
+          example: 989248099
+          description: Hold Amount
+        holdReferenceNumber:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Reference Number
+        previousBalance:
+          type: number
+          required: true
+          example: 989248099
+          description: previous Balance
+        currentBalance:
+          type: number
+          required: true
+          example: 989248099
+          description: current Balance
+        generateAdvice:
+          type: boolean
+          default: false
+          example: "true"
+          description: generate Advice
+        holdDescription1:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description1
+        holdDescription2:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description2
+        holdDescription3:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description3
+        holdDescription4:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description4
+        holdDescription5:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description5
+        holdDescription6:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description6

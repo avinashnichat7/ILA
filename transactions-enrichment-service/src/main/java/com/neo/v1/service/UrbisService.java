@@ -2,9 +2,13 @@ package com.neo.v1.service;
 
 import com.neo.v1.entity.urbis.AccountPendingTransactionEntity;
 import com.neo.v1.entity.urbis.AccountTransactionEntity;
+import com.neo.v1.entity.urbis.AccountTransactionHoldEntity;
 import com.neo.v1.reader.PropertyReader;
 import com.neo.v1.repository.urbis.TransactionsRepository;
+import com.neo.v1.transactions.enrichment.model.AccountTransactionHold;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
+import com.neo.v1.transactions.enrichment.model.TransactionHoldRequest;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,10 @@ public class UrbisService {
     public List<AccountPendingTransactionEntity> getPendingAccountTransactions(String customerId,
                                                                                AccountTransactionsRequest request) {
         return transactionsRepository.getPendingAccountTransactions(customerId, request, propertyReader.getPendingTransactionsPageSize());
+    }
+    
+    public List<AccountTransactionHoldEntity> getAccountTransactionsHold(String customerId, TransactionHoldRequest request) {
+        return transactionsRepository.getAccountTransactionsHold(customerId, request);
     }
 
 }

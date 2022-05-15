@@ -129,6 +129,9 @@ public class TransactionEnrichmentConstants {
     public static final String UPDATE_CATEGORY_SUCCESS_MSG = "com.neo.te.update.category.success.message";
     public static final String DELETE_CATEGORY_SUCCESS_CODE = "TRNE-1024";
     public static final String DELETE_CATEGORY_SUCCESS_MSG = "com.neo.te.delete.category.success.message";
+    public static final String TRANSACTION_HOLD_SUCCESS_CODE = "TRNE-1026";
+    public static final String TRANSACTION_HOLD_SUCCESS_MSG = "com.neo.te.hold.success.message";
+    
     public static final String CATEGORY_OTHER = "Other";
     public static final String REFERENCE = "REFERENCE";
     public static final String MERCHANT = "MERCHANT";
@@ -139,6 +142,7 @@ public class TransactionEnrichmentConstants {
     public static final String LINK_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE = "TRAN-2502";
     public static final String LINK_CATEGORY_INVALID_REFERENCE_ERROR_CODE = "TRAN-2503";
     public static final String LINK_CATEGORY_INVALID_LINK_TYPE_ERROR_CODE = "TRAN-2504";
+    public static final String ACCOUNT_ID_ERROR_CODE = "TRNE-2601";
     public static final String CUSTOMER_ID = "customerId";
     public static final String ACCOUNT_ID = "accountId";
     public static final String TRANSACTION_DATE = "transactionDate";

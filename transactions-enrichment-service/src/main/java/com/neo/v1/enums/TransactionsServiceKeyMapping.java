@@ -40,6 +40,7 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSFER_SERVI
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_COLOR_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_ICON_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_ID_ERROR_CODE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
@@ -173,8 +174,11 @@ public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
     CATEGORY_REFERENCE_NOT_FOUND(CATEGORY_REFERENCE_NOT_FOUND_ERROR_CODE,
             INTERNAL_SERVER_ERROR,
             "com.neo.te.link.category.reference.not.found.message",
-            "com.neo.te.link.category.reference.not.found.audit.message");
-
+            "com.neo.te.link.category.reference.not.found.audit.message"),
+    ACCOUNT_ID_REQUIRED(ACCOUNT_ID_ERROR_CODE,
+            INTERNAL_SERVER_ERROR,
+            "com.neo.te.account.id.required.message",
+            "com.neo.te.account.id.required.audit.message");
 
     private String code;
     private HttpStatus httpStatus;
