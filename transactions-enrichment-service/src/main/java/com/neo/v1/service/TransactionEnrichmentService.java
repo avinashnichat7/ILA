@@ -6,6 +6,7 @@ import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.enums.AccountTransactionStatusType;
 import com.neo.v1.enums.customer.RecordType;
+import com.neo.v1.mapper.AccountTransactionHoldMapper;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
 import com.neo.v1.mapper.CreateCategoryResponseMapper;
@@ -21,12 +22,16 @@ import com.neo.v1.model.customer.CustomerDetailData;
 import com.neo.v1.product.catalogue.model.CategoryDetail;
 import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
+import com.neo.v1.transactions.enrichment.model.AccountTransactionHold;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.TransactionHoldRequest;
+import com.neo.v1.transactions.enrichment.model.TransactionHoldResponse;
+import com.neo.v1.transactions.enrichment.model.TransactionHoldResponseData;
 import com.neo.v1.transactions.enrichment.model.TransactionLinkRequest;
 import com.neo.v1.transactions.enrichment.model.TransactionLinkResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
@@ -58,6 +63,8 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.REFERENCE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_TYPE_CHARITY_TRANSFER_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_MSG;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_MSG;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED_PENDING;
 import static com.neo.v1.enums.AccountTransactionStatusType.PENDING;
@@ -100,6 +107,7 @@ public class TransactionEnrichmentService {
     private final MerchantService merchantService;
     private final CustomerAccountTransactionCategoryEntityMapper customerAccountTransactionCategoryEntityMapper;
     private final CustomerMerchantCategoryEntityMapper customerMerchantCategoryEntityMapper;
+    private final AccountTransactionHoldMapper accountTransactionHoldMapper;
 
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
         request.setFilter(decodeString(request.getFilter()));
@@ -248,5 +256,14 @@ public class TransactionEnrichmentService {
             throw new ServiceException(LINK_CATEGORY_INVALID_LINK_TYPE);
         }
     }
+
+	public TransactionHoldResponse hold(TransactionHoldRequest transactionHoldRequest) {
+		List<AccountTransactionHold> transactionsHold = urbisService.getAccountTransactionsHold(getContext().getCustomerId(), transactionHoldRequest)
+                .stream().map(accountTransactionHoldMapper::map)
+                .collect(toList());
+		return TransactionHoldResponse.builder()
+				.meta(metaMapper.map(TRANSACTION_HOLD_SUCCESS_CODE, TRANSACTION_HOLD_SUCCESS_MSG))
+				.data(TransactionHoldResponseData.builder().transactions(transactionsHold).build()).build();
+	}
 
 }

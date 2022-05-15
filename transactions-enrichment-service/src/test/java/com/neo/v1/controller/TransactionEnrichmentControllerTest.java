@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
     private static final String URI_TRANSACTION_ENRICHMENT_ACCOUNT = "/api/v1/transactions-enrichment";
     private static final String URI_GET_CATEGORIES = "/api/v1/transactions-enrichment/category";
     private static final String URI_LINK_CATEGORIES = "/api/v1/transactions-enrichment/link";
+    private static final String URI_HOLD_CATEGORIES = "/api/v1/transactions-enrichment/hold";
 
     @Autowired
     private MockMvc mockMvc;
@@ -90,6 +91,14 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
     @Test
     void postTransactionsEnrichmentLink_withValidRequest_expectSuccess() throws Exception {
         mockMvc.perform(post(URI_LINK_CATEGORIES)
+                        .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
+                        .content(toJson(TransactionLinkResponse.builder().build())))
+                .andExpect(status().isOk());
+    }
+    
+    @Test
+    void postTransactionsEnrichmentHold_withValidRequest_expectSuccess() throws Exception {
+        mockMvc.perform(post(URI_HOLD_CATEGORIES)
                         .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
                         .content(toJson(TransactionLinkResponse.builder().build())))
                 .andExpect(status().isOk());

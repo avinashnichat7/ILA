@@ -3,8 +3,12 @@ package com.neo.v1.repository.urbis;
 import com.neo.core.exception.ServiceException;
 import com.neo.v1.entity.urbis.AccountPendingTransactionEntity;
 import com.neo.v1.entity.urbis.AccountTransactionEntity;
+import com.neo.v1.entity.urbis.AccountTransactionHoldEntity;
 import com.neo.v1.enums.TransactionsServiceKeyMapping;
+import com.neo.v1.transactions.enrichment.model.AccountTransactionHold;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
+import com.neo.v1.transactions.enrichment.model.TransactionHoldRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -35,6 +39,7 @@ public class TransactionsRepository {
 
     private static final String ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_AccountTransactionsV2";
     private static final String PENDING_ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_AccountPendingTransactionV2";
+    private static final String HOLD_ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_GetHoldTransactions";
 
     private static final String PARAM_CUSTOMER_ID = "customer_id";
     private static final String PARAM_ACCOUNT_ID = "id";
@@ -50,6 +55,7 @@ public class TransactionsRepository {
     private static final String PARAM_EXCLUDE_CARD_TRANSACTIONS = "exclude_card_transactions";
     private static final String PARAM_ERROR_CODE = "error_code";
     private static final String PARAM_ERROR_MESSAGE = "error_message";
+    private static final String PARAM_TARGET_TYPE = "target_type";
     private static final String ERROR_MESSAGE_VALUE = "Error";
     private static final Integer ERROR_CODE_VALUE = 1;
     private static final Integer DEFAULT_OFFSET = 0;
@@ -87,6 +93,21 @@ public class TransactionsRepository {
             throw new ServiceException(TransactionsServiceKeyMapping.URBIS_SERVICE_ERROR, pe);
         }
     }
+    
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_UNCOMMITTED, readOnly = true)
+    public List<AccountTransactionHoldEntity> getAccountTransactionsHold(String customerId, TransactionHoldRequest request) {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery(HOLD_ACCOUNT_TRANSACTIONS_PROCEDURE_NAME, AccountTransactionHoldEntity.class);
+            setHoldParameters(customerId, request, storedProcedure);
+            addParameter(storedProcedure, PARAM_PAGE_SIZE, isNull(request.getPageSize()) ? DEFAULT_PAGE_SIZE : request.getPageSize().intValue(), Integer.class, IN);
+            return storedProcedure.getResultList();
+        } catch (PersistenceException pe) {
+            if (pe.getMessage().contains(DATABASE_DOWN)) {
+                throw new ServiceException(TransactionsServiceKeyMapping.URBIS_SERVICE_DOWN, pe);
+            }
+            throw new ServiceException(TransactionsServiceKeyMapping.URBIS_SERVICE_ERROR, pe);
+        }
+    }
 
     private void setParameters(String customerId, AccountTransactionsRequest request, StoredProcedureQuery storedProcedure) {
         addParameter(storedProcedure, PARAM_CUSTOMER_ID, customerId, String.class, IN);
@@ -101,6 +122,23 @@ public class TransactionsRepository {
         addParameter(storedProcedure, PARAM_EXCLUDE_CARD_TRANSACTIONS, request.isExcludeCardTransactions(), Boolean.class, IN);
         String maskedCardNumber = StringUtils.isNotBlank(request.getMaskedCardNumber()) ? request.getMaskedCardNumber().replaceAll(CARD_NUMBER_MASK_CHARACTER, CARD_MASK_REPLACEMENT) : request.getMaskedCardNumber();
         addParameter(storedProcedure, PARAM_MASKED_CARD_NUMBER,maskedCardNumber, String.class, IN);
+        addParameter(storedProcedure, PARAM_ERROR_CODE, ERROR_CODE_VALUE, Integer.class, INOUT);
+        addParameter(storedProcedure, PARAM_ERROR_MESSAGE, ERROR_MESSAGE_VALUE, String.class, INOUT);
+    }
+    
+    private void setHoldParameters(String customerId, TransactionHoldRequest request, StoredProcedureQuery storedProcedure) {
+        addParameter(storedProcedure, PARAM_CUSTOMER_ID, customerId, String.class, IN);
+        addParameter(storedProcedure, PARAM_ACCOUNT_ID, request.getId(), String.class, IN);
+        addParameter(storedProcedure, PARAM_OFFSET, isNull(request.getOffset()) ? DEFAULT_OFFSET : request.getOffset().intValue(), Integer.class, IN);
+        addParameter(storedProcedure, PARAM_FILTER, request.getFilter(), String.class, IN);
+        addParameter(storedProcedure, PARAM_FROM_DATE, request.getFromDate(), LocalDate.class, IN);
+        addParameter(storedProcedure, PARAM_TO_DATE, request.getToDate(), LocalDate.class, IN);
+        addParameter(storedProcedure, PARAM_FROM_AMOUNT, request.getFromAmount(), BigDecimal.class, IN);
+        addParameter(storedProcedure, PARAM_TO_AMOUNT, request.getToAmount(), BigDecimal.class, IN);
+        addParameter(storedProcedure, PARAM_EXCLUDE_CARD_TRANSACTIONS, request.isExcludeCardTransactions(), Boolean.class, IN);
+        String maskedCardNumber = StringUtils.isNotBlank(request.getMaskedCardNumber()) ? request.getMaskedCardNumber().replaceAll(CARD_NUMBER_MASK_CHARACTER, CARD_MASK_REPLACEMENT) : request.getMaskedCardNumber();
+        addParameter(storedProcedure, PARAM_MASKED_CARD_NUMBER,maskedCardNumber, String.class, IN);
+        addParameter(storedProcedure, PARAM_TARGET_TYPE, request.getTargetType(), String.class, IN);
         addParameter(storedProcedure, PARAM_ERROR_CODE, ERROR_CODE_VALUE, Integer.class, INOUT);
         addParameter(storedProcedure, PARAM_ERROR_MESSAGE, ERROR_MESSAGE_VALUE, String.class, INOUT);
     }

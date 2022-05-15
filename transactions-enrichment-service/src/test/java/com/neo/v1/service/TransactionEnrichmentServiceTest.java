@@ -8,7 +8,9 @@ import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.entity.TmsxUrbisOperationTypesEntity;
+import com.neo.v1.entity.urbis.AccountTransactionHoldEntity;
 import com.neo.v1.enums.customer.RecordType;
+import com.neo.v1.mapper.AccountTransactionHoldMapper;
 import com.neo.v1.mapper.AccountTransactionsMapper;
 import com.neo.v1.mapper.AccountTransactionsResponseMapper;
 import com.neo.v1.mapper.CreateCategoryResponseMapper;
@@ -21,12 +23,17 @@ import com.neo.v1.model.customer.CustomerDetailData;
 import com.neo.v1.product.catalogue.model.CategoryDetail;
 import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
+import com.neo.v1.transactions.enrichment.model.AccountTransactionHold;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.Currency;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.TransactionHoldRequest;
+import com.neo.v1.transactions.enrichment.model.TransactionHoldResponse;
+import com.neo.v1.transactions.enrichment.model.TransactionHoldResponseData;
 import com.neo.v1.transactions.enrichment.model.TransactionLinkRequest;
 import com.neo.v1.transactions.enrichment.model.TransactionLinkResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
@@ -42,6 +49,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,6 +60,8 @@ import java.util.Optional;
 
 import static com.neo.v1.constants.TransactionEnrichmentConstants.MERCHANT;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.REFERENCE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_MSG;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_COLOR;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_ICON;
@@ -72,6 +82,7 @@ import static org.mockito.Mockito.when;
     @InjectMocks
     private  TransactionEnrichmentService subject;
 
+    private static final Integer GENERATE_ADVICE = 1;
     private static String ID = "123456789";
     private static String OPERTATION_TYPE = "EFT-NRT";
     private static final String LANGUAGE = "en";
@@ -124,6 +135,9 @@ import static org.mockito.Mockito.when;
 
     @Mock
     private CustomerMerchantCategoryEntityMapper customerMerchantCategoryEntityMapper;
+    
+    @Mock
+    private AccountTransactionHoldMapper accountTransactionHoldMapper;
 
     @BeforeEach
     void before() {
@@ -385,6 +399,95 @@ import static org.mockito.Mockito.when;
         when(customerCategoryRepository.findById(Long.parseLong(request.getCategoryId()))).thenReturn(Optional.of(CustomerCategoryEntity.builder().build()));
         when(customerMerchantCategoryEntityMapper.map(any(), any())).thenReturn(CustomerMerchantCategoryEntity.builder().build());
         TransactionLinkResponse result = subject.link(request);
+        assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+    
+    @Test
+    void hold_withTransactionHoldRequest_returnTransactionHoldResponse() {
+    	String transactionCurrencyCode = "XXXX";
+        String transactionCurrencyPlaces = "1";
+        String accountCurrencyCode = "XXXX";
+        String accountCurrencyPlaces = "1";
+        String id = "XXXX";
+        LocalDateTime transactionDate = LocalDateTime.now();
+        LocalDate valueDate = LocalDate.now();
+        String transactionType = "XXXX";
+        BigDecimal transactionExchangeRate = BigDecimal.valueOf(3);
+        String transactionDescription1 = "XXXX";
+        String transactionDescription2 = "XXXX";
+        String transactionDescription3 = "XXXX";
+        String transactionDescription4 = "XXXX";
+        String transactionDescription5 = "XXXX";
+        String transactionDescription6 = "XXXX";
+        BigDecimal amount = BigDecimal.valueOf(300.6834);
+        BigDecimal originalAmount = BigDecimal.valueOf(400.7134);
+        String reference = "XXXX";
+        BigDecimal previousBalance = BigDecimal.valueOf(598.900);
+        BigDecimal currentBalance = BigDecimal.valueOf(400.89);
+        Integer generateAdvice = 1;
+        String status = "completed";
+        
+        Currency accountCurrency = Currency.builder()
+                .code(accountCurrencyCode)
+                .decimalPlaces(accountCurrencyPlaces)
+                .build();
+
+    	TransactionHoldRequest request = TransactionHoldRequest.builder()
+                .build();
+        AccountTransactionHold accountTransactionHold = AccountTransactionHold.builder()
+                .id(id)
+                .holdDate(transactionDate)
+                .holdExpiryDate(valueDate)
+                .holdType(transactionType)
+                .holdCurrency(accountCurrency)
+                .holdDescription1(transactionDescription1)
+                .holdDescription2(transactionDescription2)
+                .holdDescription3(transactionDescription3)
+                .holdDescription4(transactionDescription4)
+                .holdDescription5(transactionDescription5)
+                .holdDescription6(transactionDescription6)
+                .holdAmount(amount.setScale(Integer.parseInt(transactionCurrencyPlaces), BigDecimal.ROUND_HALF_UP))
+                .holdReferenceNumber(reference)
+                .previousBalance(previousBalance)
+                .currentBalance(currentBalance)
+                .generateAdvice(GENERATE_ADVICE.equals(generateAdvice))
+                .build();
+        TransactionHoldResponseData transactionHoldResponseData = TransactionHoldResponseData.builder().transactions(Collections.singletonList(accountTransactionHold)).build();
+        TransactionHoldResponse expected = TransactionHoldResponse.builder()
+        		.data(transactionHoldResponseData)
+        		.meta(metaMapper.map(TRANSACTION_HOLD_SUCCESS_CODE, TRANSACTION_HOLD_SUCCESS_MSG))
+        		.build();
+ 
+        AccountTransactionHoldEntity accountTransactionHoldEntity = AccountTransactionHoldEntity.builder()
+                .id(id)
+                .transactionDate(transactionDate)
+                .valueDate(valueDate)
+                .holdExpiryDate(valueDate)
+                .transactionType(transactionType)
+                .transactionCurrency(transactionCurrencyCode)
+                .transactionCurrencyPlaces(transactionCurrencyPlaces)
+                .transactionExchangeRate(transactionExchangeRate)
+                .accountCurrency(accountCurrencyCode)
+                .accountCurrencyPlaces(accountCurrencyPlaces)
+                .transactionDescription1(transactionDescription1)
+                .transactionDescription2(transactionDescription2)
+                .transactionDescription3(transactionDescription3)
+                .transactionDescription4(transactionDescription4)
+                .transactionDescription5(transactionDescription5)
+                .transactionDescription6(transactionDescription6)
+                .amount(amount)
+                .originalAmount(originalAmount)
+                .reference(reference)
+                .previousBalance(previousBalance)
+                .currentBalance(currentBalance)
+                .generateAdvice(GENERATE_ADVICE)
+                .status(status)
+                .build();
+
+        List<AccountTransactionHoldEntity> accountTransactionHoldEntityList = Collections.singletonList(accountTransactionHoldEntity);
+        when(urbisService.getAccountTransactionsHold(CUSTOMER_ID, request)).thenReturn(accountTransactionHoldEntityList);
+        when(accountTransactionHoldMapper.map(accountTransactionHoldEntity)).thenReturn(accountTransactionHold);
+        TransactionHoldResponse result = subject.hold(request);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
     }
 }
