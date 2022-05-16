@@ -130,6 +130,7 @@ public class TransactionsRepository {
         addParameter(storedProcedure, PARAM_CUSTOMER_ID, customerId, String.class, IN);
         addParameter(storedProcedure, PARAM_ACCOUNT_ID, request.getId(), String.class, IN);
         addParameter(storedProcedure, PARAM_OFFSET, isNull(request.getOffset()) ? DEFAULT_OFFSET : request.getOffset().intValue(), Integer.class, IN);
+        addParameter(storedProcedure, PARAM_PAGE_SIZE, isNull(request.getPageSize()) ? DEFAULT_OFFSET : request.getPageSize().intValue(), Integer.class, IN);
         addParameter(storedProcedure, PARAM_FILTER, request.getFilter(), String.class, IN);
         addParameter(storedProcedure, PARAM_FROM_DATE, request.getFromDate(), LocalDate.class, IN);
         addParameter(storedProcedure, PARAM_TO_DATE, request.getToDate(), LocalDate.class, IN);

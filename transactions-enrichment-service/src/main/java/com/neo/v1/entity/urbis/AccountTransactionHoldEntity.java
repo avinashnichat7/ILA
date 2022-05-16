@@ -40,6 +40,10 @@ import lombok.Setter;
                                 type = Integer.class,
                                 mode = ParameterMode.IN),
                         @StoredProcedureParameter(
+                                name = "page_size",
+                                type = Integer.class,
+                                mode = ParameterMode.IN),
+                        @StoredProcedureParameter(
                                 name = "filter",
                                 type = String.class,
                                 mode = ParameterMode.IN),
@@ -58,10 +62,6 @@ import lombok.Setter;
                         @StoredProcedureParameter(
                                 name = "to_amount",
                                 type = BigDecimal.class,
-                                mode = ParameterMode.IN),
-                        @StoredProcedureParameter(
-                                name = "debit_credit_indicator",
-                                type = String.class,
                                 mode = ParameterMode.IN),
                         @StoredProcedureParameter(
                                 name = "error_code",
