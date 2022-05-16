@@ -99,7 +99,6 @@ public class TransactionsRepository {
         try {
             StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery(HOLD_ACCOUNT_TRANSACTIONS_PROCEDURE_NAME, AccountTransactionHoldEntity.class);
             setHoldParameters(customerId, request, storedProcedure);
-            addParameter(storedProcedure, PARAM_PAGE_SIZE, isNull(request.getPageSize()) ? DEFAULT_PAGE_SIZE : request.getPageSize().intValue(), Integer.class, IN);
             return storedProcedure.getResultList();
         } catch (PersistenceException pe) {
             if (pe.getMessage().contains(DATABASE_DOWN)) {
