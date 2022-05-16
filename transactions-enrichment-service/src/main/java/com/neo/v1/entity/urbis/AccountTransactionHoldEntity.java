@@ -64,6 +64,18 @@ import lombok.Setter;
                                 type = BigDecimal.class,
                                 mode = ParameterMode.IN),
                         @StoredProcedureParameter(
+                                name = "exclude_card_transactions",
+                                type = Boolean.class,
+                                mode = ParameterMode.IN),
+                        @StoredProcedureParameter(
+                                name = "target_type",
+                                type = String.class,
+                                mode = ParameterMode.IN),
+                        @StoredProcedureParameter(
+                                name = "masked_card_number",
+                                type = String.class,
+                                mode = ParameterMode.IN),
+                        @StoredProcedureParameter(
                                 name = "error_code",
                                 type = Integer.class,
                                 mode = ParameterMode.INOUT),
