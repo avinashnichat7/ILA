@@ -1,8 +1,6 @@
 package com.neo.v1.mapper;
 
-import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
-import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.product.catalogue.model.CategoryDetail;
 import com.neo.v1.product.catalogue.model.MerchantCodeDetail;
 import com.neo.v1.product.catalogue.model.MerchantDetail;
@@ -22,41 +20,13 @@ class MerchantCategoryMapperTest {
     MerchantCategoryMapper subject;
 
     @Test
-    void mapAccountTransactionCategory_withCustomerAccountTransactionCategoryEntity_returnSuccess() {
-        AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
-                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build()).build();
-        AccountTransaction transaction = AccountTransaction.builder().build();
-        CustomerAccountTransactionCategoryEntity customerAccountTransactionCategory = CustomerAccountTransactionCategoryEntity.builder()
-                .customerCategory(CustomerCategoryEntity.builder().name("cname").customerId("1").icon("icon").iconLabelUrl("iconLabelUrl").color("color").build()).build();
-        subject.mapAccountTransactionCategory(transaction, customerAccountTransactionCategory);
-        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(expected);
-    }
-
-    @Test
-    void mapAccountTransactionCategory_withNoCategoryEntity_returnSuccess() {
-        AccountTransaction transaction = AccountTransaction.builder().build();
-        CustomerAccountTransactionCategoryEntity customerAccountTransactionCategory = CustomerAccountTransactionCategoryEntity.builder().build();
-        subject.mapAccountTransactionCategory(transaction, customerAccountTransactionCategory);
-        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(transaction);
-    }
-
-    @Test
-    void mapAccountTransactionCategory_withCustomerMerchantCategoryEntity_returnSuccess() {
-        AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
-                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").isCustom(Boolean.TRUE).id("1").build()).build();
-        AccountTransaction transaction = AccountTransaction.builder().build();
-        CustomerMerchantCategoryEntity customerMerchantCategoryEntity = CustomerMerchantCategoryEntity.builder()
-                .customerCategory(CustomerCategoryEntity.builder().name("cname").customerId("1").id(1L).icon("icon").iconLabelUrl("iconLabelUrl").color("color").build()).build();
-        subject.mapAccountTransactionCategory(transaction, customerMerchantCategoryEntity);
-        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(expected);
-    }
-
-    @Test
     void mapAccountTransactionCategory_withNoCustomerMerchantCategoryEntity_returnSuccess() {
+        AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
+                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").isCustom(Boolean.TRUE).build()).build();
         AccountTransaction transaction = AccountTransaction.builder().build();
-        CustomerMerchantCategoryEntity customerMerchantCategoryEntity = CustomerMerchantCategoryEntity.builder().build();
-        subject.mapAccountTransactionCategory(transaction, customerMerchantCategoryEntity);
-        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(transaction);
+        CustomerCategoryEntity customerCategory = CustomerCategoryEntity.builder().name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build();
+        subject.mapCustomCategory(transaction, customerCategory);
+        assertThat(transaction).isEqualToComparingFieldByFieldRecursively(expected);
     }
 
     @Test
@@ -81,7 +51,7 @@ class MerchantCategoryMapperTest {
     @Test
     void mapAccountTransactionCategory_withMerchantCodeDetail_returnSuccess() {
         AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
-                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build()).build();
+                .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").isCustom(Boolean.FALSE).build()).build();
         AccountTransaction transaction = AccountTransaction.builder().build();
         MerchantCodeDetail merchantCodeDetail = MerchantCodeDetail.builder()
                 .contentfulMerchantCategory(CategoryDetail.builder().name("cname").icon("icon").iconLabelUrl("iconLabelUrl").color("color").build()).build();

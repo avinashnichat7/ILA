@@ -3,7 +3,6 @@ package com.neo.v1.mapper;
 import com.neo.core.context.GenericRestParamContextHolder;
 import com.neo.core.model.GenericRestParamDto;
 import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
-import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.TransactionLinkRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,12 +44,11 @@ class CustomerAccountTransactionCategoryEntityMapperTest {
         String iban = "iban";
         LocalDateTime dateTime = LocalDateTime.now();
         AccountTransaction accountTransaction = AccountTransaction.builder().reference(reference).transactionDate(dateTime).build();
-        CustomerCategoryEntity customerCategoryEntity = CustomerCategoryEntity.builder().build();
         TransactionLinkRequest request = TransactionLinkRequest.builder().iban(iban).build();
-        CustomerAccountTransactionCategoryEntity result = subject.map(accountTransaction, customerCategoryEntity, request);
+        CustomerAccountTransactionCategoryEntity result = subject.map(accountTransaction, "1", request);
         CustomerAccountTransactionCategoryEntity expected = CustomerAccountTransactionCategoryEntity.builder()
                 .customerId(CUSTOMER_ID).isCustom(Boolean.TRUE).active(Boolean.TRUE).transactionDate(dateTime)
-                .updatedDate(result.getUpdatedDate()).createdDate(result.getCreatedDate()).customerCategory(customerCategoryEntity)
+                .updatedDate(result.getUpdatedDate()).createdDate(result.getCreatedDate()).categoryId("1")
                 .accountId(iban).transactionReference(reference).build();
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
     }

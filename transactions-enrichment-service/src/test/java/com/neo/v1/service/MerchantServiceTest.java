@@ -10,6 +10,7 @@ import com.neo.v1.product.catalogue.model.MerchantCodeDetail;
 import com.neo.v1.product.catalogue.model.MerchantDetail;
 import com.neo.v1.repository.CustomerAccountTransactionCategoryCustomRepository;
 import com.neo.v1.repository.CustomerAccountTransactionCategoryRepository;
+import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.repository.CustomerMerchantCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
@@ -49,6 +50,8 @@ class MerchantServiceTest {
     private MerchantCategoryMapper merchantCategoryMapper;
     @Mock
     private CustomerAccountTransactionCategoryRepository customerAccountTransactionCategoryRepository;
+    @Mock
+    private CustomerCategoryRepository customerCategoryRepository;
     private static final String LANGUAGE = "en";
     private static final String UNIT = "neo";
     private static final String CUSTOMER_ID = "C1234";
@@ -84,6 +87,60 @@ class MerchantServiceTest {
     }
 
     @Test
+    void mapMerchantCategory_returnMerchantCategorySuccess() {
+        AccountTransactionsRequest request = AccountTransactionsRequest.builder()
+                .status("pending")
+                .id("1")
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .build();
+        MerchantDetail merchantDetail = MerchantDetail.builder().build();
+        Map<String, MerchantDetail> merchantDetailsCache = new HashMap<>();
+        merchantDetailsCache.put("Other", merchantDetail);
+        MerchantService.setCachedMerchantData(merchantDetailsCache);
+        AccountTransaction accountTransaction = AccountTransaction.builder().merchantName("name").build();
+        CustomerCategoryEntity customerCategory = CustomerCategoryEntity.builder().build();
+        CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = CustomerAccountTransactionCategoryEntity.builder().transactionReference("Other").customerId(CUSTOMER_ID)
+                .categoryId("1").isCustom(Boolean.TRUE).build();
+        List<AccountTransaction> transactions = Collections.singletonList(accountTransaction);
+        when(customerAccountTransactionCategoryCustomRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay()))
+                .thenReturn(Collections.singletonList(customerAccountTransactionCategoryEntity));
+        when(customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE))
+                .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").categoryId("1").isCustom(Boolean.TRUE).build()));
+        when(customerCategoryRepository.findByIdAndActive(1L, Boolean.TRUE)).thenReturn(customerCategory);
+        merchantService.mapMerchantCategory(transactions, request);
+        verify(merchantCategoryMapper).mapCustomCategory(accountTransaction, customerCategory);
+    }
+
+    @Test
+    void mapMerchantCategory_returnAccountTransactionCategorySuccess() {
+        AccountTransactionsRequest request = AccountTransactionsRequest.builder()
+                .status("pending")
+                .id("1")
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .build();
+        MerchantDetail merchantDetail = MerchantDetail.builder().build();
+        Map<String, MerchantDetail> merchantDetailsCache = new HashMap<>();
+        merchantDetailsCache.put("name", merchantDetail);
+        MerchantService.setCachedMerchantData(merchantDetailsCache);
+        AccountTransaction accountTransaction = AccountTransaction.builder().merchantName("name").build();
+        CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = CustomerAccountTransactionCategoryEntity.builder().transactionReference("Other").customerId(CUSTOMER_ID)
+                .categoryId("1").isCustom(Boolean.TRUE).build();
+        List<AccountTransaction> transactions = Collections.singletonList(accountTransaction);
+        when(customerAccountTransactionCategoryCustomRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay()))
+                .thenReturn(Collections.singletonList(customerAccountTransactionCategoryEntity));
+        when(customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE))
+                .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").categoryId("1").isCustom(Boolean.FALSE).build()));
+        merchantService.mapMerchantCategory(transactions, request);
+        verify(merchantCategoryMapper).mapAccountTransactionCategory(accountTransaction, merchantDetail);
+    }
+
+    @Test
     void mapMerchantCategory_returnSuccess() {
         AccountTransactionsRequest request = AccountTransactionsRequest.builder()
                 .status("pending")
@@ -99,7 +156,7 @@ class MerchantServiceTest {
         MerchantService.setCachedMerchantData(merchantDetailsCache);
         AccountTransaction accountTransaction = AccountTransaction.builder().merchantName("name123").build();
         CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = CustomerAccountTransactionCategoryEntity.builder().transactionReference("Other").customerId(CUSTOMER_ID)
-                .customerCategory(CustomerCategoryEntity.builder().name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build()).build();
+                .categoryId("1").build();
         List<AccountTransaction> transactions = Collections.singletonList(accountTransaction);
         when(customerAccountTransactionCategoryCustomRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay()))
                 .thenReturn(Collections.singletonList(customerAccountTransactionCategoryEntity));
@@ -119,16 +176,44 @@ class MerchantServiceTest {
                 .fromDate(LocalDate.now())
                 .toDate(LocalDate.now())
                 .build();
+        CustomerCategoryEntity customerCategory = CustomerCategoryEntity.builder().build();
         AccountTransaction accountTransaction = AccountTransaction.builder().merchantName("name123").reference("Other").build();
         CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = CustomerAccountTransactionCategoryEntity.builder().transactionReference("Other").customerId(CUSTOMER_ID)
-                .customerCategory(CustomerCategoryEntity.builder().name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build()).build();
+                .categoryId("1").isCustom(Boolean.TRUE).build();
+        List<AccountTransaction> transactions = Collections.singletonList(accountTransaction);
+        when(customerAccountTransactionCategoryCustomRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay()))
+                .thenReturn(Collections.singletonList(customerAccountTransactionCategoryEntity));
+        when(customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE))
+                .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").build()));
+        when(customerCategoryRepository.findByIdAndActive(1L, Boolean.TRUE)).thenReturn(customerCategory);
+        merchantService.mapMerchantCategory(transactions, request);
+        verify(merchantCategoryMapper).mapCustomCategory(accountTransaction, customerCategory);
+    }
+
+    @Test
+    void mapMerchantCategory_returnCustomCustomerAccountTransactionCategoryEntity() {
+        AccountTransactionsRequest request = AccountTransactionsRequest.builder()
+                .status("pending")
+                .id("1")
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .build();
+        MerchantDetail merchantDetail = MerchantDetail.builder().build();
+        Map<String, MerchantDetail> merchantDetailsCache = new HashMap<>();
+        merchantDetailsCache.put("name", merchantDetail);
+        MerchantService.setCachedMerchantData(merchantDetailsCache);
+        AccountTransaction accountTransaction = AccountTransaction.builder().merchantName("name").reference("Other").build();
+        CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = CustomerAccountTransactionCategoryEntity.builder().transactionReference("Other").customerId(CUSTOMER_ID)
+                .categoryId("1").isCustom(Boolean.FALSE).build();
         List<AccountTransaction> transactions = Collections.singletonList(accountTransaction);
         when(customerAccountTransactionCategoryCustomRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay()))
                 .thenReturn(Collections.singletonList(customerAccountTransactionCategoryEntity));
         when(customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE))
                 .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").build()));
         merchantService.mapMerchantCategory(transactions, request);
-        verify(merchantCategoryMapper).mapAccountTransactionCategory(accountTransaction, customerAccountTransactionCategoryEntity);
+        verify(merchantCategoryMapper).mapAccountTransactionCategory(accountTransaction, merchantDetail);
     }
 
     @Test

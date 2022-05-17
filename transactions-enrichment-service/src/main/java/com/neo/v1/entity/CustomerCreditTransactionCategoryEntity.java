@@ -45,9 +45,8 @@ public class CustomerCreditTransactionCategoryEntity {
     @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    private CustomerCategoryEntity customerCategory;
+    @Column(name = "category_id")
+    private String categoryId;
 
     @Column(name = "is_custom")
     private boolean isCustom;
