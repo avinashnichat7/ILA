@@ -9,4 +9,6 @@ import java.util.List;
 public interface CustomerAccountTransactionCategoryRepository extends JpaRepository<CustomerAccountTransactionCategoryEntity, Long> {
 
     List<CustomerAccountTransactionCategoryEntity> findByAccountIdAndCustomerIdAndTransactionDateBetween(String accountId, String customerId, LocalDateTime fromDate, LocalDateTime toDate);
+
+    CustomerAccountTransactionCategoryEntity findByCustomerIdAndCategoryIdAndActive(String customerId, String categoryId, boolean isActive);
 }

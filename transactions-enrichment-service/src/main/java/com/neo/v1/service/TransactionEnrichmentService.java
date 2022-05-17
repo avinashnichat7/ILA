@@ -68,7 +68,6 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HO
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED_PENDING;
 import static com.neo.v1.enums.AccountTransactionStatusType.PENDING;
-import static com.neo.v1.enums.TransactionsServiceKeyMapping.CATEGORY_REFERENCE_NOT_FOUND;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.DELETE_CATEGORY_INVALID_CATEGORY_ID;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY_ID;
@@ -228,13 +227,11 @@ public class TransactionEnrichmentService {
     public TransactionLinkResponse link(TransactionLinkRequest request) {
         validateCategoryLinkRequest(request);
         AccountTransaction transactionDetail = transactionService.getTransactionDetail(request.getIban(), request.getTransactionReference());
-        CustomerCategoryEntity customerCategoryEntity = customerCategoryRepository.findById(Long.parseLong(request.getCategoryId()))
-                .orElseThrow(() -> new ServiceException(CATEGORY_REFERENCE_NOT_FOUND));
         if(REFERENCE.equalsIgnoreCase(request.getLinkType())) {
-            CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = customerAccountTransactionCategoryEntityMapper.map(transactionDetail, customerCategoryEntity, request);
+            CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = customerAccountTransactionCategoryEntityMapper.map(transactionDetail, request.getCategoryId(), request);
             merchantService.saveCustomerAccountTransactionCategory(customerAccountTransactionCategoryEntity);
         } else if(MERCHANT.equalsIgnoreCase(request.getLinkType())) {
-            CustomerMerchantCategoryEntity customerMerchantCategoryEntity = customerMerchantCategoryEntityMapper.map(transactionDetail, customerCategoryEntity);
+            CustomerMerchantCategoryEntity customerMerchantCategoryEntity = customerMerchantCategoryEntityMapper.map(transactionDetail, request.getCategoryId());
             merchantService.saveCustomerMerchantCategory(customerMerchantCategoryEntity);
         } else {
             throw new ServiceException(LINK_CATEGORY_INVALID_LINK_TYPE);

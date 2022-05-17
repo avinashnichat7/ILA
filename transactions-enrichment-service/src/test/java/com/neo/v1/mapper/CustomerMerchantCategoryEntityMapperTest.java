@@ -2,7 +2,6 @@ package com.neo.v1.mapper;
 
 import com.neo.core.context.GenericRestParamContextHolder;
 import com.neo.core.model.GenericRestParamDto;
-import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,11 +42,10 @@ class CustomerMerchantCategoryEntityMapperTest {
         String reference = "reference";
         LocalDateTime dateTime = LocalDateTime.now();
         AccountTransaction accountTransaction = AccountTransaction.builder().reference(reference).transactionDate(dateTime).build();
-        CustomerCategoryEntity customerCategoryEntity = CustomerCategoryEntity.builder().build();
-            CustomerMerchantCategoryEntity result = subject.map(accountTransaction, customerCategoryEntity);
+            CustomerMerchantCategoryEntity result = subject.map(accountTransaction, "1");
         CustomerMerchantCategoryEntity expected = CustomerMerchantCategoryEntity.builder()
                 .customerId(CUSTOMER_ID).isCustom(Boolean.TRUE).active(Boolean.TRUE)
-                .updatedDate(result.getUpdatedDate()).createdDate(result.getCreatedDate()).customerCategory(customerCategoryEntity)
+                .updatedDate(result.getUpdatedDate()).createdDate(result.getCreatedDate()).categoryId("1")
                 .build();
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
     }
