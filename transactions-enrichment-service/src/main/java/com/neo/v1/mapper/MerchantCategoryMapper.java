@@ -16,6 +16,7 @@ public class MerchantCategoryMapper {
     public void mapCustomCategory(AccountTransaction transactions, CustomerCategoryEntity customerCategory) {
         if(Objects.nonNull(customerCategory)) {
             EnrichedTransactionCategory enrichedTransactionCategory = EnrichedTransactionCategory.builder()
+                    .id(customerCategory.getId().toString())
                     .name(customerCategory.getName())
                     .icon(customerCategory.getIcon())
                     .iconLabelUrl(customerCategory.getIconLabelUrl())

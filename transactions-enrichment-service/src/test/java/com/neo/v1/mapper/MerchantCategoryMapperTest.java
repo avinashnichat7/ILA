@@ -21,10 +21,10 @@ class MerchantCategoryMapperTest {
 
     @Test
     void mapAccountTransactionCategory_withNoCustomerMerchantCategoryEntity_returnSuccess() {
-        AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder()
+        AccountTransaction expected = AccountTransaction.builder().enrichedTransactionCategory(EnrichedTransactionCategory.builder().id("1")
                 .name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").isCustom(Boolean.TRUE).build()).build();
         AccountTransaction transaction = AccountTransaction.builder().build();
-        CustomerCategoryEntity customerCategory = CustomerCategoryEntity.builder().name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build();
+        CustomerCategoryEntity customerCategory = CustomerCategoryEntity.builder().id(1L).name("cname").icon("icon").color("color").iconLabelUrl("iconLabelUrl").build();
         subject.mapCustomCategory(transaction, customerCategory);
         assertThat(transaction).isEqualToComparingFieldByFieldRecursively(expected);
     }
