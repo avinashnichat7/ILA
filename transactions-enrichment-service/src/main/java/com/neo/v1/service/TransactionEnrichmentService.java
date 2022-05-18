@@ -1,5 +1,6 @@
 package com.neo.v1.service;
 
+import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
 import com.neo.core.exception.ServiceException;
 import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
@@ -47,6 +48,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -227,16 +229,38 @@ public class TransactionEnrichmentService {
     public TransactionLinkResponse link(TransactionLinkRequest request) {
         validateCategoryLinkRequest(request);
         AccountTransaction transactionDetail = transactionService.getTransactionDetail(request.getIban(), request.getTransactionReference());
+        boolean isCustom = checkCategoryType(request);
         if(REFERENCE.equalsIgnoreCase(request.getLinkType())) {
-            CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = customerAccountTransactionCategoryEntityMapper.map(transactionDetail, request.getCategoryId(), request);
+            CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = customerAccountTransactionCategoryEntityMapper.map(transactionDetail, request.getCategoryId(), request, isCustom);
             merchantService.saveCustomerAccountTransactionCategory(customerAccountTransactionCategoryEntity);
         } else if(MERCHANT.equalsIgnoreCase(request.getLinkType())) {
-            CustomerMerchantCategoryEntity customerMerchantCategoryEntity = customerMerchantCategoryEntityMapper.map(transactionDetail, request.getCategoryId());
+            CustomerMerchantCategoryEntity customerMerchantCategoryEntity = customerMerchantCategoryEntityMapper.map(transactionDetail, request.getCategoryId(), isCustom);
             merchantService.saveCustomerMerchantCategory(customerMerchantCategoryEntity);
         } else {
             throw new ServiceException(LINK_CATEGORY_INVALID_LINK_TYPE);
         }
         return TransactionLinkResponse.builder().meta(metaMapper.map(LINK_CATEGORY_SUCCESS_CODE, LINK_CATEGORY_SUCCESS_MSG)).build();
+    }
+
+    private boolean checkCategoryType(TransactionLinkRequest request) {
+        boolean isCustom = false;
+        List<CategoryDetail> merchantCategoryList = productCatalogueService.getProductCatalogueMerchantCategory();
+        CategoryDetail predefinedCategory = merchantCategoryList.stream().filter(c -> c.getId().equalsIgnoreCase(request.getCategoryId())).findFirst().orElse(null);
+        if(Objects.isNull(predefinedCategory)) {
+            boolean isNumber = StringUtils.isNumeric(request.getCategoryId());
+            if (isNumber) {
+                Long categoryId = Long.parseLong(request.getCategoryId());
+                CustomerCategoryEntity customerCategoryEntity = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE);
+                if (Objects.isNull(customerCategoryEntity)) {
+                    throw new ServiceException(LINK_CATEGORY_INVALID_CATEGORY_ID);
+                } else {
+                    isCustom = true;
+                }
+            } else {
+                throw new ServiceException(LINK_CATEGORY_INVALID_CATEGORY_ID);
+            }
+        }
+        return isCustom;
     }
 
     void validateCategoryLinkRequest(TransactionLinkRequest request) {

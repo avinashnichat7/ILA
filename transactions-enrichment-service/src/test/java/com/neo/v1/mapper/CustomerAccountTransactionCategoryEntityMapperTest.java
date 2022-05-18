@@ -45,7 +45,7 @@ class CustomerAccountTransactionCategoryEntityMapperTest {
         LocalDateTime dateTime = LocalDateTime.now();
         AccountTransaction accountTransaction = AccountTransaction.builder().reference(reference).transactionDate(dateTime).build();
         TransactionLinkRequest request = TransactionLinkRequest.builder().iban(iban).build();
-        CustomerAccountTransactionCategoryEntity result = subject.map(accountTransaction, "1", request);
+        CustomerAccountTransactionCategoryEntity result = subject.map(accountTransaction, "1", request, true);
         CustomerAccountTransactionCategoryEntity expected = CustomerAccountTransactionCategoryEntity.builder()
                 .customerId(CUSTOMER_ID).isCustom(Boolean.TRUE).active(Boolean.TRUE).transactionDate(dateTime)
                 .updatedDate(result.getUpdatedDate()).createdDate(result.getCreatedDate()).categoryId("1")

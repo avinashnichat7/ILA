@@ -42,7 +42,7 @@ class CustomerMerchantCategoryEntityMapperTest {
         String reference = "reference";
         LocalDateTime dateTime = LocalDateTime.now();
         AccountTransaction accountTransaction = AccountTransaction.builder().reference(reference).transactionDate(dateTime).build();
-            CustomerMerchantCategoryEntity result = subject.map(accountTransaction, "1");
+            CustomerMerchantCategoryEntity result = subject.map(accountTransaction, "1", true);
         CustomerMerchantCategoryEntity expected = CustomerMerchantCategoryEntity.builder()
                 .customerId(CUSTOMER_ID).isCustom(Boolean.TRUE).active(Boolean.TRUE)
                 .updatedDate(result.getUpdatedDate()).createdDate(result.getCreatedDate()).categoryId("1")
