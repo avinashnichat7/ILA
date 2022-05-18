@@ -380,7 +380,8 @@ import static org.mockito.Mockito.when;
                 .build();
         TransactionLinkResponse expected = TransactionLinkResponse.builder().build();
         when(transactionService.getTransactionDetail(request.getIban(), request.getTransactionReference())).thenReturn(AccountTransaction.builder().build());
-        when(customerAccountTransactionCategoryEntityMapper.map(any(), any(), any())).thenReturn(CustomerAccountTransactionCategoryEntity.builder().build());
+        when(customerAccountTransactionCategoryEntityMapper.map(any(), any(), any(), anyBoolean())).thenReturn(CustomerAccountTransactionCategoryEntity.builder().build());
+        when(customerCategoryRepository.findByIdAndActive(1L, Boolean.TRUE)).thenReturn(CustomerCategoryEntity.builder().build());
         TransactionLinkResponse result = subject.link(request);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
     }
@@ -395,7 +396,8 @@ import static org.mockito.Mockito.when;
                 .build();
         TransactionLinkResponse expected = TransactionLinkResponse.builder().build();
         when(transactionService.getTransactionDetail(request.getIban(), request.getTransactionReference())).thenReturn(AccountTransaction.builder().build());
-        when(customerMerchantCategoryEntityMapper.map(any(), any())).thenReturn(CustomerMerchantCategoryEntity.builder().build());
+        when(customerMerchantCategoryEntityMapper.map(any(), any(), anyBoolean())).thenReturn(CustomerMerchantCategoryEntity.builder().build());
+        when(customerCategoryRepository.findByIdAndActive(1L, Boolean.TRUE)).thenReturn(CustomerCategoryEntity.builder().build());
         TransactionLinkResponse result = subject.link(request);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
     }

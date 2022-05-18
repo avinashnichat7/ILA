@@ -11,12 +11,12 @@ import static com.neo.core.context.GenericRestParamContextHolder.getContext;
 @Component
 public class CustomerMerchantCategoryEntityMapper {
 
-    public CustomerMerchantCategoryEntity map(AccountTransaction accountTransaction, String customerCategoryId) {
+    public CustomerMerchantCategoryEntity map(AccountTransaction accountTransaction, String customerCategoryId, boolean isCustom) {
         return CustomerMerchantCategoryEntity.builder()
                 .customerId(getContext().getCustomerId())
                 .name(accountTransaction.getMerchantName())
                 .categoryId(customerCategoryId)
-                .isCustom(Boolean.TRUE)
+                .isCustom(isCustom)
                 .active(Boolean.TRUE)
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
