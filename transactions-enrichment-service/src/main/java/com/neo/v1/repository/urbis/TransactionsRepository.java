@@ -9,6 +9,7 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionHold;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.TransactionHoldRequest;
 
+import joptsimple.internal.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -24,6 +25,7 @@ import javax.persistence.StoredProcedureQuery;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CARD_MASK_REPLACEMENT;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CARD_NUMBER_MASK_CHARACTER;
@@ -37,11 +39,12 @@ import static javax.persistence.ParameterMode.INOUT;
 @Slf4j
 public class TransactionsRepository {
 
-    private static final String ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_AccountTransactionsV2";
+    private static final String ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_AccountTransactionsV3";
     private static final String PENDING_ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_AccountPendingTransactionV2";
     private static final String HOLD_ACCOUNT_TRANSACTIONS_PROCEDURE_NAME = "API_GetHoldTransactions";
 
     private static final String PARAM_CUSTOMER_ID = "customer_id";
+    private static final String KANZ_FILTER = "kanz_filter";
     private static final String PARAM_ACCOUNT_ID = "id";
     private static final String PARAM_OFFSET = "offset";
     private static final String PARAM_PAGE_SIZE = "page_size";
@@ -121,6 +124,7 @@ public class TransactionsRepository {
         addParameter(storedProcedure, PARAM_EXCLUDE_CARD_TRANSACTIONS, request.isExcludeCardTransactions(), Boolean.class, IN);
         String maskedCardNumber = StringUtils.isNotBlank(request.getMaskedCardNumber()) ? request.getMaskedCardNumber().replaceAll(CARD_NUMBER_MASK_CHARACTER, CARD_MASK_REPLACEMENT) : request.getMaskedCardNumber();
         addParameter(storedProcedure, PARAM_MASKED_CARD_NUMBER,maskedCardNumber, String.class, IN);
+        addParameter(storedProcedure, KANZ_FILTER, Optional.ofNullable(request.getKanzFilter()).orElse(Strings.EMPTY), String.class, IN);
         addParameter(storedProcedure, PARAM_ERROR_CODE, ERROR_CODE_VALUE, Integer.class, INOUT);
         addParameter(storedProcedure, PARAM_ERROR_MESSAGE, ERROR_MESSAGE_VALUE, String.class, INOUT);
     }

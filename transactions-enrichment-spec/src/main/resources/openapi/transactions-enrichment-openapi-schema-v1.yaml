@@ -282,6 +282,10 @@ components:
           type: boolean
           example: Mohammed
           description: Gift receiver name
+        kanzFilter:
+          type: string
+          example: kanz
+          description: kanz filter
     AccountTransactionsResponse:
       type: object
       properties:
