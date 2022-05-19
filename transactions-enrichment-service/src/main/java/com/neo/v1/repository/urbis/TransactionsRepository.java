@@ -72,6 +72,7 @@ public class TransactionsRepository {
         try {
             StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery(ACCOUNT_TRANSACTIONS_PROCEDURE_NAME, AccountTransactionEntity.class);
             setParameters(customerId, request, storedProcedure);
+            addParameter(storedProcedure, KANZ_FILTER, Optional.ofNullable(request.getKanzFilter()).orElse(Strings.EMPTY), String.class, IN);
             addParameter(storedProcedure, PARAM_PAGE_SIZE, isNull(request.getPageSize()) ? DEFAULT_PAGE_SIZE : request.getPageSize().intValue(), Integer.class, IN);
             return storedProcedure.getResultList();
         } catch (PersistenceException pe) {
@@ -124,7 +125,6 @@ public class TransactionsRepository {
         addParameter(storedProcedure, PARAM_EXCLUDE_CARD_TRANSACTIONS, request.isExcludeCardTransactions(), Boolean.class, IN);
         String maskedCardNumber = StringUtils.isNotBlank(request.getMaskedCardNumber()) ? request.getMaskedCardNumber().replaceAll(CARD_NUMBER_MASK_CHARACTER, CARD_MASK_REPLACEMENT) : request.getMaskedCardNumber();
         addParameter(storedProcedure, PARAM_MASKED_CARD_NUMBER,maskedCardNumber, String.class, IN);
-        addParameter(storedProcedure, KANZ_FILTER, Optional.ofNullable(request.getKanzFilter()).orElse(Strings.EMPTY), String.class, IN);
         addParameter(storedProcedure, PARAM_ERROR_CODE, ERROR_CODE_VALUE, Integer.class, INOUT);
         addParameter(storedProcedure, PARAM_ERROR_MESSAGE, ERROR_MESSAGE_VALUE, String.class, INOUT);
     }
