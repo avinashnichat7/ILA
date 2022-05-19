@@ -232,10 +232,10 @@ public class TransactionEnrichmentService {
         boolean isCustom = checkCategoryType(request);
         if(REFERENCE.equalsIgnoreCase(request.getLinkType())) {
             CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = customerAccountTransactionCategoryEntityMapper.map(transactionDetail, request.getCategoryId(), request, isCustom);
-            merchantService.saveCustomerAccountTransactionCategory(customerAccountTransactionCategoryEntity);
+            merchantService.saveOrUpdateCustomerAccountTransactionCategory(customerAccountTransactionCategoryEntity);
         } else if(MERCHANT.equalsIgnoreCase(request.getLinkType())) {
             CustomerMerchantCategoryEntity customerMerchantCategoryEntity = customerMerchantCategoryEntityMapper.map(transactionDetail, request.getCategoryId(), isCustom);
-            merchantService.saveCustomerMerchantCategory(customerMerchantCategoryEntity);
+            merchantService.saveOrUpdateCustomerMerchantCategory(customerMerchantCategoryEntity);
         } else {
             throw new ServiceException(LINK_CATEGORY_INVALID_LINK_TYPE);
         }

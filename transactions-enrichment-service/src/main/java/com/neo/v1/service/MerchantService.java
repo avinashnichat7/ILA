@@ -118,12 +118,18 @@ public class MerchantService {
     }
 
     @Transactional
-    public void saveCustomerAccountTransactionCategory(CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity) {
+    public void saveOrUpdateCustomerAccountTransactionCategory(CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity) {
+        CustomerAccountTransactionCategoryEntity customerAccountTransactionCategory = Optional.ofNullable(customerAccountTransactionCategoryRepository.findByAccountIdAndTransactionReference(customerAccountTransactionCategoryEntity.getAccountId(), customerAccountTransactionCategoryEntity.getTransactionReference()))
+                .orElse(CustomerAccountTransactionCategoryEntity.builder().build());
+        customerAccountTransactionCategoryEntity.setId(customerAccountTransactionCategory.getId());
         customerAccountTransactionCategoryRepository.save(customerAccountTransactionCategoryEntity);
     }
 
     @Transactional
-    public void saveCustomerMerchantCategory(CustomerMerchantCategoryEntity customerMerchantCategoryEntity) {
+    public void saveOrUpdateCustomerMerchantCategory(CustomerMerchantCategoryEntity customerMerchantCategoryEntity) {
+        CustomerMerchantCategoryEntity merchantCategoryEntity = Optional.ofNullable(customerMerchantCategoryRepository.findByCustomerIdAndName(customerMerchantCategoryEntity.getCustomerId(), customerMerchantCategoryEntity.getName()))
+                .orElse(CustomerMerchantCategoryEntity.builder().build());
+        customerMerchantCategoryEntity.setId(merchantCategoryEntity.getId());
         customerMerchantCategoryRepository.save(customerMerchantCategoryEntity);
     }
 

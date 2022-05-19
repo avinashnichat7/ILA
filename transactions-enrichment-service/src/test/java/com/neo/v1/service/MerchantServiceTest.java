@@ -233,14 +233,14 @@ class MerchantServiceTest {
     @Test
     void saveCustomerAccountTransactionCategory_returnSuccess() {
         CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = CustomerAccountTransactionCategoryEntity.builder().build();
-        merchantService.saveCustomerAccountTransactionCategory(customerAccountTransactionCategoryEntity);
+        merchantService.saveOrUpdateCustomerAccountTransactionCategory(customerAccountTransactionCategoryEntity);
         verify(customerAccountTransactionCategoryRepository).save(customerAccountTransactionCategoryEntity);
     }
 
     @Test
     void saveCustomerMerchantCategory_returnSuccess() {
         CustomerMerchantCategoryEntity customerMerchantCategoryEntity = CustomerMerchantCategoryEntity.builder().build();
-        merchantService.saveCustomerMerchantCategory(customerMerchantCategoryEntity);
+        merchantService.saveOrUpdateCustomerMerchantCategory(customerMerchantCategoryEntity);
         verify(customerMerchantCategoryRepository).save(customerMerchantCategoryEntity);
     }
 
