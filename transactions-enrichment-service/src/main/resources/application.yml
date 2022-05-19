@@ -75,6 +75,10 @@ te:
     service:
       base:
         url: http://localhost:8081/api/v1/credit-cards
+  dispute:
+    service:
+      base:
+        url: http://localhost:8081/api/v1/dispute
 
   urbis:
     service:

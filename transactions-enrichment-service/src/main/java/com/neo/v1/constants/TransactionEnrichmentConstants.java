@@ -151,7 +151,10 @@ public class TransactionEnrichmentConstants {
     public static final String CREDIT_CARD_SERVICE_DOWN_MESSAGE = "com.neo.te.credit.card.down.message";
     public static final String CREDIT_CARD_SERVICE_DOWN_AUDIT_MESSAGE = "com.neo.te.credit.card.down.audit.message";
 
-    
+    public static final String DEBIT = "debit";
+    public static final String CREDIT = "credit";
+
+
     static {
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(1L, OPERATION_TYPE_FAWRI);
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(2L, OPERATION_TYPE_FAWRIPLUS);

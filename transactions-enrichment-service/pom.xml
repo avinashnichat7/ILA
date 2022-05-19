@@ -32,9 +32,15 @@
         <build-helper-maven-plugin.version>1.9.1</build-helper-maven-plugin.version>
         <neo-test.version>0.0.11</neo-test.version>
         <product-catalogue-spec.version>feature-transactions-enrichment-1.0.0-20220512-073910</product-catalogue-spec.version>
+        <dispute-spec.version>feature-dispute-transaction-1.0.0-20220510-105310</dispute-spec.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.neo</groupId>
+            <artifactId>dispute-spec</artifactId>
+            <version>${dispute-spec.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.neo</groupId>

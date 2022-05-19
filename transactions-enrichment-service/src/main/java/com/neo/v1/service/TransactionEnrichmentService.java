@@ -58,6 +58,8 @@ import java.util.stream.Collectors;
 import static com.neo.core.context.GenericRestParamContextHolder.getContext;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREDIT;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.DEBIT;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.FAWRI_TRANSACTION_TYPE_FOR_PENDING;
@@ -113,11 +115,13 @@ public class TransactionEnrichmentService {
     private final CustomerMerchantCategoryEntityMapper customerMerchantCategoryEntityMapper;
     private final AccountTransactionHoldMapper accountTransactionHoldMapper;
     private final CreditCardService creditCardService;
+    private final DisputeService disputeService;
 
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
         request.setFilter(decodeString(request.getFilter()));
         List<AccountTransaction> transactions = new ArrayList<>();
         AccountTransactionStatusType statusType = AccountTransactionStatusType.forValue(request.getStatus());
+        String target = request.getDebitCreditIndicator();
         if (FAILED_PENDING == statusType || PENDING == statusType) {
             if (StringUtils.isBlank(request.getMaskedCardNumber())) {
                 transactions = transactionService.getAccountTransactionsByStatus(request, statusType.value());
@@ -135,6 +139,11 @@ public class TransactionEnrichmentService {
             transactions = urbisService.getAccountTransactions(getContext().getCustomerId(), request)
                     .stream().map(accountTransactionsMapper::map)
                     .collect(toList());
+            if (DEBIT.equalsIgnoreCase(target)) {
+                transactions = disputeService.filterDebitDisputeTransaction(transactions, target);
+            } else if (CREDIT.equalsIgnoreCase(target)) {
+                transactions = disputeService.filterCreditDisputeTransaction(transactions, target);
+            }
         }
         merchantService.mapMerchantCategory(transactions, request);
         log.info("Transaction Details for Account Id {} has been retrieved successfully.", request.getId());

@@ -4,10 +4,13 @@ import com.neo.core.context.GenericRestParamContextHolder;
 import com.neo.core.exception.ServiceException;
 import com.neo.core.model.GenericRestParamDto;
 import com.neo.core.provider.ServiceKeyMapping;
+import com.neo.v1.dispute.model.DisputeCaseObject;
+import com.neo.v1.dispute.model.ListOfDisputeCasesDisput;
 import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.entity.TmsxUrbisOperationTypesEntity;
+import com.neo.v1.entity.urbis.AccountTransactionEntity;
 import com.neo.v1.entity.urbis.AccountTransactionHoldEntity;
 import com.neo.v1.enums.customer.RecordType;
 import com.neo.v1.mapper.AccountTransactionHoldMapper;
@@ -17,6 +20,7 @@ import com.neo.v1.mapper.CreateCategoryResponseMapper;
 import com.neo.v1.mapper.CustomerAccountTransactionCategoryEntityMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
 import com.neo.v1.mapper.CustomerMerchantCategoryEntityMapper;
+import com.neo.v1.mapper.DisputeTransactionMapper;
 import com.neo.v1.mapper.MetaMapper;
 import com.neo.v1.mapper.TransferFeesRequestMapper;
 import com.neo.v1.mapper.UpdateCategoryResponseMapper;
@@ -29,6 +33,7 @@ import com.neo.v1.product.catalogue.model.CategoryDetail;
 import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionHold;
+import com.neo.v1.transactions.enrichment.model.AccountTransactions;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
@@ -39,6 +44,7 @@ import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.Currency;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.Dispute;
 import com.neo.v1.transactions.enrichment.model.TransactionHoldRequest;
 import com.neo.v1.transactions.enrichment.model.TransactionHoldResponse;
 import com.neo.v1.transactions.enrichment.model.TransactionHoldResponseData;
@@ -58,6 +64,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,6 +73,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.neo.core.context.GenericRestParamContextHolder.getContext;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.MERCHANT;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.REFERENCE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_CODE;
@@ -153,6 +161,13 @@ import static org.mockito.Mockito.when;
 
     @Mock
     private TransferFeesRequestMapper transferFeesRequestMapper;
+
+    @Mock
+    private DisputeTransactionMapper disputeTransactionMapper;
+    @Mock
+    private DisputeTransactionService disputeTransactionService;
+    @Mock
+    private DisputeService disputeService;
 
     @BeforeEach
     void before() {
@@ -542,5 +557,142 @@ import static org.mockito.Mockito.when;
         when(creditCardService.postCreditCardsTransactions(request)).thenReturn(CreditCardTransactionsResponse.builder().data(CreditCardTransactionsData.builder().transactions(Collections.emptyList()).build()).build());
         CreditCardTransactionsResponse result = subject.creditCardTransactions(request);
         verify(merchantService).mapMerchantCategoryForCreditTransactions(anyList(), any());
+    }
+    @Test
+    @DisplayName("Get accounts failed_pending transactions test")
+    void whenAccountCompletedTransactionsRequestDataIsPassedTogetAccountTransactionsExpectSubjectToReturnTheTransactionsDataWithDispute() {
+        String target = "debit";
+        String id = "XXXX";
+        BigDecimal positiveAmount = BigDecimal.valueOf(20);
+        String transactionDescription6 = "XXXX";
+        BigDecimal amount = BigDecimal.valueOf(300.6834);
+        AccountTransactionsRequest request = AccountTransactionsRequest.builder()
+                .status("completed")
+                .id(ID)
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .debitCreditIndicator("debit")
+                .build();
+        DisputeCaseObject disputeCaseObject = DisputeCaseObject.builder()
+                .accountId("XXXX")
+                .build();
+        List<DisputeCaseObject> disputeCaseObjectList = new ArrayList<>();
+        disputeCaseObjectList.add(disputeCaseObject);
+        ListOfDisputeCasesDisput listOfDisputeCasesDisput = ListOfDisputeCasesDisput.builder()
+                .listOfDisputeCasesDisput(disputeCaseObjectList)
+                .build();
+
+        Dispute dispute = Dispute.builder()
+                .isDisputed(true)
+                .crmCaseId("XXXX")
+                .reportDateTime("XXXX")
+                .build();
+        AccountTransaction accountTransaction = AccountTransaction.builder()
+                .id("XXXX")
+                .originalAmount(positiveAmount)
+                .amount(positiveAmount)
+                .dispute(dispute)
+                .build();
+        List<AccountTransaction> accountTransactionList = new ArrayList<>();
+        accountTransactionList.add(accountTransaction);
+        AccountTransactionEntity accountTransactionEntity = AccountTransactionEntity.builder()
+                .id(id)
+                .transactionDescription6(transactionDescription6)
+                .amount(amount)
+                .build();
+        List<AccountTransactionEntity> accountTransactionEntitieslist = new ArrayList<>();
+        accountTransactionEntitieslist.add(accountTransactionEntity);
+        Map<String, DisputeCaseObject> disputeCaseObjectMap = new HashMap<>();
+        disputeCaseObjectMap.put(disputeCaseObject.getAccountId(), disputeCaseObject);
+        TmsxUrbisOperationTypesEntity tmsxUrbisOperationTypesEntity = TmsxUrbisOperationTypesEntity.builder().build();
+        Map<String, TmsxUrbisOperationTypesEntity> tmsxConfigurations = new HashMap<>();
+        tmsxConfigurations.put(OPERTATION_TYPE, tmsxUrbisOperationTypesEntity);
+        AccountTransactions accountTransactions = AccountTransactions.builder()
+                .transactions(accountTransactionList)
+                .build();
+        AccountTransactionsResponse expected = AccountTransactionsResponse.builder()
+                .data(accountTransactions)
+                .build();
+        Map<String, Integer> codeDecimalPlacesMap = new HashMap<>();
+        codeDecimalPlacesMap.put("BHD", 1);
+        when(accountTransactionsResponseMapper.map(any(List.class))).thenReturn(expected);
+//        when(disputeTransactionService.getDisputeDetail(target)).thenReturn(disputeCaseResponse);
+        when(urbisService.getAccountTransactions(getContext().getCustomerId(), request)).thenReturn(accountTransactionEntitieslist);
+        when(accountTransactionsMapper.map(accountTransactionEntity)).thenReturn(accountTransaction);
+//        when(disputeTransactionMapper.map(true, accountTransaction, disputeCaseObjectMap)).thenReturn(dispute);
+        when(disputeService.filterDebitDisputeTransaction(accountTransactionList,target)).thenReturn(accountTransactionList);
+        AccountTransactionsResponse result = subject.getAccountTransactions(request);
+        assertThat(result).isEqualTo(expected);
+        verify(accountTransactionsResponseMapper).map(any(List.class));
+    }
+
+    @Test
+    @DisplayName("Get accounts failed_pending transactions test")
+    void whenAccountCompletedTransactionsRequestDataIsPassedTogetAccountTransactionsExpectSubjectToReturnTheTransactionsDataWithCreditDispute() {
+        String target = "credit";
+        String id = "XXXX";
+        BigDecimal positiveAmount = BigDecimal.valueOf(20);
+        String transactionDescription6 = "XXXX";
+        BigDecimal amount = BigDecimal.valueOf(300.6834);
+        AccountTransactionsRequest request = AccountTransactionsRequest.builder()
+                .status("completed")
+                .id(ID)
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .debitCreditIndicator(target)
+                .build();
+        DisputeCaseObject disputeCaseObject = DisputeCaseObject.builder()
+                .accountId("XXXX")
+                .build();
+        List<DisputeCaseObject> disputeCaseObjectList = new ArrayList<>();
+        disputeCaseObjectList.add(disputeCaseObject);
+        ListOfDisputeCasesDisput listOfDisputeCasesDisput = ListOfDisputeCasesDisput.builder()
+                .listOfDisputeCasesDisput(disputeCaseObjectList)
+                .build();
+
+        Dispute dispute = Dispute.builder()
+                .isDisputed(true)
+                .crmCaseId("XXXX")
+                .reportDateTime("XXXX")
+                .build();
+        AccountTransaction accountTransaction = AccountTransaction.builder()
+                .id("XXXX")
+                .originalAmount(positiveAmount)
+                .amount(positiveAmount)
+                .dispute(dispute)
+                .build();
+        List<AccountTransaction> accountTransactionList = new ArrayList<>();
+        accountTransactionList.add(accountTransaction);
+        AccountTransactionEntity accountTransactionEntity = AccountTransactionEntity.builder()
+                .id(id)
+                .transactionDescription6(transactionDescription6)
+                .amount(amount)
+                .build();
+        List<AccountTransactionEntity> accountTransactionEntitieslist = new ArrayList<>();
+        accountTransactionEntitieslist.add(accountTransactionEntity);
+        Map<String, DisputeCaseObject> disputeCaseObjectMap = new HashMap<>();
+        disputeCaseObjectMap.put(disputeCaseObject.getAccountId(), disputeCaseObject);
+        TmsxUrbisOperationTypesEntity tmsxUrbisOperationTypesEntity = TmsxUrbisOperationTypesEntity.builder().build();
+        Map<String, TmsxUrbisOperationTypesEntity> tmsxConfigurations = new HashMap<>();
+        tmsxConfigurations.put(OPERTATION_TYPE, tmsxUrbisOperationTypesEntity);
+        AccountTransactions accountTransactions = AccountTransactions.builder()
+                .transactions(accountTransactionList)
+                .build();
+        AccountTransactionsResponse expected = AccountTransactionsResponse.builder()
+                .data(accountTransactions)
+                .build();
+        Map<String, Integer> codeDecimalPlacesMap = new HashMap<>();
+        codeDecimalPlacesMap.put("BHD", 1);
+        when(accountTransactionsResponseMapper.map(any(List.class))).thenReturn(expected);
+        when(urbisService.getAccountTransactions(getContext().getCustomerId(), request)).thenReturn(accountTransactionEntitieslist);
+        when(accountTransactionsMapper.map(accountTransactionEntity)).thenReturn(accountTransaction);
+        when(disputeService.filterCreditDisputeTransaction(accountTransactionList,target)).thenReturn(accountTransactionList);
+        AccountTransactionsResponse result = subject.getAccountTransactions(request);
+        assertThat(result).isEqualTo(expected);
+        verify(accountTransactionsResponseMapper).map(any(List.class));
     }
 }
