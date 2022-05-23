@@ -147,6 +147,10 @@ public class TransactionEnrichmentConstants {
     public static final String ACCOUNT_ID = "accountId";
     public static final String TRANSACTION_DATE = "transactionDate";
 
+    public static final String CREDIT_CARD_SERVICE_DOWN_CODE = "GENE-2030";
+    public static final String CREDIT_CARD_SERVICE_DOWN_MESSAGE = "com.neo.te.credit.card.down.message";
+    public static final String CREDIT_CARD_SERVICE_DOWN_AUDIT_MESSAGE = "com.neo.te.credit.card.down.audit.message";
+
     
     static {
         NARRATIVE_OPERATION_TYPE_DISPLAY_MAP.put(1L, OPERATION_TYPE_FAWRI);

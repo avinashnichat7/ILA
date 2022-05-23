@@ -1,6 +1,5 @@
 package com.neo.v1.service;
 
-import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
 import com.neo.core.exception.ServiceException;
 import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
@@ -29,6 +28,10 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactions;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsData;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsRequest;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.TransactionHoldRequest;
 import com.neo.v1.transactions.enrichment.model.TransactionHoldResponse;
@@ -62,11 +65,11 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_
 import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.MERCHANT;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.REFERENCE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_TYPE_CHARITY_TRANSFER_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_MSG;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HOLD_SUCCESS_MSG;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED;
 import static com.neo.v1.enums.AccountTransactionStatusType.FAILED_PENDING;
 import static com.neo.v1.enums.AccountTransactionStatusType.PENDING;
@@ -109,6 +112,7 @@ public class TransactionEnrichmentService {
     private final CustomerAccountTransactionCategoryEntityMapper customerAccountTransactionCategoryEntityMapper;
     private final CustomerMerchantCategoryEntityMapper customerMerchantCategoryEntityMapper;
     private final AccountTransactionHoldMapper accountTransactionHoldMapper;
+    private final CreditCardService creditCardService;
 
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
         request.setFilter(decodeString(request.getFilter()));
@@ -278,7 +282,7 @@ public class TransactionEnrichmentService {
         }
     }
 
-	public TransactionHoldResponse hold(TransactionHoldRequest transactionHoldRequest) {
+	public TransactionHoldResponse  hold(TransactionHoldRequest transactionHoldRequest) {
 		List<AccountTransactionHold> transactionsHold = urbisService.getAccountTransactionsHold(getContext().getCustomerId(), transactionHoldRequest)
                 .stream().map(accountTransactionHoldMapper::map)
                 .collect(toList());
@@ -286,5 +290,13 @@ public class TransactionEnrichmentService {
 				.meta(metaMapper.map(TRANSACTION_HOLD_SUCCESS_CODE, TRANSACTION_HOLD_SUCCESS_MSG))
 				.data(TransactionHoldResponseData.builder().transactions(transactionsHold).build()).build();
 	}
+
+    public CreditCardTransactionsResponse creditCardTransactions(CreditCardTransactionsRequest request) {
+        CreditCardTransactionsResponse creditCardTransactionsResponse = creditCardService.postCreditCardsTransactions(request);
+        CreditCardTransactionsData creditCardTransactionsResponseData = creditCardTransactionsResponse.getData();
+        List<CreditCardTransactions> transactions = creditCardTransactionsResponseData.getTransactions();
+        merchantService.mapMerchantCategoryForCreditTransactions(transactions, request);
+        return creditCardTransactionsResponse;
+    }
 
 }

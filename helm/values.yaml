@@ -82,6 +82,10 @@ env:
       service:
         base:
           url: http://customers-service.customers-service.svc:8080/api/v1/customers
+    credit:
+      service:
+        base:
+          url: http://credit-cards-service.credit-cards-service.svc:8080/api/v1/credit-cards
 
   urbis:
     service:

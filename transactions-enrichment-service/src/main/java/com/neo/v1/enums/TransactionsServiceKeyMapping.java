@@ -17,6 +17,9 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGOR
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_CUSTOMER_TYPE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_ICON;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_HOLD_TRANSACTION_EXPIRY_DATE_INVALID_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREDIT_CARD_SERVICE_DOWN_AUDIT_MESSAGE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREDIT_CARD_SERVICE_DOWN_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.CREDIT_CARD_SERVICE_DOWN_MESSAGE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_DOWN_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_ERROR_CODE;
@@ -53,6 +56,7 @@ public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
     URBIS_SERVICE_DOWN(TRANSACTIONS_URBIS_DOWN_CODE, SERVICE_UNAVAILABLE, TRANSACTIONS_URBIS_DOWN_MESSAGE, TRANSACTIONS_URBIS_DOWN_AUDIT_MESSAGE),
     ACCOUNT_SERVICE_ERROR(ACCOUNT_SERVICE_ERROR_CODE, INTERNAL_SERVER_ERROR, ACCOUNT_SERVICE_ERROR_MESSAGE, ACCOUNT_SERVICE_ERROR_AUDIT_MESSAGE),
     ACCOUNT_SERVICE_DOWN(ACCOUNT_SERVICE_DOWN_CODE, SERVICE_UNAVAILABLE, ACCOUNT_SERVICE_DOWN_MESSAGE, ACCOUNT_SERVICE_DOWN_AUDIT_MESSAGE),
+    CREDIT_CARD_SERVICE_DOWN(CREDIT_CARD_SERVICE_DOWN_CODE, SERVICE_UNAVAILABLE, CREDIT_CARD_SERVICE_DOWN_MESSAGE, CREDIT_CARD_SERVICE_DOWN_AUDIT_MESSAGE),
     CREATE_HOLD_EXPIRY_DATE_INVALID(CREATE_HOLD_TRANSACTION_EXPIRY_DATE_INVALID_CODE, BAD_REQUEST, "com.neo.transactions.create.hold.expiry.date.invalid.message",
             "com.neo.transactions.create.hold.expiry.date.invalid.error.message"),
     TMSX_INVALID_OPERATION_TYPE(TMSX_INVALID_OPERATION_TYPE_CODE, BAD_REQUEST, "com.neo.transactions.tmx.post.release.hold.operation.type.invalid.message",

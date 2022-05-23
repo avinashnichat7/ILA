@@ -4,6 +4,7 @@ import com.neo.core.message.GenericMessageSource;
 import com.neo.v1.service.TransactionEnrichmentService;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.TransactionLinkResponse;
 import com.neo.v1.transactions.enrichment.model.UpdateCategoryRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
     private static final String URI_GET_CATEGORIES = "/api/v1/transactions-enrichment/category";
     private static final String URI_LINK_CATEGORIES = "/api/v1/transactions-enrichment/link";
     private static final String URI_HOLD_CATEGORIES = "/api/v1/transactions-enrichment/hold";
+
+    private static final String URI_CREDIT_CARD_TRANSACTION = "/api/v1/transactions-enrichment/credit-cards/transactions";
 
     @Autowired
     private MockMvc mockMvc;
@@ -101,6 +104,14 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
         mockMvc.perform(post(URI_HOLD_CATEGORIES)
                         .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
                         .content(toJson(TransactionLinkResponse.builder().build())))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void postCreditCardsTransactions_withValidRequest_expectSuccess() throws Exception {
+        mockMvc.perform(post(URI_CREDIT_CARD_TRANSACTION)
+                        .header(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
+                        .content(toJson(CreditCardTransactionsRequest.builder().build())))
                 .andExpect(status().isOk());
     }
 

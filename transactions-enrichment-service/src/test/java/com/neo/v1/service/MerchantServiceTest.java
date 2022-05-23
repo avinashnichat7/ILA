@@ -4,6 +4,7 @@ import com.neo.core.context.GenericRestParamContextHolder;
 import com.neo.core.model.GenericRestParamDto;
 import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
+import com.neo.v1.entity.CustomerCreditTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.mapper.MerchantCategoryMapper;
 import com.neo.v1.product.catalogue.model.MerchantCodeDetail;
@@ -11,9 +12,12 @@ import com.neo.v1.product.catalogue.model.MerchantDetail;
 import com.neo.v1.repository.CustomerAccountTransactionCategoryCustomRepository;
 import com.neo.v1.repository.CustomerAccountTransactionCategoryRepository;
 import com.neo.v1.repository.CustomerCategoryRepository;
+import com.neo.v1.repository.CustomerCreditTransactionCategoryRepository;
 import com.neo.v1.repository.CustomerMerchantCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactions;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +56,8 @@ class MerchantServiceTest {
     private CustomerAccountTransactionCategoryRepository customerAccountTransactionCategoryRepository;
     @Mock
     private CustomerCategoryRepository customerCategoryRepository;
+    @Mock
+    private CustomerCreditTransactionCategoryRepository customerCreditTransactionCategoryRepository;
     private static final String LANGUAGE = "en";
     private static final String UNIT = "neo";
     private static final String CUSTOMER_ID = "C1234";
@@ -243,5 +249,80 @@ class MerchantServiceTest {
         merchantService.saveCustomerMerchantCategory(customerMerchantCategoryEntity);
         verify(customerMerchantCategoryRepository).save(customerMerchantCategoryEntity);
     }
+
+    @Test
+    void mapMerchantCategoryForCreditTransactions_returnAccountTransactionCategorySuccess() {
+        CreditCardTransactionsRequest request = CreditCardTransactionsRequest.builder()
+                .status("pending")
+                .pciNumber("1")
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .build();
+        MerchantDetail merchantDetail = MerchantDetail.builder().build();
+        Map<String, MerchantDetail> merchantDetailsCache = new HashMap<>();
+        merchantDetailsCache.put("name", merchantDetail);
+        MerchantService.setCachedMerchantData(merchantDetailsCache);
+        CreditCardTransactions accountTransaction = CreditCardTransactions.builder().transactionDescription1("name").build();
+        CustomerCreditTransactionCategoryEntity customerAccountTransactionCategoryEntity = CustomerCreditTransactionCategoryEntity.builder().transactionReference("Other").customerId(CUSTOMER_ID)
+                .categoryId("1").isCustom(Boolean.TRUE).build();
+        List<CreditCardTransactions> transactions = Collections.singletonList(accountTransaction);
+        when(customerCreditTransactionCategoryRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getPciNumber(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay()))
+                .thenReturn(Collections.singletonList(customerAccountTransactionCategoryEntity));
+        when(customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE))
+                .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").categoryId("1").isCustom(Boolean.FALSE).build()));
+        merchantService.mapMerchantCategoryForCreditTransactions(transactions, request);
+        verify(merchantCategoryMapper).mapCreditCardTransactionCategory(accountTransaction, merchantDetail);
+    }
+
+    @Test
+    void mapMerchantCategoryForCreditTransactions_returnMerchantCategorySuccess() {
+        CreditCardTransactionsRequest request = CreditCardTransactionsRequest.builder()
+                .status("pending")
+                .pciNumber("1")
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .build();
+        MerchantDetail merchantDetail = MerchantDetail.builder().build();
+        Map<String, MerchantDetail> merchantDetailsCache = new HashMap<>();
+        merchantDetailsCache.put("Other", merchantDetail);
+        MerchantService.setCachedMerchantData(merchantDetailsCache);
+        CreditCardTransactions accountTransaction = CreditCardTransactions.builder().transactionDescription1("name").build();
+        CustomerCategoryEntity customerCategory = CustomerCategoryEntity.builder().build();
+        List<CreditCardTransactions> transactions = Collections.singletonList(accountTransaction);
+        when(customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE))
+                .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").categoryId("1").isCustom(Boolean.TRUE).build()));
+        when(customerCategoryRepository.findByIdAndActive(1L, Boolean.TRUE)).thenReturn(customerCategory);
+        merchantService.mapMerchantCategoryForCreditTransactions(transactions, request);
+        verify(merchantCategoryMapper).mapCustomCategory(accountTransaction, customerCategory);
+    }
+
+    @Test
+    void mapMerchantCategoryForCreditTransactions_returnCustomerAccountTransactionCategoryEntity() {
+        CreditCardTransactionsRequest request = CreditCardTransactionsRequest.builder()
+                .status("pending")
+                .pciNumber("1")
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .build();
+        CustomerCategoryEntity customerCategory = CustomerCategoryEntity.builder().build();
+        CreditCardTransactions accountTransaction = CreditCardTransactions.builder().transactionDescription1("name123").transactionReference("Other").build();
+        CustomerCreditTransactionCategoryEntity customerAccountTransactionCategoryEntity = CustomerCreditTransactionCategoryEntity.builder().transactionReference("Other").customerId(CUSTOMER_ID)
+                .categoryId("1").isCustom(Boolean.TRUE).build();
+        List<CreditCardTransactions> transactions = Collections.singletonList(accountTransaction);
+        when(customerCreditTransactionCategoryRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getPciNumber(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay()))
+                .thenReturn(Collections.singletonList(customerAccountTransactionCategoryEntity));
+        when(customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE))
+                .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").build()));
+        when(customerCategoryRepository.findByIdAndActive(1L, Boolean.TRUE)).thenReturn(customerCategory);
+        merchantService.mapMerchantCategoryForCreditTransactions(transactions, request);
+        verify(merchantCategoryMapper).mapCustomCategory(accountTransaction, customerCategory);
+    }
+
 
 }

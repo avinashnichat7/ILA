@@ -18,7 +18,12 @@ import com.neo.v1.mapper.CustomerAccountTransactionCategoryEntityMapper;
 import com.neo.v1.mapper.CustomerCategoryMapper;
 import com.neo.v1.mapper.CustomerMerchantCategoryEntityMapper;
 import com.neo.v1.mapper.MetaMapper;
+import com.neo.v1.mapper.TransferFeesRequestMapper;
 import com.neo.v1.mapper.UpdateCategoryResponseMapper;
+import com.neo.v1.model.account.TransferCharge;
+import com.neo.v1.model.account.TransferFees;
+import com.neo.v1.model.account.TransferFeesRequest;
+import com.neo.v1.model.account.TransferFeesResponse;
 import com.neo.v1.model.customer.CustomerDetailData;
 import com.neo.v1.product.catalogue.model.CategoryDetail;
 import com.neo.v1.repository.CustomerCategoryRepository;
@@ -29,6 +34,9 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.CategoryListResponse;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryRequest;
 import com.neo.v1.transactions.enrichment.model.CreateCategoryResponse;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsData;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsRequest;
+import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsResponse;
 import com.neo.v1.transactions.enrichment.model.Currency;
 import com.neo.v1.transactions.enrichment.model.DeleteCategoryResponse;
 import com.neo.v1.transactions.enrichment.model.TransactionHoldRequest;
@@ -72,6 +80,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -138,6 +148,11 @@ import static org.mockito.Mockito.when;
     
     @Mock
     private AccountTransactionHoldMapper accountTransactionHoldMapper;
+    @Mock
+    private CreditCardService creditCardService;
+
+    @Mock
+    private TransferFeesRequestMapper transferFeesRequestMapper;
 
     @BeforeEach
     void before() {
@@ -148,6 +163,36 @@ import static org.mockito.Mockito.when;
                 .userId(USER_ID)
                 .build();
         GenericRestParamContextHolder.setContext(genericRestParamDto);
+    }
+
+    @Test
+    @DisplayName("Get accounts pending transactions test")
+    void getAccountTransactions_ForPendingTransactions_returnSuccess() {
+        BigDecimal positiveAmount = BigDecimal.valueOf(20);
+        String failedPending = "pending";
+        AccountTransactionsRequest request = AccountTransactionsRequest.builder()
+                .status(failedPending)
+                .id(ID)
+                .pageSize(1L)
+                .offset(1L)
+                .fromDate(LocalDate.now())
+                .toDate(LocalDate.now())
+                .build();
+        TmsxUrbisOperationTypesEntity tmsxUrbisOperationTypesEntity = TmsxUrbisOperationTypesEntity.builder().build();
+        Map<String, TmsxUrbisOperationTypesEntity> tmsxConfigurations = new HashMap<>();
+        tmsxConfigurations.put(OPERTATION_TYPE, tmsxUrbisOperationTypesEntity);
+        AccountTransaction accountTransaction = AccountTransaction.builder().originalAmount(positiveAmount).amount(positiveAmount).transactionType("EFT-CSCT-DNS").build();
+        AccountTransactionsResponse expected = AccountTransactionsResponse.builder().build();
+        Map<String, Integer> codeDecimalPlacesMap = new HashMap<>();
+        codeDecimalPlacesMap.put("BHD", 1);
+        when(transactionService.getAccountTransactionsByStatus(request, failedPending)).thenReturn(Arrays.asList(accountTransaction));
+        when(accountService.getFees(any())).thenReturn(TransferFeesResponse.builder().data(TransferFees.builder().charges(Collections.singletonList(TransferCharge.builder().chargeAmountInAccountCurrency(BigDecimal.TEN).build())).build()).build());
+        when(transactionPaginationService.getPaginatedRecords(any(List.class), eq(1), eq(1))).thenReturn(Arrays.asList(accountTransaction));
+        when(accountTransactionsResponseMapper.map(any(List.class))).thenReturn(expected);
+        AccountTransactionsResponse result = subject.getAccountTransactions(request);
+        assertThat(result).isEqualTo(expected);
+        verify(accountTransactionsResponseMapper).map(any(List.class));
+        verify(transactionPaginationService).getPaginatedRecords(any(List.class), eq(1), eq(1));
     }
 
     @Test
@@ -489,5 +534,13 @@ import static org.mockito.Mockito.when;
         when(accountTransactionHoldMapper.map(accountTransactionHoldEntity)).thenReturn(accountTransactionHold);
         TransactionHoldResponse result = subject.hold(request);
         assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
+    void creditCardTransactions_returnSuccess() {
+        CreditCardTransactionsRequest request = CreditCardTransactionsRequest.builder().build();
+        when(creditCardService.postCreditCardsTransactions(request)).thenReturn(CreditCardTransactionsResponse.builder().data(CreditCardTransactionsData.builder().transactions(Collections.emptyList()).build()).build());
+        CreditCardTransactionsResponse result = subject.creditCardTransactions(request);
+        verify(merchantService).mapMerchantCategoryForCreditTransactions(anyList(), any());
     }
 }
