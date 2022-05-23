@@ -74,4 +74,10 @@ public class TransactionEnrichmentController implements NeoServiceV1Api {
 	public ResponseEntity<TransactionHoldResponse> postTransactionsEnrichmentHold(TransactionHoldRequest transactionHoldRequest) {
 		return ResponseEntity.ok(transactionsService.hold(transactionHoldRequest));
 	}
+
+    @Override
+    @PostMapping("/credit-cards/transactions")
+    public ResponseEntity<CreditCardTransactionsResponse> postTransactionsEnrichmentCreditCardsTransactions(CreditCardTransactionsRequest body) {
+        return ResponseEntity.ok(transactionsService.creditCardTransactions(body));
+    }
 }

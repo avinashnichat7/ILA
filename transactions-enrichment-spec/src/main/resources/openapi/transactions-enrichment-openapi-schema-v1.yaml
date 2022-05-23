@@ -165,7 +165,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
           description: No Products found
-
+  /transactions-enrichment/credit-cards/transactions:
+    post:
+      tags:
+        - Credit Card Transactions API
+      description: Credit Card Transactions API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditCardTransactionsRequest'
+        required: true
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditCardTransactionsResponse'
 components:
   schemas:
     Meta:
@@ -711,3 +728,126 @@ components:
           required: true
           example: "123456"
           description: hold Description6
+    CreditCardTransactionsRequest:
+      type: object
+      required:
+        - pciNumber
+      properties:
+        pciNumber:
+          type: string
+          title: "CCRD-XXX1"
+          minLength: 1
+        fromDate:
+          type: string
+          format: date
+        toDate:
+          type: string
+          format: date
+        debitCreditIndicator:
+          type: string
+        status:
+          type: string
+        fromAmount:
+          type: number
+        toAmount:
+          type: number
+        cardAccountIndicator:
+          type: string
+        offset:
+          type: integer
+        pageSize:
+          type: integer
+    CreditCardTransactionsResponse:
+      type: object
+      required:
+        - meta
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/CreditCardTransactionsData'
+    CreditCardTransactionsData:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditCardTransactions'
+    CreditCardTransactions:
+      type: object
+      properties:
+        customerId:
+          type: string
+        pciNumber:
+          type: string
+        transactionType:
+          type: string
+        transactionDate:
+          type: string
+          format: date-time
+        valueDate:
+          type: string
+          format: date
+        originalAmount:
+          type: number
+        originalCurrency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          type: number
+        amountCurrency:
+          $ref: '#/components/schemas/Currency'
+        transactionExchangeRate:
+          type: number
+        transactionDescription1:
+          type: string
+        transactionDescription2:
+          type: string
+        transactionDescription3:
+          type: string
+        transactionDescription4:
+          type: string
+        transactionDescription5:
+          type: string
+        transactionDescription6:
+          type: string
+        authorizationCode:
+          type: string
+        authorizationReferenceNumber:
+          type: string
+        transactionReference:
+          type: string
+        maskedCardNumber:
+          type: string
+        merchantCategoryCode:
+          type: string
+        walletIdentifier:
+          type: string
+        status:
+          type: string
+        recordNumber:
+          type: string
+        eppEligibilityFlag:
+          type: string
+        eppList:
+          type: array
+          items:
+            $ref: '#/components/schemas/EppData'
+        enrichedTransactionCategory:
+          $ref: '#/components/schemas/EnrichedTransactionCategory'
+    EppData:
+      type: object
+      properties:
+        term:
+          type: string
+        fee:
+          type: number
+        rate:
+          type: number
+        planNumber:
+          type: string
+        monthlyInstallmentAmount:
+          type: number
+        interestAmount:
+          type: number
+        totalAmount:
+          type: number
