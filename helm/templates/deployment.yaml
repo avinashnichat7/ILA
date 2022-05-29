@@ -124,6 +124,8 @@ spec:
               value: {{ .Values.env.te.customer.service.base.url }}
             - name: te.credit.service.base.url
               value: {{ .Values.env.te.credit.service.base.url }}
+            - name: te.dispute.service.base.url
+              value: {{ .Values.env.te.dispute.service.base.url }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

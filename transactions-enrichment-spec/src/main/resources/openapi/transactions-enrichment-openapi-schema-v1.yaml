@@ -419,6 +419,18 @@ components:
           description: Account Transaction McCode
         enrichedTransactionCategory:
           $ref: '#/components/schemas/EnrichedTransactionCategory'
+        dispute:
+          $ref: '#/components/schemas/Dispute'
+    Dispute:
+      type: object
+      properties:
+        isDisputed:
+          type: boolean
+          required: true
+        reportDateTime:
+          type: string
+        crmCaseId:
+          type: string
     EnrichedTransactionCategory:
       type: object
       properties:

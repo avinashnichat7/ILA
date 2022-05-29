@@ -182,7 +182,11 @@ public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
     ACCOUNT_ID_REQUIRED(ACCOUNT_ID_ERROR_CODE,
             INTERNAL_SERVER_ERROR,
             "com.neo.te.account.id.required.message",
-            "com.neo.te.account.id.required.audit.message");
+            "com.neo.te.account.id.required.audit.message"),
+    DISPUTE_TRANSACTION("DISP-0001",
+                        BAD_REQUEST,
+            "com.neo.te.transaction.dispute.message",
+            "com.neo.te.transaction.dispute.audit.message");
 
     private String code;
     private HttpStatus httpStatus;
