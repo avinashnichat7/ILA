@@ -17,6 +17,7 @@ import com.neo.v1.transactions.enrichment.model.AccountTransactionsRequest;
 import com.neo.v1.transactions.enrichment.model.CreditCardTransactions;
 import com.neo.v1.transactions.enrichment.model.CreditCardTransactionsRequest;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,27 +95,28 @@ public class MerchantService {
         Map<String, CustomerMerchantCategoryEntity> merchantCategoryMap = customerMerchantCategoryEntityList.stream().collect(toMap(CustomerMerchantCategoryEntity::getName, Function.identity()));
         Map<String, MerchantCodeDetail> merchantCodeDetailMap = getProductCatalogueMerchantCode();
         transactions.forEach(transaction -> {
+            String merchantName = StringUtils.isBlank(transaction.getMerchantName()) ? transaction.getTransactionType() : transaction.getMerchantName();
             if (Objects.nonNull(accountTransactionCategoryMap.get(transaction.getReference()))) {
                 CustomerAccountTransactionCategoryEntity customerAccountTransactionCategoryEntity = accountTransactionCategoryMap.get(transaction.getReference());
                 if(customerAccountTransactionCategoryEntity.isCustom()) {
                     Long categoryId = Long.parseLong(customerAccountTransactionCategoryEntity.getCategoryId());
                     CustomerCategoryEntity accountTransactionCategory = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE);
                     merchantCategoryMapper.mapCustomCategory(transaction, accountTransactionCategory);
-                } else if(Objects.nonNull(cachedMerchantData.get(transaction.getMerchantName()))) {
-                    merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(transaction.getMerchantName()));
+                } else if(Objects.nonNull(cachedMerchantData.get(merchantName))) {
+                    merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(merchantName));
                 }
-            } else if (Objects.nonNull(merchantCategoryMap.get(transaction.getMerchantName()))) {
-                CustomerMerchantCategoryEntity customerMerchantCategoryEntity = merchantCategoryMap.get(transaction.getMerchantName());
+            } else if (Objects.nonNull(merchantCategoryMap.get(merchantName))) {
+                CustomerMerchantCategoryEntity customerMerchantCategoryEntity = merchantCategoryMap.get(merchantName);
                 if(customerMerchantCategoryEntity.isCustom()) {
                     Long categoryId = Long.parseLong(customerMerchantCategoryEntity.getCategoryId());
                     CustomerCategoryEntity accountTransactionCategory = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE);
                     merchantCategoryMapper.mapCustomCategory(transaction, accountTransactionCategory);
-                } else if(Objects.nonNull(cachedMerchantData.get(transaction.getMerchantName()))) {
-                    merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(transaction.getMerchantName()));
+                } else if(Objects.nonNull(cachedMerchantData.get(merchantName))) {
+                    merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(merchantName));
                 }
-            } else if(Objects.nonNull(cachedMerchantData.get(transaction.getMerchantName()))) {
-                merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(transaction.getMerchantName()));
-            } else if(Objects.nonNull(merchantCodeDetailMap.get(transaction.getMcCode()))) {
+            } else if(Objects.nonNull(cachedMerchantData.get(merchantName))) {
+                merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(merchantName));
+            } else if(StringUtils.isNotBlank(transaction.getMerchantName()) && Objects.nonNull(merchantCodeDetailMap.get(transaction.getMcCode()))) {
                 merchantCategoryMapper.mapAccountTransactionCategory(transaction, merchantCodeDetailMap.get(transaction.getMcCode()));
             } else {
                 merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(CATEGORY_OTHER));
