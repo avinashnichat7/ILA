@@ -88,6 +88,7 @@ public class MerchantService {
     @Transactional(readOnly = true)
     public void mapMerchantCategory(List<AccountTransaction> transactions, AccountTransactionsRequest request) {
         Map<String, MerchantDetail> cachedMerchantData = getCachedMerchantData();
+        Map<String, MerchantDetail> predefinedCategoryMap = cachedMerchantData.values().stream().filter(merchantDetail -> Objects.nonNull(merchantDetail.getContentfulMerchantCategory())).collect(toMap(merchantDetail -> merchantDetail.getContentfulMerchantCategory().getId(), Function.identity()));
         List<CustomerAccountTransactionCategoryEntity> accountTransactionCategoryList = customerAccountTransactionCategoryCustomRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(),
                 Optional.ofNullable(request.getFromDate()).map(LocalDate::atStartOfDay).orElse(null), Optional.ofNullable(request.getToDate()).map(LocalDate::atStartOfDay).orElse(null));
         Map<String, CustomerAccountTransactionCategoryEntity> accountTransactionCategoryMap = accountTransactionCategoryList.stream().collect(toMap(CustomerAccountTransactionCategoryEntity::getTransactionReference, Function.identity()));
@@ -102,8 +103,8 @@ public class MerchantService {
                     Long categoryId = Long.parseLong(customerAccountTransactionCategoryEntity.getCategoryId());
                     CustomerCategoryEntity accountTransactionCategory = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE);
                     merchantCategoryMapper.mapCustomCategory(transaction, accountTransactionCategory);
-                } else if(Objects.nonNull(cachedMerchantData.get(merchantName))) {
-                    merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(merchantName));
+                } else {
+                    merchantCategoryMapper.mapAccountTransactionCategory(transaction, predefinedCategoryMap.get(customerAccountTransactionCategoryEntity.getCategoryId()));
                 }
             } else if (Objects.nonNull(merchantCategoryMap.get(merchantName))) {
                 CustomerMerchantCategoryEntity customerMerchantCategoryEntity = merchantCategoryMap.get(merchantName);
@@ -111,8 +112,8 @@ public class MerchantService {
                     Long categoryId = Long.parseLong(customerMerchantCategoryEntity.getCategoryId());
                     CustomerCategoryEntity accountTransactionCategory = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE);
                     merchantCategoryMapper.mapCustomCategory(transaction, accountTransactionCategory);
-                } else if(Objects.nonNull(cachedMerchantData.get(merchantName))) {
-                    merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(merchantName));
+                } else {
+                    merchantCategoryMapper.mapAccountTransactionCategory(transaction, predefinedCategoryMap.get(customerMerchantCategoryEntity.getCategoryId()));
                 }
             } else if(Objects.nonNull(cachedMerchantData.get(merchantName))) {
                 merchantCategoryMapper.mapAccountTransactionCategory(transaction, cachedMerchantData.get(merchantName));

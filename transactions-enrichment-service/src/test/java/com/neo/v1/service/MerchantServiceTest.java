@@ -7,6 +7,7 @@ import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.CustomerCreditTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.mapper.MerchantCategoryMapper;
+import com.neo.v1.product.catalogue.model.CategoryDetail;
 import com.neo.v1.product.catalogue.model.MerchantCodeDetail;
 import com.neo.v1.product.catalogue.model.MerchantDetail;
 import com.neo.v1.repository.CustomerAccountTransactionCategoryCustomRepository;
@@ -130,7 +131,7 @@ class MerchantServiceTest {
                 .fromDate(LocalDate.now())
                 .toDate(LocalDate.now())
                 .build();
-        MerchantDetail merchantDetail = MerchantDetail.builder().build();
+        MerchantDetail merchantDetail = MerchantDetail.builder().contentfulMerchantCategory(CategoryDetail.builder().id("1").build()).build();
         Map<String, MerchantDetail> merchantDetailsCache = new HashMap<>();
         merchantDetailsCache.put("name", merchantDetail);
         MerchantService.setCachedMerchantData(merchantDetailsCache);
@@ -206,7 +207,7 @@ class MerchantServiceTest {
                 .fromDate(LocalDate.now())
                 .toDate(LocalDate.now())
                 .build();
-        MerchantDetail merchantDetail = MerchantDetail.builder().build();
+        MerchantDetail merchantDetail = MerchantDetail.builder().contentfulMerchantCategory(CategoryDetail.builder().id("1").build()).build();
         Map<String, MerchantDetail> merchantDetailsCache = new HashMap<>();
         merchantDetailsCache.put("name", merchantDetail);
         MerchantService.setCachedMerchantData(merchantDetailsCache);
@@ -217,7 +218,7 @@ class MerchantServiceTest {
         when(customerAccountTransactionCategoryCustomRepository.findByAccountIdAndCustomerIdAndTransactionDateBetween(request.getId(), getContext().getCustomerId(), request.getFromDate().atStartOfDay(), request.getToDate().atStartOfDay()))
                 .thenReturn(Collections.singletonList(customerAccountTransactionCategoryEntity));
         when(customerMerchantCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE))
-                .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").build()));
+                .thenReturn(Collections.singletonList(CustomerMerchantCategoryEntity.builder().name("name").categoryId("1").build()));
         merchantService.mapMerchantCategory(transactions, request);
         verify(merchantCategoryMapper).mapAccountTransactionCategory(accountTransaction, merchantDetail);
     }
