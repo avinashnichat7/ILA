@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration packagingData="true">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <property name="log.stdout.pattern"
+              value="%green(%d{yyyyMMdd'T'HHmmss}) %magenta([%thread]) %highlight(%-5level) %cyan(%logger{15}) %msg%n"/>
+    <property name="log.aws.pattern"
+              value="%d{yyyyMMdd'T'HHmmss} ${LOG_LEVEL_PATTERN:-%5p} %thread %level %logger{15} %msg%n"/>
+
+    <property name="log.group" value="/com/neo/transactions-enrichment"/>
+    <property name="log.level" value="INFO"/>
+    <property name="com.neo.log.level" value="INFO"/>
+    <property name="log.region" value="eu-west-1"/>
+    <property name="log.maxBatchLogEvents" value="50"/>
+    <property name="log.maxFlushTimeMillis" value="30000"/>
+    <property name="log.maxBlockTimeMillis" value="5000"/>
+    <timestamp key="date" datePattern="yyyyMMdd"/>
+
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.stdout.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC_AWS_LOG_APPENDER" class="ca.pjer.logback.AwsLogsAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <layout>
+            <pattern>${log.aws.pattern}</pattern>
+        </layout>
+        <logGroupName>${log.group}</logGroupName>
+        <logStreamName>neo-${date}</logStreamName>
+        <maxBatchLogEvents>${log.maxBatchLogEvents}</maxBatchLogEvents>
+        <maxFlushTimeMillis>${log.maxFlushTimeMillis}</maxFlushTimeMillis>
+        <maxBlockTimeMillis>${log.maxBlockTimeMillis}</maxBlockTimeMillis>
+        <logRegion>${log.region}</logRegion>
+    </appender>
+
+    <root level="${log.level}">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_AWS_LOG_APPENDER"/>
+    </root>
+    <logger name="com.neo" level="${com.neo.log.level}" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_AWS_LOG_APPENDER"/>
+    </logger>
+
+</configuration>

@@ -1,0 +1,104 @@
+replicaCount: 1
+
+image:
+  repository: 096987977627.dkr.ecr.eu-west-1.amazonaws.com/api/transactions-enrichment-service
+  tag: latest
+  pullPolicy: Always
+
+nameOverride: "transactions-enrichment-service"
+fullnameOverride: "transactions-enrichment-service"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  paths:
+    - /api/v1/transactions-enrichment
+    - /transactions-enrichment
+
+aws:
+  role: Neo-Uat-Api-CloudWatch-Role
+
+appdynamics:
+  appdynamics_controller_host_name: null
+  appdynamics_agent_account_name: null
+  appdynamics_agent_account_access_key: null
+  appdynamics_agent_application_name: api
+  appdynamics_java_agent_reuse_node_name: True
+  appdynamics_controller_port: 443
+  appdynamics_controller_ssl_enabled: True
+
+env:
+  pg_write_db_host: null
+  pg_read_db_host: null
+  pg_db_name: neo_service_transactions_enrichment
+  pg_db_password: null
+  pg_db_username: null
+  queryTimeout: "10"
+  pool_connection_timeout: "5000"
+  pool_idle_connection_timeout: "10800000"
+  pool_maximum_size: "50"
+  pool_minimum_idle_connection: "10"
+  pool_connection_max_lifetime: "86400000"
+  urbis_db_host: 10.21.208.77
+  urbis_db_name: URBNEOUAT1
+  urbis_db_username: null
+  urbis_db_password: null
+  urbisQueryTimeout: "30"
+  urbis_pool_connection_timeout: "5000"
+  urbis_pool_idle_connection_timeout: "10800000"
+  urbis_pool_maximum_size: "50"
+  urbis_pool_minimum_idle_connection: "10"
+  urbis_pool_connection_max_lifetime: "86400000"
+  almanac_db_host: um1i4881jsbeqcm.c7nvgfbnjxct.eu-west-1.rds.amazonaws.com
+  almanac_db_name: neobankeralmanac
+  almanac_db_password: null
+  almanac_db_username: null
+  account_service_base_url: http://accounts-service.accounts-service.svc:8080/api/v1/accounts
+  urbis_service_auth_token: null
+  urbis_service_base_url: http://10.21.208.65
+
+  te:
+    account:
+      service:
+        base:
+          url: http://accounts-service.accounts-service.svc:8080/api/v1/accounts
+    charity:
+      service:
+        base:
+          url: http://charity-service.charity-service.svc:8080/api/v1/charity
+    transaction:
+      service:
+        base:
+          url: http://transactions-service.transactions-service.svc:8080/api/v1/transactions
+    product:
+      service:
+        base:
+          url: http://product-catalogue-service.product-catalogue-service.svc:8080/api/v1/product-catalogue
+    customer:
+      service:
+        base:
+          url: http://api-shared.uat.ilabank.internal/api/v1/customers
+    credit:
+      service:
+        base:
+          url: http://credit-cards-service.credit-cards-service.svc:8080/api/v1/credit-cards
+    dispute:
+      service:
+        base:
+          url: http://dispute-service.dispute-service.svc:8080/api/v1/dispute
+
+  urbis:
+    service:
+      authorisation:
+        token: null
+    pendingTransactionsPageSize: 50
+
+  spring:
+    profiles:
+      active: uat

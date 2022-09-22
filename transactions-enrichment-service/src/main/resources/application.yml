@@ -1,0 +1,139 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: local
+  datasource:
+    primary:
+      driverClassName: org.postgresql.Driver
+      url: jdbc:postgresql://${pg_write_db_host:localhost:5432}/${pg_db_name:neo_service_transactions_enrichment}?socketTimeout=${socketTimeout:10}&statement_timeout=10000
+      jdbc-url: ${spring.datasource.primary.url}
+      username: ${pg_db_username:postgres}
+      password: ${pg_db_password:test}
+      hikari:
+        connection-timeout: ${pool_connection_timeout:5000}
+        idle-timeout: ${pool_idle_connection_timeout:10800000}
+        maximum-pool-size: ${pool_maximum_size:10}
+        minimum-idle: ${pool_minimum_idle_connection:10}
+        pool-name: ${primary_pool_name:transactions-primary}-connection-pool
+        max-lifetime: ${pool_connection_max_lifetime:86400000}
+    replica:
+      driverClassName: org.postgresql.Driver
+      url: jdbc:postgresql://${pg_read_db_host:localhost:5432}/${pg_db_name:neo_service_transactions_enrichment}?socketTimeout=${socketTimeout:10}&statement_timeout=10000
+      jdbc-url: ${spring.datasource.replica.url}
+      username: ${pg_db_username:postgres}
+      password: ${pg_db_password:test}
+      hikari:
+        connection-timeout: ${pool_connection_timeout:5000}
+        idle-timeout: ${pool_idle_connection_timeout:10800000}
+        maximum-pool-size: ${pool_maximum_size:10}
+        minimum-idle: ${pool_minimum_idle_connection:10}
+        pool-name: ${primary_pool_name:transactions-primary}-connection-pool
+        max-lifetime: ${pool_connection_max_lifetime:86400000}
+  jackson:
+    default-property-inclusion: non_null
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        proc:
+          param_null_passing: true
+
+te:
+  account:
+    service:
+      base:
+        url: http://localhost:8080/api/v1/accounts
+      account-details:
+        uri: /details
+      transferFees:
+        uri: /fees
+  charity:
+    service:
+      base:
+        url: http://localhost:8080/api/v1/charity
+      details:
+        url: /{charityId}/{purposeId}
+  transaction:
+    service:
+      base:
+        url: http://localhost:8081/api/v1/transactions
+  product:
+    merchantCronConfig: '* * 0/4 * * ?'
+    service:
+      base:
+        url: http://localhost:8081/api/v1/product-catalogue
+  customer:
+    service:
+      base:
+        url: http://localhost:8081/api/v1/customers
+  credit:
+    service:
+      base:
+        url: http://localhost:8081/api/v1/credit-cards
+  dispute:
+    service:
+      base:
+        url: http://localhost:8081/api/v1/dispute
+
+  urbis:
+    service:
+      auth:
+        token: ${urbis.service.authorisation.token:urbisAuthToken}
+      base:
+        url: ${urbis_service_base_url:http://localhost:8090/urbis}
+        release-hold:
+          uri: /Hold/api/v1/holdfund/Delete/{accountNumber}/{currency}/{holdNumber}
+        create-hold:
+          uri: /Hold/api/v1/holdfund/add
+        post-trans:
+          uri: /CashWaste/api/v1/cashwaste
+        reverseTransaction:
+          uri: /CashWaste/api/v1/cashwaste/reverse/
+    datasource:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: jdbc:sqlserver://${urbis_db_host:localhost:1456};databaseName=${urbis_db_name:neo_service_transactions_enrichment};queryTimeout=${urbisQueryTimeout:30}
+      jdbc-url: ${te.urbis.datasource.url}
+      username: ${urbis_db_username:SA}
+      password: ${urbis_db_password:<YourStrong!Passw0rd>}
+      platform: mssql
+      hikari:
+        connection-timeout: ${urbis_pool_connection_timeout:5000}
+        idle-timeout: ${urbis_pool_idle_connection_timeout:10800000}
+        maximum-pool-size: ${urbis_pool_maximum_size:10}
+        minimum-idle: ${urbis_pool_minimum_idle_connection:10}
+        pool-name: ${urbis_pool_name:urbis}-connection-pool
+        max-lifetime: ${urbis_pool_connection_max_lifetime:86400000}
+    pendingTransactionsPageSize: 50
+
+feign:
+  client:
+    config:
+      default:
+        connectionTimeout: 30000
+        readTimeout: 30000
+      AccountService:
+        errorDecoder: com.neo.v1.client.decoder.AccountErrorDecoder
+      CharityClient:
+        errorDecoder: com.neo.v1.client.decoder.CharityClientErrorDecoder
+      TransactionClient:
+        errorDecoder: com.neo.v1.client.decoder.TransactionClientErrorDecoder
+      ProductCatalogueClient:
+        errorDecoder: com.neo.v1.client.decoder.ProductCatalogueClientErrorDecoder
+      CustomerFeignService:
+        errorDecoder: com.neo.v1.client.decoder.CustomerClientErrorDecoder
+
+
+logging:
+  config: classpath:logback/logback-${spring.profiles.active}.xml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "loggers, info, health"
+

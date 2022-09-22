@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "transactions-enrichment-service.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "transactions-enrichment-service.name" . }}
+    helm.sh/chart: {{ include "transactions-enrichment-service.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "transactions-enrichment-service.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "transactions-enrichment-service.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+      # Role of writing the CloudWatch logs
+      annotations:
+        iam.amazonaws.com/role: {{ .Values.aws.role }}
+        timestamp: "{{ .Release.Time.Seconds }}"
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /sharedFiles
+              name: shared-files
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.service.port }}
+            failureThreshold: 15
+            initialDelaySeconds: 60
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 60
+            periodSeconds: 3
+          env:
+            - name: APPDYNAMICS_CONTROLLER_HOST_NAME
+              value: {{ .Values.appdynamics.appdynamics_controller_host_name }}
+            - name: APPDYNAMICS_CONTROLLER_PORT
+              value: {{ .Values.appdynamics.appdynamics_controller_port | quote }}
+            - name: APPDYNAMICS_CONTROLLER_SSL_ENABLED
+              value: {{ .Values.appdynamics.appdynamics_controller_ssl_enabled | quote }}
+            - name: APPDYNAMICS_AGENT_APPLICATION_NAME
+              value: {{ .Values.appdynamics.appdynamics_agent_application_name }}
+            - name: APPDYNAMICS_AGENT_TIER_NAME
+              value: {{ .Chart.Name }}
+            - name: APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME
+              value: {{ .Values.appdynamics.appdynamics_java_agent_reuse_node_name | quote }}
+            - name: APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX
+              value: {{ .Chart.Name }}
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              value: {{ .Values.appdynamics.appdynamics_agent_account_name }}
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              value: {{ .Values.appdynamics.appdynamics_agent_account_access_key }}
+            - name: pg_write_db_host
+              value: {{ .Values.env.pg_write_db_host }}
+            - name: pg_read_db_host
+              value: {{ .Values.env.pg_read_db_host }}
+            - name: pg_db_password
+              value: {{ .Values.env.pg_db_password }}
+            - name: pg_db_username
+              value: {{ .Values.env.pg_db_username }}
+            - name: pg_db_name
+              value: {{ .Values.env.pg_db_name }}
+            - name: pool_connection_timeout
+              value: {{ .Values.env.pool_connection_timeout | quote }}
+            - name: pool_idle_connection_timeout
+              value: {{ .Values.env.pool_idle_connection_timeout | quote }}
+            - name: pool_maximum_size
+              value: {{ .Values.env.pool_maximum_size | quote }}
+            - name: pool_minimum_idle_connection
+              value: {{ .Values.env.pool_minimum_idle_connection | quote }}
+            - name: pool_connection_max_lifetime
+              value: {{ .Values.env.pool_connection_max_lifetime | quote }}
+            - name: urbis_pool_connection_timeout
+              value: {{ .Values.env.urbis_pool_connection_timeout | quote }}
+            - name: urbis_pool_idle_connection_timeout
+              value: {{ .Values.env.urbis_pool_idle_connection_timeout | quote }}
+            - name: urbis_pool_maximum_size
+              value: {{ .Values.env.urbis_pool_maximum_size | quote }}
+            - name: urbis_pool_minimum_idle_connection
+              value: {{ .Values.env.urbis_pool_minimum_idle_connection | quote }}
+            - name: urbis_pool_connection_max_lifetime
+              value: {{ .Values.env.urbis_pool_connection_max_lifetime | quote }}
+            - name: urbis.service.authorisation.token
+              value: {{ .Values.env.urbis.service.authorisation.token }}
+            - name: urbis_service_base_url
+              value: {{ .Values.env.urbis_service_base_url }}
+            - name: urbis_db_host
+              value: {{ .Values.env.urbis_db_host }}
+            - name: urbis_db_password
+              value: {{ .Values.env.urbis_db_password | quote }}
+            - name: urbis_db_username
+              value: {{ .Values.env.urbis_db_username | quote }}
+            - name: urbis_db_name
+              value: {{ .Values.env.urbis_db_name }}
+            - name: AWS_REGION
+              value: {{ .Values.env.aws_region }}
+            - name: spring.profiles.active
+              value: {{ .Values.env.spring.profiles.active }}
+            - name: te.account.service.base.url
+              value: {{ .Values.env.te.account.service.base.url }}
+            - name: te.charity.service.base.url
+              value: {{ .Values.env.te.charity.service.base.url }}
+            - name: te.transaction.service.base.url
+              value: {{ .Values.env.te.transaction.service.base.url }}
+            - name: te.product.service.base.url
+              value: {{ .Values.env.te.product.service.base.url }}
+            - name: te.customer.service.base.url
+              value: {{ .Values.env.te.customer.service.base.url }}
+            - name: te.credit.service.base.url
+              value: {{ .Values.env.te.credit.service.base.url }}
+            - name: te.dispute.service.base.url
+              value: {{ .Values.env.te.dispute.service.base.url }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      initContainers:
+      - name: appd-agent
+        image: 096987977627.dkr.ecr.eu-west-1.amazonaws.com/misc/appd-appserver-agent:latest
+        imagePullPolicy: Always
+        command: ['cp', '-r', '/sharedFiles/AppServerAgent', '/mountPath/AppServerAgent']
+        volumeMounts:
+        - mountPath: /mountPath
+          name: shared-files
+      volumes:
+        - name: shared-files
+          emptyDir: {}

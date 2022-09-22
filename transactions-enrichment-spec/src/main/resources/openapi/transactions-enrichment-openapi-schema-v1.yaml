@@ -1,0 +1,865 @@
+openapi: '3.0.2'
+info:
+  title: Transaction Enrichment Service Specs
+  version: '0.0.1'
+servers:
+  - url: '{protocol}://localhost/v1'
+    variables:
+      protocol:
+        enum:
+          - https
+        default: https
+paths:
+  /transactions-enrichment:
+    post:
+      summary: Dummy Get API
+      description: Pet object that needs to be added to the store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountTransactionsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AccountTransactionsResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: Dummy Get API
+  /transactions-enrichment/category:
+    get:
+      summary: Get ila Products
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
+    post:
+      summary: Create category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CreateCategoryResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
+    put:
+      summary: Update category
+      parameters:
+        - in: path
+          required: true
+          name: categoryId
+          description: category Id
+          example: "7"
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UpdateCategoryResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
+    delete:
+      summary: Delete category
+      parameters:
+        - in: path
+          required: true
+          name: categoryId
+          description: category Id
+          example: "7"
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/DeleteCategoryResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
+  /transactions-enrichment/link:
+    post:
+      summary: Get ila Products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionLinkRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TransactionLinkResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
+  /transactions-enrichment/hold:
+    post:
+      summary: Hold Transaction Enrichment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionHoldRequest'
+      responses:
+        '200':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TransactionHoldResponse'
+          description: OK
+        '404':
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          description: No Products found
+  /transactions-enrichment/credit-cards/transactions:
+    post:
+      tags:
+        - Credit Card Transactions API
+      description: Credit Card Transactions API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditCardTransactionsRequest'
+        required: true
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditCardTransactionsResponse'
+components:
+  schemas:
+    Meta:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: 'GENE-0001'
+          description: The code associated with the successful operation.
+        message:
+          type: string
+          example: message
+          description: The message for the client
+    ApiError:
+      type: object
+      required:
+        - meta
+      properties:
+        meta:
+          $ref: '#/components/schemas/ErrorMetaInformation'
+      title: ApiError
+    ErrorMetaInformation:
+      type: object
+      required:
+        - code
+        - errorType
+        - message
+      properties:
+        code:
+          type: string
+          example: 20025
+          description: code associated with the error
+        errorType:
+          type: string
+          example: INTERNAL_SERVER_ERROR
+          description: error type
+          enum:
+            - VALIDATION_ERROR
+            - INTERNAL_SERVER_ERROR
+            - RESOURCE_NOT_FOUND
+        message:
+          type: string
+          example: 'Failure to process <request>. Reason: <reason-phrase>'
+          description: message
+      title: ErrorMetaInformation
+    Currency:
+      type: object
+      required:
+        - code
+        - decimalPlaces
+      properties:
+        code:
+          type: string
+          example: BHD
+          description: currency code
+        decimalPlaces:
+          type: string
+          example: 3
+          description: decimal places
+    AccountTransactionsRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: BHxxABCO1456789023903
+          description: Source Iban
+        offset:
+          type: integer
+          example: Happy Birthday
+          description: Gift title
+        pageSize:
+          type: integer
+          format : int64
+          example: Happy Birthday
+          description: Gift description
+        filter:
+          type: string
+          example: hkhjkhk3
+          description: Gift icon
+        fromAmount:
+          type: number
+          example: TYPE_A
+          description: Gift card type
+        toAmount:
+          type: number
+          example: 1000
+          description: Gift amount
+        fromDate:
+          type: string
+          format: date
+          example: BHD
+          description: Currency code
+        toDate:
+          type: string
+          format: date
+          example: +973123456
+          description: Mobile number
+        debitCreditIndicator:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+        status:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+        maskedCardNumber:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+        excludeCardTransactions:
+          type: boolean
+          example: Mohammed
+          description: Gift receiver name
+        kanzFilter:
+          type: string
+          example: kanz
+          description: kanz filter
+    AccountTransactionsResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/AccountTransactions'
+    AccountTransactions:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountTransaction'
+    AccountTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDate:
+          type: string
+          format: date-time
+          example: 989248099
+          description: Account Transaction Id
+        valueDate:
+          type: string
+          format: date
+          example: 989248099
+          description: Account Transaction Id
+        transactionType:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionCurrency:
+          $ref: '#/components/schemas/Currency'
+        transactionExchangeRate:
+          type: number
+          example: 989248099
+          description: Account Transaction Id
+        accountCurrency:
+          $ref: '#/components/schemas/Currency'
+        transactionDescription1:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription2:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription3:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription4:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription5:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionDescription6:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        amount:
+          type: number
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        originalAmount:
+          type: number
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        reference:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        previousBalance:
+          type: number
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        currentBalance:
+          type: number
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        generateAdvice:
+          type: boolean
+          example: 989248099
+          description: Account Transaction Id
+        status:
+          type: string
+          example: 989248099
+          description: Account Transaction Id
+        transactionTypeCode:
+          type: string
+          required: true
+          example: 989248099
+          description: Account Transaction Id
+        merchantName:
+          type: string
+          required: true
+          example: talabat
+          description: Account Transaction Merchant Name
+        mcCode:
+          type: string
+          required: true
+          example: 989248099
+          description: Account Transaction McCode
+        enrichedTransactionCategory:
+          $ref: '#/components/schemas/EnrichedTransactionCategory'
+        dispute:
+          $ref: '#/components/schemas/Dispute'
+    Dispute:
+      type: object
+      properties:
+        isDisputed:
+          type: boolean
+          required: true
+        reportDateTime:
+          type: string
+        crmCaseId:
+          type: string
+    EnrichedTransactionCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          example: dinner
+          description: Merchant Category Name
+        name:
+          type: string
+          example: dinner
+          description: Merchant Category Name
+        icon:
+          type: string
+          example: icon
+          description: Merchant Category icon
+        iconLabelUrl:
+          type: string
+          example: icon label url
+          description: Icon Label URL
+        color:
+          type: string
+          example: icon color
+          description: Merchant Category icon color
+        isCustom:
+          type: boolean
+    CategoryListResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/CategoryListData'
+    CategoryListData:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantCategoryDetail'
+    MerchantCategoryDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123456"
+          description: Category Id
+        name:
+          type: string
+          example: "Ajith"
+          description: Category name
+        iconLabelUrl:
+          type: string
+          example: "https://example.com/2.png"
+          description: Icon Label URL
+        icon:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon url
+        color:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon color
+        isCustom:
+          type: boolean
+          default: false
+          example: "true"
+          description: custom category identification flag
+        displayOrder:
+          type: integer
+          example: "1"
+          description: Category order
+    CreateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Ajith"
+          description: Category name
+        icon:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon url
+        color:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon color
+    CreateCategoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/CategoryData'
+    CategoryData:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: "123456"
+          description: Category Id
+        name:
+          type: string
+          example: "Ajith"
+          description: Category name
+        icon:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon url
+        color:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon color
+    UpdateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Ajith"
+          description: Category name
+        icon:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon url
+        color:
+          type: string
+          example: "https://example.com/3.png"
+          description: Icon color
+    UpdateCategoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/CategoryData'
+    DeleteCategoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+    TransactionLinkRequest:
+      type: object
+      properties:
+        iban:
+          type: string
+          example: "BH12ABCO1234567890"
+          description: Iban
+        categoryId:
+          type: string
+          example: "121151"
+          description: CategoryId
+        transactionReference:
+          type: string
+          example: "ABhSUB234b"
+          description: transaction reference
+        linkType:
+          type: string
+          example: "REFERENCE"
+          description: link type
+    TransactionLinkResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+    TransactionHoldRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: BHxxABCO1456789023903
+          description: Source Iban
+        offset:
+          type: integer
+          example: Happy Birthday
+          description: Gift title
+        pageSize:
+          type: integer
+          format : int64
+          example: Happy Birthday
+          description: Gift description
+        filter:
+          type: string
+          example: hkhjkhk3
+          description: Gift icon
+        fromAmount:
+          type: number
+          example: TYPE_A
+          description: Gift card type
+        toAmount:
+          type: number
+          example: 1000
+          description: Gift amount
+        fromDate:
+          type: string
+          format: date
+          example: BHD
+          description: Currency code
+        toDate:
+          type: string
+          format: date
+          example: +973123456
+          description: Mobile number
+        maskedCardNumber:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+        excludeCardTransactions:
+          type: boolean
+          example: Mohammed
+          description: Gift receiver name
+        targetType:
+          type: string
+          example: Mohammed
+          description: Gift receiver name
+    TransactionHoldResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/TransactionHoldResponseData'
+    TransactionHoldResponseData:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountTransactionHold'
+    AccountTransactionHold:
+      type: object
+      properties:
+        id:
+          type: string
+          required: true
+          example: "123456"
+          description: IBAN
+        holdDate:
+          type: string
+          required: true
+          format: date-time
+          example: 989248099
+          description: hold Date
+        holdExpiryDate:
+          type: string
+          required: true
+          format: date
+          example: 989248099
+          description: hold Expiry Date
+        holdType:
+          type: string
+          required: true
+          example: "https://example.com/3.png"
+          description: Hold Type
+        holdCurrency:
+          $ref: '#/components/schemas/Currency'
+        holdAmount:
+          type: number
+          required: true
+          example: 989248099
+          description: Hold Amount
+        holdReferenceNumber:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Reference Number
+        previousBalance:
+          type: number
+          required: true
+          example: 989248099
+          description: previous Balance
+        currentBalance:
+          type: number
+          required: true
+          example: 989248099
+          description: current Balance
+        generateAdvice:
+          type: boolean
+          default: false
+          example: "true"
+          description: generate Advice
+        holdDescription1:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description1
+        holdDescription2:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description2
+        holdDescription3:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description3
+        holdDescription4:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description4
+        holdDescription5:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description5
+        holdDescription6:
+          type: string
+          required: true
+          example: "123456"
+          description: hold Description6
+    CreditCardTransactionsRequest:
+      type: object
+      required:
+        - pciNumber
+      properties:
+        pciNumber:
+          type: string
+          title: "CCRD-XXX1"
+          minLength: 1
+        fromDate:
+          type: string
+          format: date
+        toDate:
+          type: string
+          format: date
+        debitCreditIndicator:
+          type: string
+        status:
+          type: string
+        fromAmount:
+          type: number
+        toAmount:
+          type: number
+        cardAccountIndicator:
+          type: string
+        offset:
+          type: integer
+        pageSize:
+          type: integer
+    CreditCardTransactionsResponse:
+      type: object
+      required:
+        - meta
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        data:
+          $ref: '#/components/schemas/CreditCardTransactionsData'
+    CreditCardTransactionsData:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditCardTransactions'
+    CreditCardTransactions:
+      type: object
+      properties:
+        customerId:
+          type: string
+        pciNumber:
+          type: string
+        transactionType:
+          type: string
+        transactionDate:
+          type: string
+          format: date-time
+        valueDate:
+          type: string
+          format: date
+        originalAmount:
+          type: number
+        originalCurrency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          type: number
+        amountCurrency:
+          $ref: '#/components/schemas/Currency'
+        transactionExchangeRate:
+          type: number
+        transactionDescription1:
+          type: string
+        transactionDescription2:
+          type: string
+        transactionDescription3:
+          type: string
+        transactionDescription4:
+          type: string
+        transactionDescription5:
+          type: string
+        transactionDescription6:
+          type: string
+        authorizationCode:
+          type: string
+        authorizationReferenceNumber:
+          type: string
+        transactionReference:
+          type: string
+        maskedCardNumber:
+          type: string
+        merchantCategoryCode:
+          type: string
+        walletIdentifier:
+          type: string
+        status:
+          type: string
+        recordNumber:
+          type: string
+        eppEligibilityFlag:
+          type: string
+        eppList:
+          type: array
+          items:
+            $ref: '#/components/schemas/EppData'
+        enrichedTransactionCategory:
+          $ref: '#/components/schemas/EnrichedTransactionCategory'
+    EppData:
+      type: object
+      properties:
+        term:
+          type: string
+        fee:
+          type: number
+        rate:
+          type: number
+        planNumber:
+          type: string
+        monthlyInstallmentAmount:
+          type: number
+        interestAmount:
+          type: number
+        totalAmount:
+          type: number

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>neo-service-transactions-enrichment</artifactId>
+        <groupId>com.neo</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>transactions-enrichment-spec</artifactId>
+
+    <properties>
+        <open.api.plugin.version>2.1.0</open.api.plugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <scope>provided</scope>
+            <version>1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.neo.plugin.openapi</groupId>
+            <artifactId>neo-swagger-maven-plugin</artifactId>
+            <version>${open.api.plugin.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase-maven-plugin.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.neo.plugin.openapi</groupId>
+                <artifactId>neo-swagger-maven-plugin</artifactId>
+                <version>${open.api.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generateCode</goal>
+                        </goals>
+                        <configuration>
+                            <schemas>
+                                <schema>
+                                    <location>
+                                        ${project.basedir}/src/main/resources/openapi/transactions-enrichment-openapi-schema-v1.yaml
+                                    </location>
+                                    <serviceName>neo-service-v1</serviceName>
+                                    <packageName>com.neo.v1.transactions.enrichment</packageName>
+                                </schema>
+                            </schemas>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <generatedSourcesDirectory>${project.build.directory}/generated-sources</generatedSourcesDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
