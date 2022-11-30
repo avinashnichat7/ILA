@@ -1,6 +1,7 @@
 microservice:
   neo-service-transactions-enrichment:
     cluster: api
+    lite: false
     version:
     name:
     chart:
