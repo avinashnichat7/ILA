@@ -21,7 +21,7 @@ spec:
       # Role of writing the CloudWatch logs
       annotations:
         iam.amazonaws.com/role: {{ .Values.aws.role }}
-        timestamp: "{{ .Release.Time.Seconds }}"
+        timestamp: {{ now | quote }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
