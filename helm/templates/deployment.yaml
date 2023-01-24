@@ -39,14 +39,20 @@ spec:
               path: /actuator/health
               port: {{ .Values.service.port }}
             failureThreshold: 15
-            initialDelaySeconds: 60
+            initialDelaySeconds: 10
             periodSeconds: 3
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: {{ .Values.service.port }}
-            initialDelaySeconds: 60
+            initialDelaySeconds: 10
             periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.service.port }}
+            failureThreshold: 60
+            periodSeconds: 10
           env:
             - name: APPDYNAMICS_CONTROLLER_HOST_NAME
               value: {{ .Values.appdynamics.appdynamics_controller_host_name }}
@@ -146,6 +152,13 @@ spec:
         image: 096987977627.dkr.ecr.eu-west-1.amazonaws.com/misc/appd-appserver-agent:latest
         imagePullPolicy: Always
         command: ['cp', '-r', '/sharedFiles/AppServerAgent', '/mountPath/AppServerAgent']
+        resources:
+          limits:
+            cpu: 200m
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 1Gi
         volumeMounts:
         - mountPath: /mountPath
           name: shared-files
