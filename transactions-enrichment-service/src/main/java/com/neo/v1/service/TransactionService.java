@@ -2,6 +2,7 @@ package com.neo.v1.service;
 
 import com.neo.core.exception.ServiceException;
 import com.neo.v1.client.TransactionClient;
+import com.neo.v1.enums.GlobalConfig;
 import com.neo.v1.mapper.TransactionDetailRequestMapper;
 import com.neo.v1.mapper.TransactionsRequestMapper;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
@@ -25,7 +26,6 @@ public class TransactionService {
     private final TransactionClient transactionClient;
     private final TransactionsRequestMapper transactionsRequestMapper;
     private final TransactionDetailRequestMapper transactionDetailRequestMapper;
-
 
     public List<AccountTransaction> getAccountTransactionsByStatus(AccountTransactionsRequest request, String status) {
 
@@ -60,4 +60,6 @@ public class TransactionService {
         }
         return accountTransaction;
     }
+
+
 }

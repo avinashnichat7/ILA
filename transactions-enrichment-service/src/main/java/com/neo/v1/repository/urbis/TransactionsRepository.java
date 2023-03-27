@@ -63,6 +63,7 @@ public class TransactionsRepository {
     private static final Integer ERROR_CODE_VALUE = 1;
     private static final Integer DEFAULT_OFFSET = 0;
     private static final Integer DEFAULT_PAGE_SIZE = 5;
+    private static final String ACCOUNT_ALL_TRANSACTIONS_PROCEDURE_NAME = "API_AllAccountTransactions_V1";
 
     @PersistenceContext(unitName = URBIS_DB_PERSISTENCE_UNIT)
     private EntityManager entityManager;
@@ -150,6 +151,22 @@ public class TransactionsRepository {
     private void addParameter(StoredProcedureQuery storedProcedure, String paramName, Object paramValue, Class<?> clazz, ParameterMode parameterMode) {
         storedProcedure.registerStoredProcedureParameter(paramName, clazz, parameterMode);
         storedProcedure.setParameter(paramName, paramValue);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_UNCOMMITTED, readOnly = true)
+    public List<AccountTransactionEntity> getAllAccountTransactions(String customerId,
+                                                                    AccountTransactionsRequest request) {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery(ACCOUNT_ALL_TRANSACTIONS_PROCEDURE_NAME, AccountTransactionEntity.class);
+            setParameters(customerId, request, storedProcedure);
+            addParameter(storedProcedure, PARAM_PAGE_SIZE, isNull(request.getPageSize()) ? DEFAULT_PAGE_SIZE : request.getPageSize(), Integer.class, IN);
+            return storedProcedure.getResultList();
+        } catch (PersistenceException pe) {
+            if (pe.getMessage().contains(DATABASE_DOWN)) {
+                throw new ServiceException(TransactionsServiceKeyMapping.URBIS_SERVICE_DOWN, pe);
+            }
+            throw new ServiceException(TransactionsServiceKeyMapping.URBIS_SERVICE_ERROR, pe);
+        }
     }
 
 }

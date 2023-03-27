@@ -34,7 +34,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @ControllerAdvice(assignableTypes = TransactionEnrichmentController.class)
 @RequiredArgsConstructor
 public class TransactionEnrichmentControllerAdvice extends GenericResponseEntityExceptionHandler {
-
     private final GenericMessageSource genericMessageSource;
     private final ErrorMetaInformationMapper errorMetaInformationMapper;
 

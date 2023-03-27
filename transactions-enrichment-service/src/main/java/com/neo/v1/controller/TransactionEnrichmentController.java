@@ -2,13 +2,13 @@ package com.neo.v1.controller;
 
 
 import com.neo.core.model.ApiError;
-import com.neo.v1.service.TransactionEnrichmentService;
 
+import com.neo.v1.service.TransactionEnrichmentService;
 import com.neo.v1.transactions.enrichment.api.NeoServiceV1Api;
 import com.neo.v1.transactions.enrichment.model.*;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @Slf4j
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("/api/v1/transactions-enrichment")
 @ApiResponses({
         @ApiResponse(code = 400, message = "BadRequest", response = ApiError.class),
@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransactionEnrichmentController implements NeoServiceV1Api {
 
     private final TransactionEnrichmentService transactionsService;
-
     @Override
     @PostMapping
     public ResponseEntity<AccountTransactionsResponse> postTransactionsEnrichment(AccountTransactionsRequest body) {

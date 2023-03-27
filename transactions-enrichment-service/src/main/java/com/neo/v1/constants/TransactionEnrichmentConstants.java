@@ -7,6 +7,18 @@ import java.util.Map;
 import static java.math.BigDecimal.ONE;
 
 public class TransactionEnrichmentConstants {
+    public static final String TRANSACTIONS_A24_DOWN_CODE = "GENE-2030";
+    public static final String TRANSACTIONS_URBIS_DOWN_CODE = "GENE-1006";
+    public static final String TRANSACTIONS_URBIS_DOWN_MESSAGE = "com.neo.v1.transactions.urbis.down.message";
+    public static final String TRANSACTIONS_URBIS_DOWN_AUDIT_MESSAGE = "com.neo.transactions.urbis.down.audit.message";
+    public static final String TRANSACTIONS_A24_DOWN_MESSAGE = "com.neo.transactions.a24.down.message";
+
+    public static final String TRANSACTIONS_A24_ERROR_CODE = "TRAN-0102";
+    public static final String TRANSACTIONS_A24_MESSAGE = "com.neo.transactions.a24.message";
+    public static final String TRANSACTIONS_A24_AUDIT_MESSAGE = "com.neo.transactions.a24.audit.message";
+    public static final String TRANSACTIONS_A24_DOWN_AUDIT_MESSAGE = "com.neo.transactions.a24.down.audit.message";
+
+    public static final String DATABASE_DOWN = "Unable to acquire JDBC Connection";
 
     public static final String CODE_ENTRY_ACCOUNT_ID_REQUIRED = "TRNE-0021";
     public static final String POST_RELEASE_HOLD_ENTRY_ACCOUNT_ID_REQUIRED = "TRNE-0038";
@@ -28,15 +40,10 @@ public class TransactionEnrichmentConstants {
     public static final String TRANSACTIONS_ACCOUNT_MESSAGE = "com.neo.transactions.account.message";
 
     // URBIS ERRORS CODES AND MESSAGES
+
     public static final String TRANSACTIONS_URBIS_ERROR_CODE = "TRNE-0001";
     public static final String TRANSACTIONS_URBIS_MESSAGE = "com.neo.transactions.urbis.message";
     public static final String TRANSACTIONS_URBIS_AUDIT_MESSAGE = "com.neo.transactions.urbis.audit.message";
-
-    public static final String TRANSACTIONS_URBIS_DOWN_CODE = "GENE-1006";
-    public static final String TRANSACTIONS_URBIS_DOWN_MESSAGE = "com.neo.transactions.urbis.down.message";
-    public static final String TRANSACTIONS_URBIS_DOWN_AUDIT_MESSAGE = "com.neo.transactions.urbis.down.audit.message";
-
-    public static final String DATABASE_DOWN = "Unable to acquire JDBC Connection";
 
     public static final String ACCOUNT_SERVICE_DOWN_CODE = "GENE-2005";
     public static final String ACCOUNT_SERVICE_DOWN_MESSAGE = "com.neo.transactions.account.down.message";
@@ -70,15 +77,22 @@ public class TransactionEnrichmentConstants {
     public static final String TMSX_POST_RELEASE_HOLD_PAYMENT_ENTRY_AMOUNT_CURRENCY_REQUIRED_CODE = "TRNE-0065";
     public static final String URBIS_REPOSITORY_PACKAGE = "com.neo.v1.repository.urbis";
     public static final String URBIS_DB_PERSISTENCE_UNIT = "urbis";
+    public static final String A24_DB_PERSISTENCE_UNIT = "a24";
 
     public static final BigDecimal TMSX_ACCOUNT_TRANSACTION_EXCHANGE_RATE = ONE;
 
     public static final String GET_ACCOUNT_TRANSACTIONS_REQUIRED_ACCOUNT_ID_CODE = "TRNE-0074";
     public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_DEBIT_CREDIT_INDICATOR_CODE = "TRNE-0075";
+    public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_OFFSET_CODE = "TRAN-0082";
+    public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_PAGE_SIZE_CODE = "TRAN-0083";
+
     public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_FILTER_SIZE_CODE = "TRNE-0084";
     public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_FROM_AMOUNT_CODE = "TRNE-0085";
     public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_TO_AMOUNT_CODE = "TRNE-0086";
     public static final long GET_ACCOUNT_TRANSACTION_FROM_DATE_DEFAULT_MONTHS_TO_MINUS = 6;
+    public static final String GET_ACCOUNT_TRANSACTIONS_INVALID_STATUS_CODE = "TRAN-0089";
+
+    public static final int GET_ACCOUNT_TRANSACTION_DEFAULT_PAGE_SIZE = 5;
 
     public static final String EXCHANGE_SERVICE_DOWN_CODE = "GENE-2010";
     public static final String EXCHANGE_SERVICE_ERROR_CODE = "TRNE-0078";

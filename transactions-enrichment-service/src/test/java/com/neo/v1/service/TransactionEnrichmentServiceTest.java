@@ -59,6 +59,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -168,7 +169,10 @@ import static org.mockito.Mockito.when;
     private DisputeTransactionService disputeTransactionService;
     @Mock
     private DisputeService disputeService;
-
+    @Mock
+    private ConfigurationService configurationService;
+    @Mock
+    private A24Service  a24Service;
     @BeforeEach
     void before() {
         GenericRestParamDto genericRestParamDto = GenericRestParamDto.builder()
@@ -687,6 +691,7 @@ import static org.mockito.Mockito.when;
                 .build();
         Map<String, Integer> codeDecimalPlacesMap = new HashMap<>();
         codeDecimalPlacesMap.put("BHD", 1);
+        Mockito.lenient().when(accountTransactionsResponseMapper.map(any(List.class))).thenReturn(expected);
         when(accountTransactionsResponseMapper.map(any(List.class))).thenReturn(expected);
         when(urbisService.getAccountTransactions(getContext().getCustomerId(), request)).thenReturn(accountTransactionEntitieslist);
         when(accountTransactionsMapper.map(accountTransactionEntity)).thenReturn(accountTransaction);

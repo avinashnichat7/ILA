@@ -1,10 +1,13 @@
 package com.neo.v1.service;
 
+
 import com.neo.core.exception.ServiceException;
+import com.neo.core.model.GenericRestParam;
 import com.neo.v1.entity.CustomerAccountTransactionCategoryEntity;
 import com.neo.v1.entity.CustomerCategoryEntity;
 import com.neo.v1.entity.CustomerMerchantCategoryEntity;
 import com.neo.v1.enums.AccountTransactionStatusType;
+import com.neo.v1.enums.GlobalConfig;
 import com.neo.v1.enums.customer.RecordType;
 import com.neo.v1.mapper.AccountTransactionHoldMapper;
 import com.neo.v1.mapper.AccountTransactionsMapper;
@@ -20,6 +23,7 @@ import com.neo.v1.model.account.TransferCharge;
 import com.neo.v1.model.account.TransferFees;
 import com.neo.v1.model.customer.CustomerDetailData;
 import com.neo.v1.product.catalogue.model.CategoryDetail;
+import com.neo.v1.reader.PropertyReader;
 import com.neo.v1.repository.CustomerCategoryRepository;
 import com.neo.v1.transactions.enrichment.model.AccountTransaction;
 import com.neo.v1.transactions.enrichment.model.AccountTransactionHold;
@@ -55,11 +59,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 import static com.neo.core.context.GenericRestParamContextHolder.getContext;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_SUCCESS_MSG;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREDIT;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.DEBIT;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_SUCCESS_MSG;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.FAWRI_TRANSACTION_TYPE_FOR_PENDING;
@@ -72,9 +75,7 @@ import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_HO
 import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_TYPE_CHARITY_TRANSFER_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_CODE;
 import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_SUCCESS_MSG;
-import static com.neo.v1.enums.AccountTransactionStatusType.FAILED;
-import static com.neo.v1.enums.AccountTransactionStatusType.FAILED_PENDING;
-import static com.neo.v1.enums.AccountTransactionStatusType.PENDING;
+import static com.neo.v1.enums.AccountTransactionStatusType.*;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.DELETE_CATEGORY_INVALID_CATEGORY_ID;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.INVALID_CATEGORY_ID;
@@ -89,7 +90,10 @@ import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INV
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_COLOR;
 import static com.neo.v1.enums.TransactionsServiceKeyMapping.UPDATE_CATEGORY_INVALID_ICON;
 import static com.neo.v1.util.TransactionsUtils.decodeString;
+import static java.lang.Boolean.TRUE;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.web.cors.CorsConfiguration.ALL;
 
 @Slf4j
 @Service
@@ -97,6 +101,7 @@ import static java.util.stream.Collectors.toList;
 public class TransactionEnrichmentService {
 
     private final AccountService accountService;
+
     private final UrbisService urbisService;
     private final TransactionPaginationService transactionPaginationService;
     private final TransferFeesRequestMapper transferFeesRequestMapper;
@@ -117,8 +122,11 @@ public class TransactionEnrichmentService {
     private final CreditCardService creditCardService;
     private final DisputeService disputeService;
 
+    private final PropertyReader propertyReader;
+    private final A24Service a24Service;
+    private final ConfigurationService configurationService;
+
     public AccountTransactionsResponse getAccountTransactions(AccountTransactionsRequest request) {
-        request.setFilter(decodeString(request.getFilter()));
         List<AccountTransaction> transactions = new ArrayList<>();
         AccountTransactionStatusType statusType = AccountTransactionStatusType.forValue(request.getStatus());
         String target = request.getDebitCreditIndicator();
@@ -135,15 +143,22 @@ public class TransactionEnrichmentService {
         } else if (FAILED == statusType && StringUtils.isBlank(request.getMaskedCardNumber())) {
             transactions = transactionService.getAccountTransactionsByStatus(request, statusType.value());
             transactions = transactionPaginationService.getPaginatedRecords(transactions, request.getOffset().intValue(), request.getPageSize().intValue());
-        } else {
+        } else if (COMPLETED == statusType && StringUtils.isBlank(request.getMaskedCardNumber())) {
             transactions = urbisService.getAccountTransactions(getContext().getCustomerId(), request)
                     .stream().map(accountTransactionsMapper::map)
                     .collect(toList());
-            if (DEBIT.equalsIgnoreCase(target)) {
-                transactions = disputeService.filterDebitDisputeTransaction(transactions, target);
-            } else if (CREDIT.equalsIgnoreCase(target)) {
-                transactions = disputeService.filterCreditDisputeTransaction(transactions, target);
+            String isThrottlingEnabled = configurationService.getConfiguration(GlobalConfig.ENABLE_THROTTLING);
+            if(GenericRestParam.SourceType.CRM.equals(getContext().getSource()) && isThrottlingEnabled.equalsIgnoreCase(TRUE.toString())) {
+                List<AccountTransaction> a24Transactions = a24Service.getAccountTransactions(getContext().getCustomerId(), request)
+                        .stream().map(accountTransactionsMapper::map)
+                        .collect(toList());
+                transactions.addAll(a24Transactions);
             }
+        } else {
+            request.setStatus(ALL);
+            transactions = urbisService.getAllAccountTransactions(getContext().getCustomerId(), request)
+                    .stream().map(accountTransactionsMapper::map)
+                    .collect(toList());
         }
         merchantService.mapMerchantCategory(transactions, request);
         log.info("Transaction Details for Account Id {} has been retrieved successfully.", request.getId());
@@ -180,7 +195,7 @@ public class TransactionEnrichmentService {
 
     public CategoryListResponse getMerchantCategoryList() {
         List<CategoryDetail> categoryList = productCatalogueService.getProductCatalogueMerchantCategory();
-        List<CustomerCategoryEntity> customerCategoryEntityList = customerCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), Boolean.TRUE);
+        List<CustomerCategoryEntity> customerCategoryEntityList = customerCategoryRepository.findByCustomerIdAndActive(getContext().getCustomerId(), TRUE);
         return customerCategoryMapper.map(categoryList, customerCategoryEntityList);
     }
 
@@ -211,7 +226,7 @@ public class TransactionEnrichmentService {
     public UpdateCategoryResponse updateCategory(Long categoryId, UpdateCategoryRequest req) {
         categoryId = Optional.ofNullable(categoryId).orElseThrow( ()-> new ServiceException(INVALID_CATEGORY_ID));
         validateUpdateCategoryRequest(req);
-        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, getContext().getCustomerId(), Boolean.TRUE).orElseThrow(() -> new ServiceException(INVALID_CATEGORY_ID));
+        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, getContext().getCustomerId(), TRUE).orElseThrow(() -> new ServiceException(INVALID_CATEGORY_ID));
         CustomerCategoryEntity updatedEntity = customerCategoryMapper.map(req, categoryEntity.getCustomerId(), categoryId);
         CustomerCategoryEntity savedCategory = customerCategoryRepository.save(updatedEntity);
         return updateCategoryResponseMapper.map(savedCategory, metaMapper.map(UPDATE_CATEGORY_SUCCESS_CODE, UPDATE_CATEGORY_SUCCESS_MSG));
@@ -232,7 +247,7 @@ public class TransactionEnrichmentService {
     @Transactional
     public DeleteCategoryResponse deleteCategory(Long categoryId) {
         categoryId = Optional.ofNullable(categoryId).orElseThrow( ()-> new ServiceException(INVALID_CATEGORY_ID));
-        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, getContext().getCustomerId(), Boolean.TRUE).orElseThrow(() -> new ServiceException(DELETE_CATEGORY_INVALID_CATEGORY_ID));
+        CustomerCategoryEntity categoryEntity = customerCategoryRepository.findByIdAndCustomerIdAndActive(categoryId, getContext().getCustomerId(), TRUE).orElseThrow(() -> new ServiceException(DELETE_CATEGORY_INVALID_CATEGORY_ID));
         categoryEntity.setActive(Boolean.FALSE);
         categoryEntity.setUpdatedDate(LocalDateTime.now());
         customerCategoryRepository.save(categoryEntity);
@@ -263,7 +278,7 @@ public class TransactionEnrichmentService {
             boolean isNumber = StringUtils.isNumeric(request.getCategoryId());
             if (isNumber) {
                 Long categoryId = Long.parseLong(request.getCategoryId());
-                CustomerCategoryEntity customerCategoryEntity = customerCategoryRepository.findByIdAndActive(categoryId, Boolean.TRUE);
+                CustomerCategoryEntity customerCategoryEntity = customerCategoryRepository.findByIdAndActive(categoryId, TRUE);
                 if (Objects.isNull(customerCategoryEntity)) {
                     throw new ServiceException(LINK_CATEGORY_INVALID_CATEGORY_ID);
                 } else {
@@ -291,14 +306,14 @@ public class TransactionEnrichmentService {
         }
     }
 
-	public TransactionHoldResponse  hold(TransactionHoldRequest transactionHoldRequest) {
-		List<AccountTransactionHold> transactionsHold = urbisService.getAccountTransactionsHold(getContext().getCustomerId(), transactionHoldRequest)
+    public TransactionHoldResponse  hold(TransactionHoldRequest transactionHoldRequest) {
+        List<AccountTransactionHold> transactionsHold = urbisService.getAccountTransactionsHold(getContext().getCustomerId(), transactionHoldRequest)
                 .stream().map(accountTransactionHoldMapper::map)
                 .collect(toList());
-		return TransactionHoldResponse.builder()
-				.meta(metaMapper.map(TRANSACTION_HOLD_SUCCESS_CODE, TRANSACTION_HOLD_SUCCESS_MSG))
-				.data(TransactionHoldResponseData.builder().transactions(transactionsHold).build()).build();
-	}
+        return TransactionHoldResponse.builder()
+                .meta(metaMapper.map(TRANSACTION_HOLD_SUCCESS_CODE, TRANSACTION_HOLD_SUCCESS_MSG))
+                .data(TransactionHoldResponseData.builder().transactions(transactionsHold).build()).build();
+    }
 
     public CreditCardTransactionsResponse creditCardTransactions(CreditCardTransactionsRequest request) {
         CreditCardTransactionsResponse creditCardTransactionsResponse = creditCardService.postCreditCardsTransactions(request);
@@ -309,3 +324,4 @@ public class TransactionEnrichmentService {
     }
 
 }
+

@@ -20,4 +20,12 @@ public interface AccountClient {
                                          @RequestHeader String customerId,
                                          @RequestHeader String userId,
                                          @RequestBody TransferFeesRequest transferFeesRequest);
+
+    @PostMapping(path = "${transactions.account.service.account-details.uri}", produces = APPLICATION_JSON_UTF8_VALUE,
+            consumes = APPLICATION_JSON_UTF8_VALUE)
+    AccountDetailResponse getAccountDetailByCustomerId(@RequestParam String language,
+                                                       @RequestParam String unit,
+                                                       @RequestHeader String customerId,
+                                                       @RequestHeader String userId,
+                                                       @RequestBody AccountDetailRequest accountDetailRequest);
 }

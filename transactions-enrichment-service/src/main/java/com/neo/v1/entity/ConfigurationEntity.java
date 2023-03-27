@@ -20,7 +20,7 @@ import javax.persistence.Table;
 public class ConfigurationEntity {
 
     @EmbeddedId
-    private ConfigurationCompositeKey configurationCompositeKey;
+    private ConfigurationIdentity configurationIdentity;
 
     private String value;
 

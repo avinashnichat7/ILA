@@ -5,45 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_DOWN_AUDIT_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_DOWN_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_DOWN_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_AUDIT_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_SERVICE_ERROR_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CATEGORY_REFERENCE_NOT_FOUND_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_CATEGORY;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_COLOR;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_CUSTOMER_TYPE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_CATEGORY_INVALID_ICON;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREATE_HOLD_TRANSACTION_EXPIRY_DATE_INVALID_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREDIT_CARD_SERVICE_DOWN_AUDIT_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREDIT_CARD_SERVICE_DOWN_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.CREDIT_CARD_SERVICE_DOWN_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.DELETE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_DOWN_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.EXCHANGE_SERVICE_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.HOLD_NUMBER_REQUIRED_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.IBAN_REQUIRED_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_INVALID_IBAN_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_INVALID_LINK_TYPE_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.LINK_CATEGORY_INVALID_REFERENCE_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.PRODUCT_CATALOGUE_UNAVAILABLE_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TMSX_INVALID_OPERATION_TYPE_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_AUDIT_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_DOWN_AUDIT_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_DOWN_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_DOWN_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTIONS_URBIS_MESSAGE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSACTION_UNAVAILABLE_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSFER_SERVICE_DOWN_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.TRANSFER_SERVICE_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_CATEGORY_ID_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_COLOR_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.UPDATE_CATEGORY_INVALID_ICON_ERROR_CODE;
-import static com.neo.v1.constants.TransactionEnrichmentConstants.ACCOUNT_ID_ERROR_CODE;
+import static com.neo.v1.constants.TransactionEnrichmentConstants.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
@@ -51,6 +13,9 @@ import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 @AllArgsConstructor
 @Getter
 public enum TransactionsServiceKeyMapping implements ServiceKeyMapping {
+    A24_SERVICE_DOWN(TRANSACTIONS_A24_DOWN_CODE, SERVICE_UNAVAILABLE, TRANSACTIONS_A24_DOWN_MESSAGE, TRANSACTIONS_A24_DOWN_AUDIT_MESSAGE),
+    A24_SERVICE_ERROR(TRANSACTIONS_A24_ERROR_CODE, INTERNAL_SERVER_ERROR, TRANSACTIONS_A24_MESSAGE, TRANSACTIONS_A24_AUDIT_MESSAGE),
+
 
     URBIS_SERVICE_ERROR(TRANSACTIONS_URBIS_ERROR_CODE, INTERNAL_SERVER_ERROR, TRANSACTIONS_URBIS_MESSAGE, TRANSACTIONS_URBIS_AUDIT_MESSAGE),
     URBIS_SERVICE_DOWN(TRANSACTIONS_URBIS_DOWN_CODE, SERVICE_UNAVAILABLE, TRANSACTIONS_URBIS_DOWN_MESSAGE, TRANSACTIONS_URBIS_DOWN_AUDIT_MESSAGE),

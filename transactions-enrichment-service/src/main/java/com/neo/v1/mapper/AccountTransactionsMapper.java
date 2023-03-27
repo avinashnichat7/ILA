@@ -1,6 +1,7 @@
 package com.neo.v1.mapper;
 
 import com.neo.v1.entity.TmsxUrbisOperationTypesEntity;
+import com.neo.v1.entity.a24.A24AccountTransactionEntity;
 import com.neo.v1.entity.urbis.AccountPendingTransactionEntity;
 import com.neo.v1.entity.urbis.AccountTransactionDetailEntity;
 import com.neo.v1.entity.urbis.AccountTransactionEntity;
@@ -71,6 +72,28 @@ public class AccountTransactionsMapper {
                 .merchantName(entity.getMerchantName())
                 .build();
     }
+    public AccountTransaction map(A24AccountTransactionEntity entity) {
+        return AccountTransaction.builder()
+                .id(entity.getId())
+                .transactionDate(entity.getTransactionDate())
+                .valueDate(entity.getValueDate())
+                .transactionType(entity.getTransactionType())
+                .transactionCurrency(currencyMapper.map(entity.getTransactionCurrency(), entity.getTransactionCurrencyPlaces()))
+                .transactionExchangeRate(entity.getTransactionExchangeRate())
+                .accountCurrency(currencyMapper.map(entity.getAccountCurrency(), entity.getAccountCurrencyPlaces()))
+                .transactionDescription1(entity.getTransactionDescription1())
+                .transactionDescription2(entity.getTransactionDescription2())
+                .transactionDescription3(entity.getTransactionDescription3())
+                .transactionDescription4(entity.getTransactionDescription4())
+                .transactionDescription5(entity.getTransactionDescription5())
+                .transactionDescription6(entity.getTransactionDescription6())
+                .amount(entity.getAmount())
+                .originalAmount(entity.getOriginalAmount())
+                .reference(entity.getReference())
+                .generateAdvice(GENERATE_ADVICE.equals(entity.getGenerateAdvice()))
+                .status(entity.getStatus())
+                .build();
+    }
 
     public AccountTransaction map(AccountTransaction object) {
         return AccountTransaction.builder()
@@ -98,6 +121,7 @@ public class AccountTransactionsMapper {
                 .merchantName(object.getMerchantName())
                 .build();
     }
+
 
     public AccountTransaction map(AccountPendingTransactionEntity entity) {
         return AccountTransaction.builder()
@@ -259,4 +283,5 @@ public class AccountTransactionsMapper {
         return (Objects.isNull(fromAmount) || amountToCompare.compareTo(fromAmount) >= 0)
                 && (Objects.isNull(toAmount) || amountToCompare.compareTo(toAmount) <= 0);
     }
+
 }
